@@ -1,0 +1,7 @@
+numpy
+scipy
+deap
+matplotlib
+lxml
+pandas
+json5
