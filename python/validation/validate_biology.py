@@ -72,11 +72,13 @@ class BiologyValidator:
         config_path: Path | str,
         output_dir: Path | str,
         timeout_seconds: int = 7200,
+        sim_max_time: Optional[float] = None,
     ):
         self.binary_path = Path(binary_path).expanduser().resolve()
         self.base_config_path = Path(config_path).expanduser().resolve()
         self.output_dir = Path(output_dir).expanduser().resolve()
         self.timeout_seconds = int(timeout_seconds)
+        self.sim_max_time: Optional[float] = sim_max_time
 
         if not self.binary_path.exists():
             raise FileNotFoundError(f"PhysiCell binary not found: {self.binary_path}")
@@ -277,6 +279,12 @@ class BiologyValidator:
     ) -> None:
         tree = ET.parse(config_path)
         root = tree.getroot()
+
+        if self.sim_max_time is not None:
+            for tag in ("max_time", "overall_time"):
+                node = root.find(f".//{tag}")
+                if node is not None:
+                    node.text = str(self.sim_max_time)
 
         for key, value in user_parameter_overrides.items():
             node = root.find(f".//user_parameters/{key}")
@@ -487,9 +495,16 @@ def np_rint(values):
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run biological validation scenarios for Stroma World.")
     parser.add_argument("--physicell-binary", required=True, help="Path to stroma_world executable.")
-    parser.add_argument("--physicell-config", required=True, help="Path to PhysiCell_settings.xml.")
+    parser.add_argument("--physicell-config", "--base-config", dest="physicell_config", required=True, help="Path to PhysiCell_settings.xml.")
     parser.add_argument("--output-dir", required=True, help="Directory for validation outputs.")
     parser.add_argument("--timeout-seconds", type=int, default=7200, help="Per-simulation timeout in seconds.")
+    parser.add_argument(
+        "--sim-max-time",
+        type=float,
+        default=None,
+        help="Override max_time (minutes) in the PhysiCell config for each validation run. "
+             "Use a short value (e.g. 1440) to limit output size.",
+    )
     parser.add_argument(
         "--log-level",
         default="INFO",
@@ -515,6 +530,7 @@ def main() -> int:
         config_path=Path(args.physicell_config),
         output_dir=Path(args.output_dir),
         timeout_seconds=args.timeout_seconds,
+        sim_max_time=args.sim_max_time,
     )
     summary = validator.run_all()
 

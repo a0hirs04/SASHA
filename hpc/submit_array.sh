@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=stroma_world_ea_array
-#SBATCH --partition=gpu
+#SBATCH --partition=cpu384g
 # On Zurada, switch to another partition if needed (e.g., batch/compute).
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1

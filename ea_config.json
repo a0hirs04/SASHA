@@ -1,0 +1,17 @@
+{
+  "population_size": 8,
+  "generations": 3,
+  "mutation_rate": 0.2,
+  "crossover_rate": 0.7,
+  "tournament_size": 3,
+  "max_interventions": 5,
+  "parallel_sims": 4,
+  "druggable_genes": ["EGFR", "BCL_XL", "MMP2", "TGFB1", "SHH", "GLI1", "HAS2", "ABCB1"],
+  "timeout_seconds": 3600,
+  "random_seed": 42,
+  "elitism_fraction": 0.05,
+  "keep_population_history": true,
+  "initial_tumor_cells": 50,
+  "max_expected_drug": 1.0,
+  "domain_size": 2000.0
+}
