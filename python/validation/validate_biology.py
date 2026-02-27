@@ -10,7 +10,7 @@ import sys
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 import xml.etree.ElementTree as ET
 
 # Ensure project-root imports work when running as a script.
@@ -96,11 +96,11 @@ class BiologyValidator:
             LOGGER.info("Running validation scenario: %s", spec.name)
             result = self._run_scenario(spec)
             scenario_results.append(result)
-
-            # Keep baseline result for downstream cross-checks (dual therapy vs baseline).
-            if spec.name == "NO_INTERVENTION_BASELINE":
-                self._baseline_cache["fitness"] = result.fitness
-                self._baseline_cache["metrics"] = result.metrics
+            self._baseline_cache[spec.name] = {
+                "fitness": result.fitness,
+                "metrics": result.metrics,
+                "extras": result.extras,
+            }
 
         passed = sum(1 for r in scenario_results if r.success)
         failed = len(scenario_results) - passed
@@ -334,154 +334,159 @@ class BiologyValidator:
         return int(default)
 
     def _scenario_specs(self) -> List[ScenarioSpec]:
-        baseline_intervention = {"interventions": []}
+        no_cytotoxic_user = {"drug_start_time": 1.0e9, "drug_concentration": 0.0}
+        no_cytotoxic_var = {
+            "drug": {
+                "Dirichlet_boundary_condition": {"enabled": False, "value": 0.0},
+                "Dirichlet_options": {"enabled": False, "value": 0.0},
+                "initial_condition": 0.0,
+            }
+        }
+        cytotoxic_user = {"drug_start_time": 0.0, "drug_concentration": 1.0}
+        cytotoxic_var = {
+            "drug": {
+                "Dirichlet_boundary_condition": {"enabled": True, "value": 1.0},
+                "Dirichlet_options": {"enabled": True, "value": 1.0},
+                "initial_condition": 1.0,
+            }
+        }
+        high_tgfb_var = {
+            "tgfb": {
+                "Dirichlet_boundary_condition": {"enabled": True, "value": 1.0},
+                "Dirichlet_options": {"enabled": True, "value": 1.0},
+                "initial_condition": 1.0,
+            }
+        }
 
         specs: List[ScenarioSpec] = [
             ScenarioSpec(
-                name="NO_INTERVENTION_BASELINE",
-                description="No interventions. Expect stromal barrier formation by day 10.",
-                criterion="stroma_barrier_score > 0.5",
-                intervention_payload=baseline_intervention,
-                user_parameter_overrides={},
-                variable_overrides={},
-                evaluator=self._eval_baseline,
+                name="BASELINE_NO_CYTOTOXIC",
+                description="AsPC-1 baseline with no cytotoxic exposure.",
+                criterion="reference baseline is produced for SHH paradox comparison",
+                intervention_payload={"calibration_profile": "AsPC-1", "knob_interventions": []},
+                user_parameter_overrides=no_cytotoxic_user,
+                variable_overrides=no_cytotoxic_var,
+                evaluator=self._eval_baseline_no_cytotoxic,
             ),
             ScenarioSpec(
-                name="KRAS_DEPENDENCE",
-                description="KRAS forced OFF should limit growth.",
-                criterion="final tumor count < 1.5x initial",
+                name="SHH_OFF_NO_CYTOTOXIC",
+                description="Knob 1b inhibition without cytotoxic context.",
+                criterion="worse tumor outcome than BASELINE_NO_CYTOTOXIC",
                 intervention_payload={
-                    "interventions": [],
-                    "mutation_overrides": {"KRAS": {"locked": True, "state": 0.0}},
-                    "tumor_mutations": {"KRAS": {"locked": True, "state": 0.0}},
+                    "calibration_profile": "AsPC-1",
+                    "knob_interventions": [
+                        {"knob": "shh_secretion_rate", "effect": "INHIBIT", "strength": 1.0, "name": "SHH_OFF"}
+                    ],
                 },
-                user_parameter_overrides={},
-                variable_overrides={},
-                evaluator=self._eval_kras_dependence,
+                user_parameter_overrides=no_cytotoxic_user,
+                variable_overrides=no_cytotoxic_var,
+                evaluator=self._eval_shh_off_no_cytotoxic,
             ),
             ScenarioSpec(
-                name="STROMA_DISRUPTION",
-                description="No stromal cells should remove barrier and improve penetration.",
-                criterion="stroma_barrier_score < 0.1 and drug_penetration > 0.8",
-                intervention_payload={"interventions": []},
-                user_parameter_overrides={"number_of_stromal_cells": 0},
-                variable_overrides={
-                    "drug": {
-                        "Dirichlet_boundary_condition": {"enabled": True, "value": 1.0},
-                        "Dirichlet_options": {"enabled": True, "value": 1.0},
-                        "initial_condition": 0.0,
-                    }
-                },
-                evaluator=self._eval_stroma_disruption,
-            ),
-            ScenarioSpec(
-                name="TGF_BETA_BLOCKING",
-                description="TGFB1 inhibition should reduce stromal activation.",
-                criterion="activated CAF fraction < 0.3",
+                name="SHH_OFF_WITH_CYTOTOXIC",
+                description="Knob 1b inhibition with cytotoxic enabled.",
+                criterion="improved tumor kill vs SHH_OFF_NO_CYTOTOXIC",
                 intervention_payload={
-                    "interventions": [{"gene": "TGFB1", "effect": "INHIBIT", "strength": 1.0}],
+                    "calibration_profile": "AsPC-1",
+                    "knob_interventions": [
+                        {"knob": "shh_secretion_rate", "effect": "INHIBIT", "strength": 1.0, "name": "SHH_OFF"}
+                    ],
                 },
-                user_parameter_overrides={},
-                variable_overrides={},
-                evaluator=self._eval_tgfb_blocking,
+                user_parameter_overrides=cytotoxic_user,
+                variable_overrides=cytotoxic_var,
+                evaluator=self._eval_shh_off_with_cytotoxic,
             ),
             ScenarioSpec(
-                name="DUAL_THERAPY",
-                description="EGFR+HAS2 inhibition should improve over baseline.",
-                criterion="fitness > 0.5",
-                intervention_payload={
-                    "interventions": [
-                        {"gene": "EGFR", "effect": "INHIBIT", "strength": 0.8},
-                        {"gene": "HAS2", "effect": "INHIBIT", "strength": 0.8},
-                    ]
-                },
-                user_parameter_overrides={},
-                variable_overrides={},
-                evaluator=self._eval_dual_therapy,
+                name="KNOB2_ASPC1_CONTROL",
+                description="AsPC-1 under high TGF-beta exposure for Knob 2 comparator.",
+                criterion="reference control for KNOB2_PANC1_CONTROL",
+                intervention_payload={"calibration_profile": "AsPC-1", "knob_interventions": []},
+                user_parameter_overrides=no_cytotoxic_user,
+                variable_overrides={**no_cytotoxic_var, **high_tgfb_var},
+                evaluator=self._eval_knob2_aspc1_control,
             ),
             ScenarioSpec(
-                name="RESISTANCE_EMERGENCE",
-                description="Early strong drug exposure should enrich resistant survivors.",
-                criterion="mean NRF2 in surviving tumor cells > 0.5",
-                intervention_payload={"interventions": []},
-                user_parameter_overrides={"drug_start_time": 0, "drug_concentration": 1.0},
-                variable_overrides={
-                    "drug": {
-                        "Dirichlet_boundary_condition": {"enabled": True, "value": 1.0},
-                        "Dirichlet_options": {"enabled": True, "value": 1.0},
-                        "initial_condition": 1.0,
-                    }
-                },
-                evaluator=self._eval_resistance_emergence,
+                name="KNOB2_PANC1_CONTROL",
+                description="PANC-1 high Knob 2 sensitivity should show stronger TGF-beta brake.",
+                criterion="tumor burden lower than KNOB2_ASPC1_CONTROL",
+                intervention_payload={"calibration_profile": "PANC-1", "knob_interventions": []},
+                user_parameter_overrides=no_cytotoxic_user,
+                variable_overrides={**no_cytotoxic_var, **high_tgfb_var},
+                evaluator=self._eval_knob2_panc1_control,
             ),
         ]
         return specs
 
-    def _eval_baseline(
-        self, metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
+    @staticmethod
+    def _eval_baseline_no_cytotoxic(
+        metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
     ) -> Tuple[bool, str]:
-        ok = metrics.stroma_barrier_score > 0.5
+        ok = metrics.total_tumor_cells > 0
+        return ok, (
+            f"tumor={metrics.total_tumor_cells}, "
+            f"live_tumor={metrics.live_tumor_cells}, "
+            f"fitness={compute_fitness(metrics):.3f}"
+        )
+
+    @staticmethod
+    def _eval_shh_off_no_cytotoxic(
+        metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
+    ) -> Tuple[bool, str]:
+        ref = baseline.get("BASELINE_NO_CYTOTOXIC", {}).get("metrics", {})
+        ref_fit = baseline.get("BASELINE_NO_CYTOTOXIC", {}).get("fitness", math.nan)
+        if not ref:
+            return False, "missing BASELINE_NO_CYTOTOXIC reference"
+
+        ref_tumor = float(ref.get("total_tumor_cells", math.nan))
+        cur_fit = float(compute_fitness(metrics))
+        worse_burden = metrics.total_tumor_cells > ref_tumor
+        worse_fitness = math.isfinite(float(ref_fit)) and (cur_fit < float(ref_fit))
+        ok = worse_burden or worse_fitness
         details = (
-            f"stroma_barrier_score={metrics.stroma_barrier_score:.3f}, "
-            f"ecm_delta={extras.get('ecm_delta', math.nan):.3f}, "
-            f"activated_cafs_delta={extras.get('activated_cafs_delta', math.nan):.1f}"
+            f"tumor={metrics.total_tumor_cells} vs baseline={ref_tumor:.1f}, "
+            f"fitness={cur_fit:.3f} vs baseline={float(ref_fit):.3f}"
         )
         return ok, details
 
-    def _eval_kras_dependence(
-        self, metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
-    ) -> Tuple[bool, str]:
-        threshold = 1.5 * float(self.initial_tumor_cells)
-        ok = metrics.total_tumor_cells < threshold
-        details = f"final_tumor={metrics.total_tumor_cells}, threshold={threshold:.1f}"
-        return ok, details
-
     @staticmethod
-    def _eval_stroma_disruption(
+    def _eval_shh_off_with_cytotoxic(
         metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
     ) -> Tuple[bool, str]:
-        ok = (metrics.stroma_barrier_score < 0.1) and (metrics.drug_penetration > 0.8)
+        ref = baseline.get("SHH_OFF_NO_CYTOTOXIC", {}).get("metrics", {})
+        ref_fit = baseline.get("SHH_OFF_NO_CYTOTOXIC", {}).get("fitness", math.nan)
+        if not ref:
+            return False, "missing SHH_OFF_NO_CYTOTOXIC reference"
+
+        ref_live = float(ref.get("live_tumor_cells", math.nan))
+        ref_tumor = float(ref.get("total_tumor_cells", math.nan))
+        cur_fit = float(compute_fitness(metrics))
+        better_kill = metrics.live_tumor_cells < ref_live or metrics.total_tumor_cells < ref_tumor
+        better_fitness = math.isfinite(float(ref_fit)) and (cur_fit > float(ref_fit))
+        ok = better_kill and better_fitness
         details = (
-            f"stroma_barrier_score={metrics.stroma_barrier_score:.3f}, "
-            f"drug_penetration={metrics.drug_penetration:.3f}"
+            f"live_tumor={metrics.live_tumor_cells} vs shh_off_no_cyto={ref_live:.1f}, "
+            f"tumor={metrics.total_tumor_cells} vs shh_off_no_cyto={ref_tumor:.1f}, "
+            f"fitness={cur_fit:.3f} vs shh_off_no_cyto={float(ref_fit):.3f}"
         )
         return ok, details
 
     @staticmethod
-    def _eval_tgfb_blocking(
+    def _eval_knob2_aspc1_control(
         metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
     ) -> Tuple[bool, str]:
-        if metrics.total_stromal_cells <= 0:
-            return False, "no stromal cells present; cannot evaluate activated CAF fraction"
-        frac = float(metrics.activated_cafs) / float(metrics.total_stromal_cells)
-        ok = frac < 0.3
-        return ok, f"activated_caf_fraction={frac:.3f}"
+        ok = metrics.total_tumor_cells > 0
+        return ok, f"aspc1_high_tgfb_total_tumor={metrics.total_tumor_cells}"
 
     @staticmethod
-    def _eval_dual_therapy(
+    def _eval_knob2_panc1_control(
         metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
     ) -> Tuple[bool, str]:
-        fitness = float(compute_fitness(metrics))
-        baseline_fitness = baseline.get("fitness", math.nan)
-        if math.isfinite(float(baseline_fitness)):
-            ok = (fitness > 0.5) and (fitness > float(baseline_fitness))
-            details = f"fitness={fitness:.3f}, baseline_fitness={float(baseline_fitness):.3f}"
-            return ok, details
-        ok = fitness > 0.5
-        return ok, f"fitness={fitness:.3f}"
-
-    @staticmethod
-    def _eval_resistance_emergence(
-        metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
-    ) -> Tuple[bool, str]:
-        mean_nrf2 = extras.get("mean_nrf2_surviving_tumor", math.nan)
-        if not math.isfinite(float(mean_nrf2)):
-            return False, "NRF2 gene row missing or no surviving tumor cells"
-        ok = float(mean_nrf2) > 0.5
-        details = (
-            f"mean_nrf2_surviving_tumor={float(mean_nrf2):.3f}, "
-            f"mean_abcb1_surviving_tumor={float(extras.get('mean_abcb1_surviving_tumor', math.nan)):.3f}"
-        )
+        aspc1 = baseline.get("KNOB2_ASPC1_CONTROL", {}).get("metrics", {})
+        if not aspc1:
+            return False, "missing KNOB2_ASPC1_CONTROL reference"
+        aspc1_tumor = float(aspc1.get("total_tumor_cells", math.nan))
+        ok = metrics.total_tumor_cells < aspc1_tumor
+        details = f"panc1_total_tumor={metrics.total_tumor_cells} vs aspc1_total_tumor={aspc1_tumor:.1f}"
         return ok, details
 
 

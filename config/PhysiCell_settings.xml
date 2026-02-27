@@ -765,6 +765,40 @@
         <drug_concentration type="double" units="dimensionless"
             description="Drug boundary concentration when administered">1.0</drug_concentration>
 
+        <!-- 13-knob calibration profile selector -->
+        <calibration_profile type="string" units="none"
+            description="Tumor calibration profile (AsPC-1 default, PANC-1 for Knob 2 comparator)">AsPC-1</calibration_profile>
+        <tumor_calibration_knobs_json type="string" units="none"
+            description="Path to tumor calibration profiles JSON">config/tumor_calibration_knobs.json</tumor_calibration_knobs_json>
+
+        <!-- 13-knob calibration defaults (AsPC-1) -->
+        <tgfb_secretion_rate type="double" units="dimensionless"
+            description="Knob 1a (Targetable): tumor TGFB secretion scale">0.8</tgfb_secretion_rate>
+        <shh_secretion_rate type="double" units="dimensionless"
+            description="Knob 1b (Targetable): tumor SHH secretion scale">0.7</shh_secretion_rate>
+        <tgfb_brake_sensitivity type="double" units="dimensionless"
+            description="Knob 2 (Fixed): TGF-beta growth-arrest sensitivity">0.05</tgfb_brake_sensitivity>
+        <proliferation_rate type="double" units="dimensionless"
+            description="Knob 3a (Fixed): proliferative drive scale">0.75</proliferation_rate>
+        <checkpoint_integrity type="double" units="dimensionless"
+            description="Knob 3b (Fixed): checkpoint integrity scale">0.05</checkpoint_integrity>
+        <apoptosis_resistance type="double" units="dimensionless"
+            description="Knob 4 (Fixed): basal apoptosis resistance">0.85</apoptosis_resistance>
+        <emt_induction_threshold type="double" units="dimensionless"
+            description="Knob 5a (Observable): EMT induction threshold">0.3</emt_induction_threshold>
+        <emt_phenotype_extent type="string" units="none"
+            description="Knob 5b (Observable): EMT phenotype extent (LOW|MEDIUM|HIGH)">HIGH</emt_phenotype_extent>
+        <hypoxia_response_threshold type="double" units="dimensionless"
+            description="Knob 6a (Observable): hypoxia response threshold control">0.35</hypoxia_response_threshold>
+        <hypoxia_phenotype_shift type="string" units="none"
+            description="Knob 6b (Observable): hypoxia phenotype shift (LOW|MEDIUM|HIGH)">HIGH</hypoxia_phenotype_shift>
+        <efflux_induction_delay type="double" units="dimensionless"
+            description="Knob 7a (Targetable): ABCB1 induction delay control">0.5</efflux_induction_delay>
+        <efflux_strength type="double" units="dimensionless"
+            description="Knob 7b (Targetable): ABCB1 efflux strength">0.7</efflux_strength>
+        <mechanical_compaction_strength type="double" units="dimensionless"
+            description="Knob 8 (Fixed): mechanical compaction / solid-stress strength">0.6</mechanical_compaction_strength>
+
     </user_parameters>
 
 </PhysiCell_settings>

@@ -9,11 +9,11 @@ from python.ea.evolutionary_algorithm import ALLOWED_EFFECTS, EAConfig, StromaWo
 
 def _assert_individual_valid(individual, cfg: EAConfig) -> None:
     assert 1 <= len(individual) <= cfg.max_interventions
-    genes = [entry["gene"] for entry in individual]
-    assert len(genes) == len(set(genes))
+    knobs = [entry["knob"] for entry in individual]
+    assert len(knobs) == len(set(knobs))
 
     for entry in individual:
-        assert entry["gene"] in cfg.druggable_genes
+        assert entry["knob"] in cfg.targetable_knobs
         assert entry["effect"] in ALLOWED_EFFECTS
         assert 0.1 <= float(entry["strength"]) <= 1.0
 
@@ -48,8 +48,8 @@ def test_individual_generation_valid_interventions_only(ea_instance):
 def test_mutation_stays_within_bounds(ea_instance):
     individual = ea_instance._individual_from_plain(  # noqa: SLF001
         [
-            {"gene": "EGFR", "effect": "INHIBIT", "strength": 0.5},
-            {"gene": "BCL_XL", "effect": "INHIBIT", "strength": 0.7},
+            {"knob": "tgfb_secretion_rate", "effect": "INHIBIT", "strength": 0.5},
+            {"knob": "efflux_strength", "effect": "INHIBIT", "strength": 0.7},
         ]
     )
 
@@ -61,16 +61,16 @@ def test_mutation_stays_within_bounds(ea_instance):
 def test_crossover_no_duplicate_gene_targets(ea_instance):
     ind1 = ea_instance._individual_from_plain(  # noqa: SLF001
         [
-            {"gene": "EGFR", "effect": "INHIBIT", "strength": 0.4},
-            {"gene": "BCL_XL", "effect": "INHIBIT", "strength": 0.8},
-            {"gene": "HAS2", "effect": "INHIBIT", "strength": 0.6},
+            {"knob": "tgfb_secretion_rate", "effect": "INHIBIT", "strength": 0.4},
+            {"knob": "efflux_strength", "effect": "INHIBIT", "strength": 0.8},
+            {"knob": "efflux_induction_delay", "effect": "INHIBIT", "strength": 0.6},
         ]
     )
     ind2 = ea_instance._individual_from_plain(  # noqa: SLF001
         [
-            {"gene": "EGFR", "effect": "ACTIVATE", "strength": 0.3},
-            {"gene": "MMP2", "effect": "INHIBIT", "strength": 0.5},
-            {"gene": "TGFB1", "effect": "INHIBIT", "strength": 0.9},
+            {"knob": "tgfb_secretion_rate", "effect": "ACTIVATE", "strength": 0.3},
+            {"knob": "shh_secretion_rate", "effect": "INHIBIT", "strength": 0.5},
+            {"knob": "efflux_strength", "effect": "INHIBIT", "strength": 0.9},
         ]
     )
 
@@ -90,3 +90,17 @@ def test_ea_runs_one_generation_with_mock_fitness(ea_instance, monkeypatch):
     assert 0.0 <= result.best_fitness <= 1.0
     assert len(result.best_individual) >= 1
     assert len(result.fitness_history) >= 2  # generation 0 + generation 1
+
+
+def test_payload_emits_knob_interventions_only(ea_instance):
+    individual = ea_instance._individual_from_plain(  # noqa: SLF001
+        [
+            {"knob": "tgfb_secretion_rate", "effect": "INHIBIT", "strength": 0.5},
+            {"knob": "efflux_strength", "effect": "ACTIVATE", "strength": 0.3},
+        ]
+    )
+    payload = ea_instance._individual_to_json(individual)  # noqa: SLF001
+    assert "knob_interventions" in payload
+    assert "interventions" not in payload
+    knobs = {entry["knob"] for entry in payload["knob_interventions"]}
+    assert knobs.issubset(set(ea_instance.config.targetable_knobs))

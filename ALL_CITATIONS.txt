@@ -1,4 +1,21 @@
-Using PhysiCell version 1.14.2
-	Please cite DOI: 10.1371/journal.pcbi.1005991
-	Project website: http://physicell.org
+PROJECT-NORTHSTAR citations and calibration anchors
 
+Core platform
+- Ghaffarizadeh A, Heiland R, Friedman SH, Mumenthaler SM, Macklin P. PhysiCell:
+  An Open Source Physics-Based Cell Simulator for 3-D Multicellular Systems.
+  PLoS Comput Biol. 2018;14(2):e1005991. doi:10.1371/journal.pcbi.1005991
+
+Knob 8 (mechanical compaction / solid stress anchors)
+- Nia HT et al. 2017. Pancreatic tumor solid-stress measurements (kPa-scale)
+  used as anchor references for PDAC mechanical compaction calibration.
+- Stylianopoulos T et al. 2012. Pancreatic tumor solid stress and vascular
+  compression measurements; anchor reference for mechanical suppression terms.
+  (PNAS record commonly indexed under doi:10.1073/pnas.1213353109)
+
+SHH paradox / stromal depletion context
+- Rhim AD, Oberstein PE, Thomas DH, et al. Stromal elements act to restrain, rather
+  than support, pancreatic ductal adenocarcinoma. Cancer Cell. 2014;25(6):735-747.
+  doi:10.1016/j.ccr.2014.04.021
+- Lee JJ, Perera RM, Wang H, et al. Stromal response to Hedgehog signaling restrains
+  pancreatic cancer progression. Proc Natl Acad Sci U S A. 2014;111(30):E3091-E3100.
+  doi:10.1073/pnas.1411679111

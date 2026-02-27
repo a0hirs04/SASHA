@@ -40,20 +40,15 @@ except Exception:  # pragma: no cover
         set_fitness_config,
         validate_metrics,
     )
+try:
+    from .knob_schema import TARGETABLE_KNOBS as SCHEMA_TARGETABLE_KNOBS, validate_partition as validate_knob_partition
+except Exception:  # pragma: no cover
+    from python.ea.knob_schema import TARGETABLE_KNOBS as SCHEMA_TARGETABLE_KNOBS, validate_partition as validate_knob_partition  # type: ignore
 
 
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_DRUGGABLE_GENES = [
-    "EGFR",
-    "BCL_XL",
-    "MMP2",
-    "TGFB1",
-    "SHH",
-    "GLI1",
-    "HAS2",
-    "ABCB1",
-]
+DEFAULT_TARGETABLE_KNOBS = list(SCHEMA_TARGETABLE_KNOBS)
 
 ALLOWED_EFFECTS = ("INHIBIT", "ACTIVATE")
 
@@ -65,9 +60,10 @@ class EAConfig:
     mutation_rate: float = 0.2
     crossover_rate: float = 0.7
     tournament_size: int = 3
-    max_interventions: int = 5
+    max_interventions: int = 4
     parallel_sims: int = 4
-    druggable_genes: List[str] = field(default_factory=lambda: list(DEFAULT_DRUGGABLE_GENES))
+    targetable_knobs: List[str] = field(default_factory=lambda: list(DEFAULT_TARGETABLE_KNOBS))
+    calibration_profile: str = "AsPC-1"
 
     # Runtime / integration settings.
     binary_path: str = "/work/a0hirs04/PhysiCell/stroma_world"
@@ -105,6 +101,7 @@ class StromaWorldEA:
             raise ImportError("DEAP is required. Install with `pip install deap`.")
 
         self.config = config
+        validate_knob_partition()
         self._rng = random.Random(config.random_seed)
         if config.random_seed is not None:
             random.seed(config.random_seed)
@@ -157,7 +154,7 @@ class StromaWorldEA:
         Mutation strategy:
         - For each intervention, with probability mutation_rate:
           40% mutate strength
-          20% mutate target gene
+          20% mutate target knob
           10% mutate effect type
           15% add intervention
           15% remove intervention
@@ -177,8 +174,8 @@ class StromaWorldEA:
                 delta = self._rng.gauss(0.0, 0.1)
                 entry["strength"] = self._clamp(entry["strength"] + delta, 0.1, 1.0)
             elif roll < 0.60:
-                current_genes = {e["gene"] for e in individual if e is not entry}
-                entry["gene"] = self._random_gene(exclude=current_genes)
+                current_knobs = {e["knob"] for e in individual if e is not entry}
+                entry["knob"] = self._random_knob(exclude=current_knobs)
             elif roll < 0.70:
                 entry["effect"] = self._random_effect(exclude=entry.get("effect"))
             elif roll < 0.85:
@@ -189,8 +186,8 @@ class StromaWorldEA:
         for _ in range(pending_add):
             if len(individual) >= self.config.max_interventions:
                 break
-            current_genes = {e["gene"] for e in individual}
-            individual.append(self._random_intervention(exclude_genes=current_genes))
+            current_knobs = {e["knob"] for e in individual}
+            individual.append(self._random_intervention(exclude_knobs=current_knobs))
 
         for _ in range(pending_remove):
             if len(individual) <= 1:
@@ -207,7 +204,7 @@ class StromaWorldEA:
         Uniform crossover at intervention level:
         - pool interventions from both parents
         - each child samples uniformly from pooled interventions
-        - no duplicate gene targets in resulting children
+        - no duplicate knob targets in resulting children
         """
         pool = [copy.deepcopy(x) for x in ind1] + [copy.deepcopy(x) for x in ind2]
         if not pool:
@@ -336,7 +333,7 @@ class StromaWorldEA:
         ]
         for i, intervention in enumerate(result.best_individual, start=1):
             lines.append(
-                f"{i}. gene={intervention['gene']} effect={intervention['effect']} strength={intervention['strength']:.3f}"
+                f"{i}. knob={intervention['knob']} effect={intervention['effect']} strength={intervention['strength']:.3f}"
             )
 
         if result.fitness_history:
@@ -376,10 +373,10 @@ class StromaWorldEA:
         self.toolbox.register("clone", copy.deepcopy)
 
     def _make_random_individual(self):
-        max_allowed = max(1, min(self.config.max_interventions, len(self.config.druggable_genes)))
+        max_allowed = max(1, min(self.config.max_interventions, len(self.config.targetable_knobs)))
         n_interventions = self._rng.randint(1, max_allowed)
-        genes = self._rng.sample(self.config.druggable_genes, k=n_interventions)
-        interventions = [self._random_intervention(force_gene=g) for g in genes]
+        knobs = self._rng.sample(self.config.targetable_knobs, k=n_interventions)
+        interventions = [self._random_intervention(force_knob=k) for k in knobs]
         interventions = self._normalize_interventions(interventions)
         return creator.StromaInterventionIndividual(interventions)
 
@@ -485,11 +482,11 @@ class StromaWorldEA:
     def _sample_child_from_pool(self, pool: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         self._rng.shuffle(pool)
         child: List[Dict[str, Any]] = []
-        used_genes = set()
+        used_knobs = set()
         for intervention in pool:
-            if self._rng.random() < 0.5 and intervention["gene"] not in used_genes:
+            if self._rng.random() < 0.5 and intervention["knob"] not in used_knobs:
                 child.append(copy.deepcopy(intervention))
-                used_genes.add(intervention["gene"])
+                used_knobs.add(intervention["knob"])
             if len(child) >= self.config.max_interventions:
                 break
 
@@ -501,23 +498,23 @@ class StromaWorldEA:
 
     def _random_intervention(
         self,
-        exclude_genes: Optional[set] = None,
-        force_gene: Optional[str] = None,
+        exclude_knobs: Optional[set] = None,
+        force_knob: Optional[str] = None,
     ) -> Dict[str, Any]:
-        gene = force_gene if force_gene is not None else self._random_gene(exclude=exclude_genes)
+        knob = force_knob if force_knob is not None else self._random_knob(exclude=exclude_knobs)
         effect = self._random_effect()
         strength = self._rng.uniform(0.1, 1.0)
         return {
-            "gene": gene,
+            "knob": knob,
             "effect": effect,
             "strength": round(float(strength), 6),
         }
 
-    def _random_gene(self, exclude: Optional[set] = None) -> str:
+    def _random_knob(self, exclude: Optional[set] = None) -> str:
         exclude = exclude or set()
-        candidates = [g for g in self.config.druggable_genes if g not in exclude]
+        candidates = [k for k in self.config.targetable_knobs if k not in exclude]
         if not candidates:
-            candidates = list(self.config.druggable_genes)
+            candidates = list(self.config.targetable_knobs)
         return self._rng.choice(candidates)
 
     def _random_effect(self, exclude: Optional[str] = None) -> str:
@@ -535,21 +532,25 @@ class StromaWorldEA:
         seen = set()
         normalized: List[Dict[str, Any]] = []
         for entry in interventions:
-            gene = str(entry.get("gene", "")).strip()
+            knob = str(entry.get("knob", "")).strip()
             effect = str(entry.get("effect", "INHIBIT")).strip().upper()
             strength = float(entry.get("strength", 0.5))
 
-            if gene not in self.config.druggable_genes:
-                continue
+            if knob not in self.config.targetable_knobs:
+                raise ValueError(
+                    f"Partition violation: knob '{knob}' is not targetable. "
+                    "EA may only use tgfb_secretion_rate, shh_secretion_rate, "
+                    "efflux_induction_delay, efflux_strength."
+                )
             if effect not in ALLOWED_EFFECTS:
                 effect = "INHIBIT"
-            if gene in seen:
+            if knob in seen:
                 continue
 
-            seen.add(gene)
+            seen.add(knob)
             normalized.append(
                 {
-                    "gene": gene,
+                    "knob": knob,
                     "effect": effect,
                     "strength": round(self._clamp(strength, 0.1, 1.0), 6),
                 }
@@ -564,18 +565,21 @@ class StromaWorldEA:
     def _individual_to_json(self, individual: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
         interventions = []
         for idx, entry in enumerate(self._normalize_interventions(individual)):
-            gene = entry["gene"]
+            knob = entry["knob"]
             effect = entry["effect"]
             strength = float(entry["strength"])
             interventions.append(
                 {
-                    "gene": gene,
+                    "knob": knob,
                     "effect": effect,
                     "strength": self._clamp(strength, 0.0, 1.0),
-                    "name": f"{effect}_{gene}_{idx}",
+                    "name": f"{effect}_{knob}_{idx}",
                 }
             )
-        return {"interventions": interventions}
+        return {
+            "calibration_profile": self.config.calibration_profile,
+            "knob_interventions": interventions,
+        }
 
     def _individual_from_plain(self, interventions: Sequence[Dict[str, Any]]):
         normalized = self._normalize_interventions(interventions)

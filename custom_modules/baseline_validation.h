@@ -10,6 +10,8 @@
 // PURPOSE:
 //   Verifies that the BooleanNetwork gene-network logic faithfully implements
 //   all eight tumor-intrinsic baseline traits before any EA evolution begins.
+//   Also enforces 13-knob partition invariants (Fixed/Observable/Targetable)
+//   and selected fast calibration checks.
 //
 //   Each trait maps directly to one or more BooleanNetwork behaviors that
 //   can be checked analytically (no full PhysiCell simulation required).
@@ -23,15 +25,17 @@
 //       exit(EXIT_FAILURE);
 //   }
 //
-// TRAITS TESTED:
+// TRAITS / INVARIANTS TESTED:
 //   1. Constitutive Paracrine Secretion (TGFB1, SHH driven by KRAS=GOF)
-//   2. TGF-β Insensitivity (SMAD4=LOF disconnects arrest arm; invasion arm intact)
+//   2. TGF-β Insensitivity (low Knob 2 growth-arrest sensitivity; invasion arm intact)
 //   3. Rapid Proliferation / Broken Checkpoints (KRAS+/MYC+, braking=NONE)
 //   4. Apoptotic Resistance at Baseline (BCL-XL+/TP53-; apoptosis << proliferation)
 //   5. Inducible EMT (hypoxic/TGF-β periphery mesenchymal; normoxic core epithelial)
 //   6. Hypoxia-Responsive Phenotype Switching (HIF1A activates; secretion amplified)
 //   7. Drug-Inducible Efflux — not constitutive (NRF2→ABCB1 only when drug present)
 //   8. ECM Compaction — mechanical not signaling (solid_stress formula verified)
+//   9. 13-knob partition constraints and AsPC-1 / PANC-1 Knob 2 comparator
+//  10. SHH paradox fast invariants (SHH-off no-cytotoxic vs SHH-off with cytotoxic)
 // ============================================================================
 
 /// Run all 8 baseline behavioral tests.

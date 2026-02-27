@@ -1,5 +1,8 @@
 #include "./custom.h"
 #include "baseline_validation.h"
+#include "tumor_calibration_knobs.h"
+
+#include "../BioFVM/json.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -13,6 +16,7 @@
 
 using namespace BioFVM;
 using namespace PhysiCell;
+using json = nlohmann::json;
 
 // ---------------------------------------------------------------------------
 // Global substrate indices (single source of truth for custom modules)
@@ -37,6 +41,9 @@ void (*g_base_diffusion_decay_solver)(Microenvironment&, double) = NULL;
 static const double ECM_BLOCKING_FACTOR   = 0.8;
 static const double DRUG_ECM_DECAY_COEFF  = 0.001; // local post-solve drug loss scaling
 static const double OXYGEN_ECM_DECAY_COEFF= 0.001; // local post-solve oxygen perfusion penalty
+
+TumorCalibrationProfiles g_knob_profiles;
+bool g_knob_profiles_loaded = false;
 
 inline double clamp_unit(double x)
 {
@@ -152,30 +159,199 @@ void initialize_boolean_network_for_cell(Cell* pCell, CellType cell_type)
     bn->sync_to_cell(pCell);
 }
 
+void apply_xml_knob_overrides(TumorCalibrationKnobs& knobs)
+{
+    auto maybe_set_double = [&](const char* name, double& field)
+    {
+        try
+        {
+            field = parameters.doubles(name);
+        }
+        catch (...) {}
+    };
+    maybe_set_double("tgfb_secretion_rate", knobs.tgfb_secretion_rate);
+    maybe_set_double("shh_secretion_rate", knobs.shh_secretion_rate);
+    maybe_set_double("tgfb_brake_sensitivity", knobs.tgfb_brake_sensitivity);
+    maybe_set_double("proliferation_rate", knobs.proliferation_rate);
+    maybe_set_double("checkpoint_integrity", knobs.checkpoint_integrity);
+    maybe_set_double("apoptosis_resistance", knobs.apoptosis_resistance);
+    maybe_set_double("emt_induction_threshold", knobs.emt_induction_threshold);
+    maybe_set_double("hypoxia_response_threshold", knobs.hypoxia_response_threshold);
+    maybe_set_double("efflux_induction_delay", knobs.efflux_induction_delay);
+    maybe_set_double("efflux_strength", knobs.efflux_strength);
+    maybe_set_double("mechanical_compaction_strength", knobs.mechanical_compaction_strength);
+
+    if (parameters.strings.find_index("emt_phenotype_extent") >= 0)
+    {
+        knobs.emt_phenotype_extent = knob_level_from_string(parameters.strings("emt_phenotype_extent"));
+    }
+    if (parameters.strings.find_index("hypoxia_phenotype_shift") >= 0)
+    {
+        knobs.hypoxia_phenotype_shift = knob_level_from_string(parameters.strings("hypoxia_phenotype_shift"));
+    }
+}
+
+void load_knob_profiles_if_needed()
+{
+    if (g_knob_profiles_loaded) return;
+
+    std::string profiles_path = "config/tumor_calibration_knobs.json";
+    if (parameters.strings.find_index("tumor_calibration_knobs_json") >= 0)
+    {
+        profiles_path = parameters.strings("tumor_calibration_knobs_json");
+    }
+    g_knob_profiles = load_tumor_calibration_profiles(profiles_path);
+    g_knob_profiles_loaded = true;
+}
+
 void load_interventions_at_setup()
 {
     const std::string intervention_path = resolve_intervention_json_path();
-    if (intervention_path.empty())
+    std::vector<KnobIntervention> knob_interventions;
+    std::string profile_override;
+
+    if (!intervention_path.empty())
     {
-        set_current_interventions(std::vector<Intervention>());
-        std::cerr << "[setup_tissue] No intervention JSON provided; running baseline dynamics.\n";
-        return;
+        std::ifstream ifs(intervention_path);
+        if (!ifs.is_open())
+        {
+            std::cerr << "[setup_tissue] FATAL: cannot open intervention JSON: "
+                      << intervention_path << "\n";
+            exit(EXIT_FAILURE);
+        }
+
+        json root;
+        ifs >> root;
+        if (!root.is_object())
+        {
+            std::cerr << "[setup_tissue] FATAL: intervention JSON root must be an object.\n";
+            exit(EXIT_FAILURE);
+        }
+
+        if (root.contains("calibration_profile"))
+        {
+            if (!root["calibration_profile"].is_string())
+            {
+                std::cerr << "[setup_tissue] FATAL: calibration_profile must be a string.\n";
+                exit(EXIT_FAILURE);
+            }
+            profile_override = root["calibration_profile"].get<std::string>();
+        }
+
+        // Canonical schema.
+        if (root.contains("knob_interventions"))
+        {
+            if (!root["knob_interventions"].is_array())
+            {
+                std::cerr << "[setup_tissue] FATAL: knob_interventions must be an array.\n";
+                exit(EXIT_FAILURE);
+            }
+            for (const auto& entry : root["knob_interventions"])
+            {
+                if (!entry.is_object() ||
+                    !entry.contains("knob") || !entry["knob"].is_string() ||
+                    !entry.contains("effect") || !entry["effect"].is_string() ||
+                    !entry.contains("strength") || !entry["strength"].is_number())
+                {
+                    std::cerr << "[setup_tissue] FATAL: invalid knob_interventions entry.\n";
+                    exit(EXIT_FAILURE);
+                }
+
+                KnobIntervention iv;
+                iv.knob = entry["knob"].get<std::string>();
+                iv.effect = entry["effect"].get<std::string>();
+                iv.strength = entry["strength"].get<double>();
+                if (entry.contains("name") && entry["name"].is_string())
+                {
+                    iv.name = entry["name"].get<std::string>();
+                }
+                knob_interventions.push_back(iv);
+            }
+        }
+
+        // One-release legacy bridge: interventions(gene) -> knob_interventions.
+        if (root.contains("interventions"))
+        {
+            if (!root["interventions"].is_array())
+            {
+                std::cerr << "[setup_tissue] FATAL: legacy field 'interventions' must be an array.\n";
+                exit(EXIT_FAILURE);
+            }
+            for (const auto& entry : root["interventions"])
+            {
+                if (!entry.is_object() ||
+                    !entry.contains("gene") || !entry["gene"].is_string() ||
+                    !entry.contains("effect") || !entry["effect"].is_string() ||
+                    !entry.contains("strength") || !entry["strength"].is_number())
+                {
+                    continue;
+                }
+
+                const std::string gene = entry["gene"].get<std::string>();
+                std::string mapped_knob;
+                if (gene == "TGFB1") mapped_knob = "tgfb_secretion_rate";
+                else if (gene == "SHH") mapped_knob = "shh_secretion_rate";
+                else if (gene == "ABCB1") mapped_knob = "efflux_strength";
+                else
+                {
+                    std::cerr << "[setup_tissue] FATAL: partition violation in legacy payload: gene '"
+                              << gene
+                              << "' is not bridgeable. Allowed legacy genes: TGFB1, SHH, ABCB1.\n";
+                    exit(EXIT_FAILURE);
+                }
+
+                KnobIntervention iv;
+                iv.knob = mapped_knob;
+                iv.effect = entry["effect"].get<std::string>();
+                iv.strength = entry["strength"].get<double>();
+                if (entry.contains("name") && entry["name"].is_string())
+                {
+                    iv.name = entry["name"].get<std::string>();
+                }
+                knob_interventions.push_back(iv);
+            }
+        }
     }
 
     try
     {
-        const std::vector<Intervention> interventions =
-            BooleanNetwork::load_from_json(intervention_path);
-        set_current_interventions(interventions);
-        std::cerr << "[setup_tissue] Loaded " << interventions.size()
-                  << " interventions from: " << intervention_path << "\n";
+        validate_knob_partition();
+        load_knob_profiles_if_needed();
+
+        std::string profile_name = "AsPC-1";
+        if (parameters.strings.find_index("calibration_profile") >= 0)
+        {
+            profile_name = parameters.strings("calibration_profile");
+        }
+        if (!profile_override.empty())
+        {
+            profile_name = profile_override;
+        }
+
+        TumorCalibrationKnobs knobs = select_profile(g_knob_profiles, profile_name);
+        apply_xml_knob_overrides(knobs);
+
+        apply_targetable_knob_interventions(knobs, knob_interventions);
+        set_active_calibration_knobs(knobs);
+
+        // Runtime interventions are knob-driven; keep gene-level interventions empty.
+        set_current_interventions(std::vector<Intervention>());
+
+        if (intervention_path.empty())
+        {
+            std::cerr << "[setup_tissue] No intervention JSON provided; using active calibration defaults.\n";
+        }
+        else
+        {
+            std::cerr << "[setup_tissue] Loaded knob interventions from: " << intervention_path
+                      << " (count=" << knob_interventions.size() << ")\n";
+        }
     }
     catch (const std::exception& e)
     {
-        set_current_interventions(std::vector<Intervention>());
-        std::cerr << "[setup_tissue] WARNING: failed to load interventions from '"
-                  << intervention_path << "' (" << e.what()
-                  << "). Continuing with no interventions.\n";
+        std::cerr << "[setup_tissue] FATAL: failed to initialize calibration knobs ("
+                  << e.what() << ")\n";
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -291,6 +467,30 @@ void setup_microenvironment(void)
 
     const ThresholdConfig cfg = ThresholdConfig::load_from_xml();
     set_threshold_config(cfg);
+
+    try
+    {
+        validate_knob_partition();
+        load_knob_profiles_if_needed();
+
+        std::string profile_name = "AsPC-1";
+        if (parameters.strings.find_index("calibration_profile") >= 0)
+        {
+            profile_name = parameters.strings("calibration_profile");
+        }
+
+        TumorCalibrationKnobs knobs = select_profile(g_knob_profiles, profile_name);
+        apply_xml_knob_overrides(knobs);
+        set_active_calibration_knobs(knobs);
+        std::cerr << "[setup_microenvironment] Loaded calibration profile: "
+                  << profile_name << "\n";
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "[setup_microenvironment] FATAL: failed to initialize calibration knobs: "
+                  << e.what() << "\n";
+        exit(EXIT_FAILURE);
+    }
 
     const std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     const double ms = std::chrono::duration<double, std::milli>(t1 - t0).count();

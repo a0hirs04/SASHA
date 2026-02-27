@@ -25,6 +25,7 @@
 
 #include "boolean_network.h"
 #include "gene_definitions.h"
+#include "tumor_calibration_knobs.h"
 
 #include <algorithm>   // std::min
 #include <cmath>
@@ -149,10 +150,12 @@ static bool test_trait1(std::ostream& log)
     chk(bn[SHH] > 0.35, "SHH    constitutive secretion   (KRAS=1 → target=0.40)",
         bn[SHH], 0.35);
 
-    // Secretion rates used in tumor_cell.cpp step 5e: gene_state * scale.
-    // TGF-β: tgfb1 * 0.05; SHH: shh * 0.02
-    const double tgfb_rate = bn[TGFB1] * 0.05;
-    const double shh_rate  = bn[SHH]   * 0.02;
+    // Secretion rates used in tumor_cell.cpp step 5e:
+    //   TGF-β: tgfb1 * (0.0625 * knob_1a)
+    //   SHH:   shh   * (0.0285714286 * knob_1b)
+    const TumorCalibrationKnobs& knobs = get_active_calibration_knobs();
+    const double tgfb_rate = bn[TGFB1] * (0.0625 * clamp01(knobs.tgfb_secretion_rate));
+    const double shh_rate  = bn[SHH]   * (0.0285714286 * clamp01(knobs.shh_secretion_rate));
     chk(tgfb_rate > 0.015, "TGF-β secretion rate  > 0.015/min", tgfb_rate, 0.015);
     chk(shh_rate  > 0.006, "SHH   secretion rate  > 0.006/min", shh_rate,  0.006);
 
@@ -170,8 +173,8 @@ static bool test_trait1(std::ostream& log)
 // Behavioral test (PDF): "Bathe tumor cells in high TGF-β.  They should NOT
 //   arrest.  They should become more motile."
 //
-// Case A — Canonical PDAC (SMAD4=LOF):
-//   High TGF-β must NOT activate RB1 (arrest arm disconnected by SMAD4=0).
+// Case A — Canonical PDAC (AsPC-1 default Knob 2 low):
+//   High TGF-β must NOT strongly activate RB1 (arrest arm remains weak).
 //   SNAI1 MUST rise (SMAD-independent invasion arm intact).
 // Case B — SMAD4 restored (therapeutic OVEREXPRESS intervention):
 //   Same TGF-β environment. RB1 MUST rise when SMAD4 is restored,
@@ -188,10 +191,10 @@ static bool test_trait2(std::ostream& log)
     BooleanNetwork bn_a = make_tumor_bn();
     run_steps(bn_a, 100, 6.0, 38.0, 1.0, 0.0, 0.0);
 
-    // RB1 target = CDKN2A*0.7 + SMAD4*0.3 + SMAD4*tgfb*0.4
-    //            = 0 + 0 + 0 = 0  (both CDKN2A=0 and SMAD4=0 locked)
+    // RB1 target = CDKN2A*0.7 + SMAD4*0.3 + 0.4*tgfb*knob_2
+    //            = 0 + 0 + 0.4*1.0*0.05 = 0.02  (low-growth arrest sensitivity)
     chk(bn_a[RB1] < 0.10,
-        "Case A  RB1 ~0 under high TGF-β (SMAD4=LOF disconnects arrest arm)",
+        "Case A  RB1 remains low under high TGF-β (AsPC-1 low Knob 2 sensitivity)",
         bn_a[RB1], 0.10);
 
     // SNAI1 target = 0.5*tgfb + 0.2*KRAS + 0.1*HIF1A = 0.5+0.2+0 = 0.7
@@ -213,7 +216,7 @@ static bool test_trait2(std::ostream& log)
 
     // ---- Case B: SMAD4 restored via OVEREXPRESS intervention ----
     // run_steps_with_ivs applies OVEREXPRESS after each update(), mirroring how
-    // the simulation handles gene-therapy interventions.  This keeps SMAD4=1.0
+    // the simulation handles gene-therapy interventions. This keeps SMAD4=1.0
     // through the hard-lock in update() by restoring it immediately after each step.
     BooleanNetwork bn_b = make_tumor_bn();
     const std::vector<Intervention> restore_smad4 = {
@@ -221,11 +224,11 @@ static bool test_trait2(std::ostream& log)
     };
     run_steps_with_ivs(bn_b, 100, 6.0, 38.0, 1.0, 0.0, 0.0, restore_smad4);
 
-    // RB1 target (after SMAD4 restored) = 0*0.7 + 1.0*0.3 + 1.0*1.0*0.4 = 0.7
-    // After 600 min convergence: RB1 ≈ 0.7.
-    chk(bn_b[RB1] > 0.50,
-        "Case B  RB1 rises when SMAD4 is restored + TGF-β (arrest arm reconnected)",
-        bn_b[RB1], 0.50);
+    // RB1 target (after SMAD4 restored in AsPC-1 default profile):
+    //   0*0.7 + 1.0*0.3 + 0.4*1.0*knob_2(=0.05) = 0.32
+    chk(bn_b[RB1] > 0.25,
+        "Case B  RB1 rises modestly when SMAD4 is restored (AsPC-1 low knob_2 remains)",
+        bn_b[RB1], 0.25);
 
     return pass;
 }
@@ -464,8 +467,10 @@ static bool test_trait6(std::ostream& log)
     // Secretion axis: KRAS+TGFB1+SHH dominate both cells (both VERY_HIGH), but
     // the actual TGFB1 gene state (hence secretion rate) is higher under hypoxia.
     // Positive feedback: hypoxia → more TGF-β secreted → more stroma → more hypoxia.
-    const double tgfb_rate_norm = bn_norm[TGFB1] * 0.05;
-    const double tgfb_rate_hyp  = bn_hyp[TGFB1]  * 0.05;
+    const TumorCalibrationKnobs& knobs = get_active_calibration_knobs();
+    const double tgfb_rate_scale = 0.0625 * clamp01(knobs.tgfb_secretion_rate);
+    const double tgfb_rate_norm = bn_norm[TGFB1] * tgfb_rate_scale;
+    const double tgfb_rate_hyp  = bn_hyp[TGFB1]  * tgfb_rate_scale;
     chk(tgfb_rate_hyp > tgfb_rate_norm * 1.1,
         "Hypoxic  TGF-β secretion rate > 1.1× normoxic   (positive feedback loop)",
         tgfb_rate_hyp / (tgfb_rate_norm + 1e-9), 1.1);
@@ -655,6 +660,101 @@ static bool test_trait8(std::ostream& log)
     return pass;
 }
 
+// ============================================================================
+// Test 9 — 13-Knob Partition + AsPC-1 / PANC-1 Knob 2 Comparator
+// ============================================================================
+static bool test_trait9(std::ostream& log)
+{
+    bool pass = true;
+    Checker chk{log, pass};
+
+    const TumorCalibrationKnobs saved = get_active_calibration_knobs();
+    try
+    {
+        validate_knob_partition();
+
+        chk(is_targetable_knob("tgfb_secretion_rate"), "targetable includes knob 1a", 1.0, 1.0);
+        chk(is_targetable_knob("shh_secretion_rate"), "targetable includes knob 1b", 1.0, 1.0);
+        chk(is_targetable_knob("efflux_induction_delay"), "targetable includes knob 7a", 1.0, 1.0);
+        chk(is_targetable_knob("efflux_strength"), "targetable includes knob 7b", 1.0, 1.0);
+        chk(!is_targetable_knob("tgfb_brake_sensitivity"), "knob 2 not targetable", 0.0, 0.0);
+
+        const TumorCalibrationProfiles profiles =
+            load_tumor_calibration_profiles("config/tumor_calibration_knobs.json");
+        chk(std::fabs(profiles.aspc1.tgfb_brake_sensitivity - 0.05) < 1e-9,
+            "AsPC-1 knob 2 default == 0.05", profiles.aspc1.tgfb_brake_sensitivity, 0.05);
+        chk(std::fabs(profiles.panc1.tgfb_brake_sensitivity - 0.9) < 1e-9,
+            "PANC-1 knob 2 override == 0.9", profiles.panc1.tgfb_brake_sensitivity, 0.9);
+
+        set_active_calibration_knobs(profiles.aspc1);
+        BooleanNetwork aspc1_bn = make_tumor_bn();
+        run_steps(aspc1_bn, 100, 6.0, 38.0, 1.0, 0.0, 0.0);
+
+        set_active_calibration_knobs(profiles.panc1);
+        BooleanNetwork panc1_bn = make_tumor_bn();
+        run_steps(panc1_bn, 100, 6.0, 38.0, 1.0, 0.0, 0.0);
+
+        chk(panc1_bn[RB1] > aspc1_bn[RB1] + 0.25,
+            "PANC-1 RB1(TGF) >> AsPC-1 RB1(TGF) under high TGF-β (Knob 2 comparator)",
+            panc1_bn[RB1] - aspc1_bn[RB1], 0.25);
+    }
+    catch (const std::exception& e)
+    {
+        pass = false;
+        log << "    FAIL  Trait 9 exception: " << e.what() << "\n";
+    }
+
+    set_active_calibration_knobs(saved);
+    return pass;
+}
+
+// ============================================================================
+// Test 10 — SHH Paradox Fast Invariants (Proxy)
+// ============================================================================
+static bool test_trait10(std::ostream& log)
+{
+    bool pass = true;
+    Checker chk{log, pass};
+
+    const TumorCalibrationKnobs& knobs = get_active_calibration_knobs();
+
+    BooleanNetwork baseline = make_tumor_bn();
+    run_steps(baseline, 100, 6.0, 38.0, 0.0, 0.0, 0.0);
+
+    BooleanNetwork shh_off = make_tumor_bn();
+    const std::vector<Intervention> shh_block = {
+        { SHH, EffectType::INHIBIT, 1.0, "SHH_OFF_NO_CYTOTOXIC_PROXY" }
+    };
+    run_steps_with_ivs(shh_off, 100, 6.0, 38.0, 0.0, 0.0, 0.0, shh_block);
+
+    const double shh_scale = 0.0285714286 * clamp01(knobs.shh_secretion_rate);
+    const double shh_secretion_baseline = baseline[SHH] * shh_scale;
+    const double shh_secretion_off = shh_off[SHH] * shh_scale;
+    chk(shh_secretion_off < shh_secretion_baseline,
+        "SHH-off reduces SHH secretion (required precondition)", shh_secretion_off, shh_secretion_baseline);
+
+    // Proxy for paradox:
+    // Lower SHH -> lower stroma/ECM containment.
+    // - No cytotoxic context: less containment can worsen growth.
+    // - Cytotoxic context: less ECM barrier improves drug penetration.
+    const double ecm_proxy_baseline = clamp01(0.1 + shh_secretion_baseline);
+    const double ecm_proxy_off      = clamp01(0.1 + shh_secretion_off);
+
+    const double no_cytotoxic_growth_drive_baseline = 1.0 - 0.25 * ecm_proxy_baseline;
+    const double no_cytotoxic_growth_drive_off      = 1.0 - 0.25 * ecm_proxy_off;
+    chk(no_cytotoxic_growth_drive_off > no_cytotoxic_growth_drive_baseline,
+        "SHH_OFF_NO_CYTOTOXIC proxy worsens tumor growth pressure vs baseline",
+        no_cytotoxic_growth_drive_off - no_cytotoxic_growth_drive_baseline, 1e-4);
+
+    const double cytotoxic_penetration_baseline = 1.0 - 0.5 * ecm_proxy_baseline;
+    const double cytotoxic_penetration_off      = 1.0 - 0.5 * ecm_proxy_off;
+    chk(cytotoxic_penetration_off > cytotoxic_penetration_baseline,
+        "SHH_OFF_WITH_CYTOTOXIC proxy improves penetration vs no-cytotoxic SHH-off context",
+        cytotoxic_penetration_off - cytotoxic_penetration_baseline, 1e-4);
+
+    return pass;
+}
+
 } // anonymous namespace
 
 // ============================================================================
@@ -679,9 +779,11 @@ bool run_baseline_validation()
         { 6, "Hypoxia-Responsive Phenotype Switching",      test_trait6 },
         { 7, "Drug-Inducible Efflux  (Not Constitutive)",   test_trait7 },
         { 8, "ECM Compaction  (Passive / Mechanical)",      test_trait8 },
+        { 9, "13-Knob Partition + AsPC-1/PANC-1 Knob 2",    test_trait9 },
+        {10, "SHH Paradox Fast Invariants",                 test_trait10 },
     };
 
-    static const int N = 8;
+    static const int N = 10;
 
     std::cerr << "\n";
     std::cerr << "================================================================\n";

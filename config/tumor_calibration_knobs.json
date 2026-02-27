@@ -1,0 +1,22 @@
+{
+  "profiles": {
+    "AsPC-1": {
+      "tgfb_secretion_rate": 0.8,
+      "shh_secretion_rate": 0.7,
+      "tgfb_brake_sensitivity": 0.05,
+      "proliferation_rate": 0.75,
+      "checkpoint_integrity": 0.05,
+      "apoptosis_resistance": 0.85,
+      "emt_induction_threshold": 0.3,
+      "emt_phenotype_extent": "HIGH",
+      "hypoxia_response_threshold": 0.35,
+      "hypoxia_phenotype_shift": "HIGH",
+      "efflux_induction_delay": 0.5,
+      "efflux_strength": 0.7,
+      "mechanical_compaction_strength": 0.6
+    },
+    "PANC-1": {
+      "tgfb_brake_sensitivity": 0.9
+    }
+  }
+}

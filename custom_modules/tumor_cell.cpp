@@ -1,6 +1,8 @@
 #include "tumor_cell.h"
+#include "tumor_calibration_knobs.h"
 
 #include <algorithm>
+#include <cmath>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -240,6 +242,17 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     const double cdkn2a  = clamp_unit((*bn)[CDKN2A]);
     const double tp53    = clamp_unit((*bn)[TP53]);
     const double myc     = clamp_unit((*bn)[MYC]);
+    const TumorCalibrationKnobs& knobs = get_active_calibration_knobs();
+
+    // 13-knob calibration multipliers on phenotype mapping.
+    const double proliferation_scale =
+        std::max(0.0, std::min(1.5, clamp_unit(knobs.proliferation_rate) / 0.75));
+    const double apoptosis_scale =
+        std::max(0.1, std::min(2.0,
+            (1.0 - clamp_unit(knobs.apoptosis_resistance)) / (1.0 - 0.85)));
+    const double emt_extent_mult = knob_level_multiplier(knobs.emt_phenotype_extent);
+    const double efflux_strength_mult = clamp_unit(knobs.efflux_strength) / 0.7;
+    const double compaction_mult = clamp_unit(knobs.mechanical_compaction_strength) / 0.6;
 
     // Compute qualitative axis outcomes via dominance voting.
     // compute_axis_outcome() implements the signal contribution table (Part 3)
@@ -277,10 +290,8 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
         death_outcome = AxisOutcome::HIGH;
     }
 
-    // Veto 3: SMAD4=- AND TGFB1 present → TGF-β brake on tumor = DISABLED.
-    //   Already structurally enforced in compute_tumor_targets() (RB1 rule):
-    //   SMAD4=0 makes the SMAD4*tgfb product identically zero → RB1 cannot rise.
-    //   No additional override needed here; braking_outcome already reflects this.
+    // Veto 3: historical SMAD4-gated TGF-β brake logic is now represented by
+    // Knob 2 calibration in compute_tumor_targets() and is not hard-overridden here.
 
     // Veto 4: ZEB1=active AND CDH1=repressed → Motility floor = HIGH.
     //   Full EMT. Cell is mesenchymal regardless of other adhesion signals.
@@ -312,6 +323,8 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     const double braking_mult = (braking_outcome == AxisOutcome::NONE)
         ? 1.0
         : clamp_unit(1.0 - braking_int * (1.0 / 6.0));
+    const double effective_braking = 1.0
+        - clamp_unit(knobs.checkpoint_integrity) * (1.0 - braking_mult);
 
     // Contact inhibition: physical crowding suppresses proliferation in brake-
     // intact cells. When braking_outcome=NONE (veto 1 fired), CDKN2A-/TP53-
@@ -354,14 +367,16 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     // mechanical stress rather than allowing viscoelastic dissipation.
     // At ECM=0.0: solid_stress = simple_pressure (cells only).
     // At ECM=0.8: solid_stress = 1.8 × simple_pressure (stiff matrix contribution).
-    const double solid_stress = simple_pressure * (1.0 + local_ecm_val);
+    const double solid_stress = simple_pressure * (1.0 + local_ecm_val * compaction_mult);
     // Saturating brake: 35% max suppression at high solid stress (cells adapt
     // via cytoskeletal remodeling, preventing complete growth arrest from
     // mechanical stress alone — unlike chemical veto rule 1).
-    const double solid_stress_brake = clamp_unit(1.0 - 0.35 * std::min(1.0, solid_stress));
+    const double solid_stress_brake =
+        clamp_unit(1.0 - (0.35 * compaction_mult) * std::min(1.0, solid_stress));
 
-    // Final proliferation rate: growth_bin × braking × contact × ECM × solid_stress.
-    const double final_prolif = growth_bin * braking_mult * contact_mult
+    // Knob 3a scales pre-physical proliferation.
+    const double pre_physical_prolif = growth_bin * effective_braking * contact_mult;
+    const double final_prolif = pre_physical_prolif * proliferation_scale
                               * ecm_brake * solid_stress_brake;
     phenotype.cycle.data.transition_rate(0, 0) = std::max(0.0, final_prolif);
 
@@ -381,7 +396,7 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
         const double base_apoptosis_rate =
             PhenoParamBins::get(PhenoParamBins::APOPTOSIS,
                                 static_cast<AxisOutcome>(apopt_int));
-        phenotype.death.rates[apoptosis_index] = base_apoptosis_rate;
+        phenotype.death.rates[apoptosis_index] = base_apoptosis_rate * apoptosis_scale;
 
         // Drug-induced death (additive, on top of basal resistance).
         // Veto 5: ABCB1 counts toward resistance ONLY when drug is present.
@@ -389,7 +404,7 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
         {
             // Drug sensitivity (NRF2 + ABCB1 resistance, both induced by drug).
             // Clamped to [0.05, 1.0]: floor prevents complete drug immunity.
-            double drug_sensitivity = 1.0 - 0.4 * nrf2 - 0.4 * abcb1;
+            double drug_sensitivity = 1.0 - 0.4 * nrf2 - 0.4 * efflux_strength_mult * abcb1;
             drug_sensitivity = std::max(0.05, std::min(1.0, drug_sensitivity));
 
             // ECM delivery barrier (PEGPH20 failure mechanism — Phase 1.2 Caveat):
@@ -415,8 +430,9 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     //
     // SNAI1 can independently trigger mesenchymal motility before ZEB1 rises
     // (fast responder to TGF-β: hours vs. days for ZEB1).
-    const bool is_mesenchymal = (zeb1  > cfg.emt_zeb1_threshold ||
-                                 snai1 > cfg.emt_zeb1_threshold);
+    const bool is_mesenchymal =
+        (zeb1 * emt_extent_mult > cfg.emt_zeb1_threshold ||
+         snai1 * emt_extent_mult > cfg.emt_zeb1_threshold);
     set_custom_data_if_present(pCell, "is_mesenchymal", is_mesenchymal ? 1.0 : 0.0);
 
     // Migration speed from invasion axis bin + ECM steric factor.
@@ -428,19 +444,20 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     const double ecm_motility_factor = clamp_unit(1.0 - 0.5 * local_ecm_val);
     // floor at 0.01 µm/min: cells always retain minimal basal motility
     phenotype.motility.migration_speed =
-        std::max(0.01, speed_bin * ecm_motility_factor);
+        std::max(0.01, speed_bin * emt_extent_mult * ecm_motility_factor);
 
     // CDH1 (E-cadherin) → cell-cell adhesion: graded mapping captures partial EMT.
     // CDH1=1.0 (epithelial): adhesion = 0.4 (strong, contact-inhibited).
     // CDH1=0.0 (mesenchymal): adhesion = 0.1 (weak, migratory).
     // Partial EMT states (CDH1 ≈ 0.5) are common in PDAC; intermediate values.
-    phenotype.mechanics.cell_cell_adhesion_strength = 0.1 + 0.3 * cdh1;
+    phenotype.mechanics.cell_cell_adhesion_strength =
+        0.1 + 0.3 * clamp_unit(cdh1 / std::max(0.75, emt_extent_mult));
 
     // ---- 5d) ECM DEGRADATION (local voxel update) ---------------------------
     if (ecm_index >= 0)
     {
         const double local_ecm = read_density_value(densities, ecm_index);
-        const double degraded_ecm = clamp_unit(local_ecm - mmp2 * 0.01 * dt);
+        const double degraded_ecm = clamp_unit(local_ecm - mmp2 * emt_extent_mult * 0.01 * dt);
         write_density_value(densities, ecm_index, degraded_ecm);
     }
 
@@ -448,8 +465,10 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     // Expression proxies (gene activities) map to secretion rates.
     // TRAIT 1: KRAS constitutively drives TGF-β and SHH secretion (KRAS=1, locked).
     // This is the primary mechanism for stroma self-assembly (Example 4 in the doc).
-    const double tgfb_secretion = clamp_nonnegative(tgfb1 * 0.05);
-    const double shh_secretion  = clamp_nonnegative(shh_expr * 0.02);
+    const double tgfb_secretion = clamp_nonnegative(
+        tgfb1 * (0.0625 * clamp_unit(knobs.tgfb_secretion_rate)));
+    const double shh_secretion  = clamp_nonnegative(
+        shh_expr * (0.0285714286 * clamp_unit(knobs.shh_secretion_rate)));
 
     if (tgfb_index >= 0 &&
         tgfb_index < static_cast<int>(phenotype.secretion.secretion_rates.size()))
@@ -469,7 +488,7 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     // gene and wasting generations targeting it before treatment begins.
     // (Gene State Representation, Veto Rule 5: ABCB1=active AND drug absent → ZERO)
     const double drug_sensitivity_stored = (drug > 0.01)
-        ? std::max(0.05, std::min(1.0, 1.0 - 0.4 * nrf2 - 0.4 * abcb1))
+        ? std::max(0.05, std::min(1.0, 1.0 - 0.4 * nrf2 - 0.4 * efflux_strength_mult * abcb1))
         : 1.0;
     set_custom_data_if_present(pCell, "drug_sensitivity", drug_sensitivity_stored);
 

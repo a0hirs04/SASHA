@@ -246,24 +246,26 @@ def plot_intervention_frequency(population_history: list, output_path: Path) -> 
         for intervention in individual:
             if not isinstance(intervention, dict):
                 continue
-            gene = str(intervention.get("gene", "")).strip()
-            if not gene or gene in seen:
+            knob = str(intervention.get("knob", "")).strip()
+            if not knob:
+                knob = str(intervention.get("gene", "")).strip()
+            if not knob or knob in seen:
                 continue
-            seen.add(gene)
-            counts[gene] += 1
+            seen.add(knob)
+            counts[knob] += 1
 
     if not counts:
         raise ValueError("No valid interventions found in final population.")
 
-    genes, values = zip(*sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])))
-    x = np.arange(len(genes))
+    knobs, values = zip(*sorted(counts.items(), key=lambda kv: (-kv[1], kv[0])))
+    x = np.arange(len(knobs))
 
     fig, ax = plt.subplots(figsize=(10, 5.5))
     bars = ax.bar(x, values, color="#4c78a8")
     ax.set_xticks(x)
-    ax.set_xticklabels(genes, rotation=30, ha="right")
-    ax.set_ylabel("Individuals targeting gene")
-    ax.set_title("Final Population Intervention Frequency")
+    ax.set_xticklabels(knobs, rotation=30, ha="right")
+    ax.set_ylabel("Individuals targeting knob")
+    ax.set_title("Final Population Knob Frequency")
     ax.grid(axis="y", alpha=0.25)
 
     for bar, val in zip(bars, values):

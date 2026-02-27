@@ -29,15 +29,11 @@ except ImportError:  # pragma: no cover
 
 LOGGER = logging.getLogger("run_ea")
 
-DRUG_ANALOG_LABELS = {
-    "EGFR": "erlotinib-like",
-    "HAS2": "PEGPH20-like",
-    "BCL_XL": "navitoclax-like",
-    "MMP2": "marimastat-like",
-    "TGFB1": "fresolimumab-like",
-    "SHH": "hedgehog-ligand-blocking-like",
-    "GLI1": "GLI-inhibitor-like",
-    "ABCB1": "tariquidar-like",
+KNOB_ANALOG_LABELS = {
+    "tgfb_secretion_rate": "tgfb-secretion modulator-like",
+    "shh_secretion_rate": "shh-secretion modulator-like",
+    "efflux_induction_delay": "efflux-kinetics modulator-like",
+    "efflux_strength": "efflux-blocker-like",
 }
 
 
@@ -125,31 +121,38 @@ def apply_cli_overrides(cfg: EAConfig, args: argparse.Namespace, output_dir: Pat
 def generate_random_individual_payloads(cfg: EAConfig, n: int = 3) -> List[Dict[str, Any]]:
     rng = random.Random(cfg.random_seed)
     payloads: List[Dict[str, Any]] = []
-    max_allowed = max(1, min(cfg.max_interventions, len(cfg.druggable_genes)))
+    max_allowed = max(1, min(cfg.max_interventions, len(cfg.targetable_knobs)))
 
     for j in range(n):
         k = rng.randint(1, max_allowed)
-        genes = rng.sample(cfg.druggable_genes, k=k)
+        knobs = rng.sample(cfg.targetable_knobs, k=k)
         interventions = []
-        for i, gene in enumerate(genes):
+        for i, knob in enumerate(knobs):
             effect = rng.choices(["INHIBIT", "ACTIVATE"], weights=[0.8, 0.2], k=1)[0]
             strength = round(rng.uniform(0.1, 1.0), 6)
             interventions.append(
                 {
-                    "gene": gene,
+                    "knob": knob,
                     "effect": effect,
                     "strength": strength,
-                    "name": f"{effect}_{gene}_{i}",
+                    "name": f"{effect}_{knob}_{i}",
                 }
             )
-        payloads.append({"interventions": interventions, "candidate_index": j})
+        payloads.append(
+            {
+                "calibration_profile": cfg.calibration_profile,
+                "knob_interventions": interventions,
+                "candidate_index": j,
+            }
+        )
     return payloads
 
 
-def save_best_intervention(result: EAResult, outpath: Path) -> None:
+def save_best_intervention(result: EAResult, outpath: Path, calibration_profile: str) -> None:
     payload = {
         "best_fitness": result.best_fitness,
-        "interventions": result.best_individual,
+        "calibration_profile": calibration_profile,
+        "knob_interventions": result.best_individual,
     }
     outpath.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
@@ -205,16 +208,14 @@ def save_fitness_plot(result: EAResult, plots_dir: Path) -> None:
 
 
 def build_interpretation(best_individual: List[Dict[str, Any]]) -> str:
-    genes = {entry.get("gene", "") for entry in best_individual}
+    knobs = {entry.get("knob", "") for entry in best_individual}
     fragments: List[str] = []
 
-    if genes & {"HAS2", "MMP2", "TGFB1", "SHH", "GLI1"}:
-        fragments.append("disrupt stroma to improve drug penetration")
-    if "EGFR" in genes:
-        fragments.append("block growth signaling")
-    if "BCL_XL" in genes:
-        fragments.append("overcome death resistance")
-    if "ABCB1" in genes:
+    if knobs & {"tgfb_secretion_rate", "shh_secretion_rate"}:
+        fragments.append("reshape stromal signaling pressure")
+    if "efflux_induction_delay" in knobs:
+        fragments.append("slow resistance induction timing")
+    if "efflux_strength" in knobs:
         fragments.append("limit efflux-mediated drug resistance")
 
     if not fragments:
@@ -229,13 +230,13 @@ def build_interpretation(best_individual: List[Dict[str, Any]]) -> str:
 def format_human_summary(result: EAResult) -> str:
     lines = [f"Best strategy (fitness={result.best_fitness:.2f}):"]
     for i, intervention in enumerate(result.best_individual, start=1):
-        gene = intervention.get("gene", "UNKNOWN")
+        knob = intervention.get("knob", "UNKNOWN")
         effect = str(intervention.get("effect", "INHIBIT")).upper()
         strength = float(intervention.get("strength", 0.0))
         pct = int(round(strength * 100.0))
         verb = "Inhibit" if effect == "INHIBIT" else "Activate"
-        alias = DRUG_ANALOG_LABELS.get(gene, "targeted-like")
-        lines.append(f"{i}. {verb} {gene} at {pct}% strength ({alias})")
+        alias = KNOB_ANALOG_LABELS.get(knob, "targeted-like")
+        lines.append(f"{i}. {verb} {knob} at {pct}% strength ({alias})")
 
     interpretation = build_interpretation(result.best_individual)
     lines.append(f"Interpretation: {interpretation}")
@@ -299,7 +300,7 @@ def main() -> int:
     plots_dir = output_dir / "plots"
     summary_path = output_dir / "summary.txt"
 
-    save_best_intervention(result, best_intervention_path)
+    save_best_intervention(result, best_intervention_path, cfg.calibration_profile)
     save_fitness_history_csv(result, fitness_history_path)
     save_ea_result_json(result, ea_result_path)
     save_fitness_plot(result, plots_dir)

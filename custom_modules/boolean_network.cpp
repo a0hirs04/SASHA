@@ -6,10 +6,12 @@
 // ============================================================================
 
 #include "boolean_network.h"
+#include "tumor_calibration_knobs.h"
 #include "../modules/PhysiCell_settings.h"   // PhysiCell::parameters
 #include <algorithm>       // std::fill
 #include <cstring>         // std::memset
 #include <fstream>         // std::ifstream
+#include <cmath>
 #include <stdexcept>       // std::runtime_error
 #include <unordered_map>   // gene name → index lookup table
 #include <iostream>        // std::cerr (intervention logging)
@@ -288,7 +290,15 @@ void BooleanNetwork::update(double dt,
     {
         if (is_mutant[i]) continue;  // mutant genes are permanently locked
 
-        const double effective_tau = tau[i] > 0.0 ? tau[i] : 1.0;  // guard /0
+        double effective_tau = tau[i] > 0.0 ? tau[i] : 1.0;  // guard /0
+        if (i == ABCB1)
+        {
+            // Knob 7a: drug-efflux induction delay controls ABCB1 integration timescale.
+            // 0.5 is the AsPC-1 reference point (tau=60 min).
+            const TumorCalibrationKnobs& knobs = get_active_calibration_knobs();
+            const double knob_delay = clamp(knobs.efflux_induction_delay, 0.0, 1.0);
+            effective_tau = clamp(60.0 * (knob_delay / 0.5), 6.0, 360.0);
+        }
         gene_states[i] += dt * (target[i] - gene_states[i]) / effective_tau;
         gene_states[i]  = clamp(gene_states[i], 0.0, 1.0);
     }
@@ -332,6 +342,23 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     const double CDH1_   = gene_states[CDH1];
     const double CDKN2A_ = gene_states[CDKN2A];
     const double SMAD4_  = gene_states[SMAD4];
+    const TumorCalibrationKnobs& knobs = get_active_calibration_knobs();
+
+    auto threshold_ramp = [&](double signal, double threshold) -> double
+    {
+        const double t = clamp(threshold, 0.0, 0.99);
+        if (signal <= t) return 0.0;
+        return clamp((signal - t) / (1.0 - t), 0.0, 1.0);
+    };
+
+    // Knob 5a: thresholded EMT induction gates TGF-β and hypoxia contributions.
+    const double emt_tgfb_signal = threshold_ramp(tgfb_local, knobs.emt_induction_threshold);
+    const double emt_hif1a_signal = threshold_ramp(HIF1A_, knobs.emt_induction_threshold);
+    // Knob 6b: categorical scaling for HIF1A-driven phenotype switching.
+    const double hypoxia_shift_mult = knob_level_multiplier(knobs.hypoxia_phenotype_shift);
+    // Knob 6a: oxygen threshold map (mmHg): 22 - 20 * knob_6a.
+    const double hypoxia_o2_threshold = clamp(22.0 - 20.0 * clamp(knobs.hypoxia_response_threshold, 0.0, 1.0),
+                                              0.1, 22.0);
 
     // =========================================================================
     // GROWTH AXIS
@@ -383,7 +410,8 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //
     //   Canonical PDAC (KRAS=1, NRF2=0.1, HIF1A=0): BCL_XL ≈ 0.815.
     //   Hypoxic PDAC (HIF1A=1): BCL_XL ≈ 0.915 — harder to kill with navitoclax.
-    target[BCL_XL] = clamp(0.3 + 0.5 * KRAS_ + 0.15 * NRF2_ + 0.1 * HIF1A_, 0.0, 1.0);
+    target[BCL_XL] = clamp(0.3 + 0.5 * KRAS_ + 0.15 * NRF2_ + 0.1 * HIF1A_ * hypoxia_shift_mult,
+                           0.0, 1.0);
 
     // SNAI1 — Snail; fast EMT initiator TF; first responder to TGF-b.
     //
@@ -396,7 +424,9 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   hypoxia. Together, TGF-b + KRAS + HIF1A create a cooperative gate:
     //   in canonical PDAC without exogenous TGF-b stimulus, SNAI1 is at ~0.2
     //   (subthreshold for full EMT), but any paracrine TGF-b signal tips it.
-    target[SNAI1] = clamp(0.5 * tgfb_local + 0.2 * KRAS_ + 0.1 * HIF1A_,
+    target[SNAI1] = clamp(0.5 * emt_tgfb_signal
+                        + 0.2 * KRAS_
+                        + 0.1 * emt_hif1a_signal * hypoxia_shift_mult,
                           0.0, 1.0);
 
     // =========================================================================
@@ -409,13 +439,14 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   pRB (RB1) is maintained active (hypophosphorylated) when CDK4/6 is
     //   inhibited. CDKN2A (p16) directly blocks CDK4/6 — the primary arm (70%).
     //
-    //   SMAD4 contributes via two mechanisms:
+    //   SMAD4 contributes via one baseline mechanism:
     //     (a) Basal arm: SMAD4 transcriptionally activates p15/CDKN2B to
     //         reinforce CDK4/6 inhibition independently of p16. (0.3 weight)
-    //     (b) TGF-β conditional arm: TGF-β → SMAD2/3/4 → p15/p21 → RB1.
-    //         This arm is ABSENT in SMAD4-null PDAC: even high tgfb_local
-    //         has no growth-arrest effect. (0.4 * SMAD4_ * tgfb_local term;
-    //         the product is identically zero when SMAD4_ = 0.)
+    //   Knob 2 (tgfb_brake_sensitivity) controls the TGF-β conditional
+    //   growth-arrest arm in a calibrated manner:
+    //     (b) + 0.4 * tgfb_local * knob_2
+    //   This keeps TGF-β growth-arrest sensitivity as a calibrated disease
+    //   property while keeping invasion coupling unchanged.
     //
     // SMAD4 ASYMMETRY (Critical Caveat #1):
     //   TGF-β is a tumor suppressor or stroma builder depending on SMAD4
@@ -426,12 +457,11 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //     regardless of SMAD4 — see SNAI1 and ZEB1 rules above.
     //   - STROMA-BUILDING arm (TGF-β → ACTA2 → CAF activation): active in
     //     stromal cells (SMAD4=1.0 WT), see compute_stroma_targets().
-    //   Therapeutic SMAD4 restoration (OVEREXPRESS) re-enables growth arrest,
-    //   converting TGF-β from pro-invasion to pro-arrest in tumor cells.
-    //   In canonical PDAC (CDKN2A=0, SMAD4=0): RB1 target = 0 (both brakes broken).
+    //   In canonical PDAC (CDKN2A=0, SMAD4=0, knob_2=0.05): RB1 target under
+    //   high TGF-β remains near-zero (0.4 * 1.0 * 0.05 = 0.02).
     target[RB1] = clamp(CDKN2A_ * 0.7
                       + SMAD4_  * 0.3
-                      + SMAD4_  * tgfb_local * 0.4,
+                      + 0.4 * tgfb_local * clamp(knobs.tgfb_brake_sensitivity, 0.0, 1.0),
                         0.0, 1.0);
 
     // =========================================================================
@@ -452,8 +482,8 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   SNAI1 feed-forward reduces the TGF-b threshold for ZEB1 activation.
     {
         const double CDH1_feedback = CDH1_;
-        target[ZEB1] = clamp(0.25 * tgfb_local
-                           + 0.25 * HIF1A_
+        target[ZEB1] = clamp(0.25 * emt_tgfb_signal
+                           + 0.25 * emt_hif1a_signal * hypoxia_shift_mult
                            + 0.15 * KRAS_
                            + 0.20 * SNAI1_
                            - 0.25 * CDH1_feedback,
@@ -481,7 +511,7 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   upregulates MMP2 via AP-1 and HIF binding sites), and KRAS.
     target[MMP2] = clamp(0.20 * ZEB1_
                        + 0.15 * SNAI1_
-                       + 0.25 * HIF1A_
+                       + 0.25 * emt_hif1a_signal * hypoxia_shift_mult
                        + 0.15 * KRAS_,
                          0.0, 1.0);
 
@@ -497,7 +527,7 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   amplifies TGF-beta secretion via HIF1A binding to the TGFB1 promoter
     //   (0.2 * HIF1A). This creates a feedforward loop: hypoxia → TGF-beta
     //   → stromal activation → desmoplasia → further hypoxia.
-    target[TGFB1] = clamp(0.1 + 0.3 * KRAS_ + 0.2 * HIF1A_, 0.0, 1.0);
+    target[TGFB1] = clamp(0.1 + 0.3 * KRAS_ + 0.2 * HIF1A_ * hypoxia_shift_mult, 0.0, 1.0);
 
     // SHH — Sonic Hedgehog ligand; activates GLI1 in stromal cells.
     //
@@ -518,12 +548,11 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //
     // Biological basis:
     //   Under normoxia, HIF1A protein is hydroxylated by PHD enzymes (require
-    //   O2) and degraded via VHL/26S proteasome. Below ~5 mmHg, PHD activity
-    //   collapses and HIF1A accumulates rapidly (within minutes). The target
-    //   scales linearly from 0 at threshold to 1 at anoxia (0 mmHg), modeling
-    //   the graded PHD oxygen dependence (Km ~5 mmHg for PHD2).
-    if (oxygen < cfg.hypoxia_hif1a_threshold)
-        target[HIF1A] = clamp(1.0 - oxygen / cfg.hypoxia_hif1a_threshold, 0.0, 1.0);
+    //   O2) and degraded via VHL/26S proteasome. Knob 6a sets the response
+    //   threshold in mmHg via: threshold = 22 - 20 * knob_6a. Below threshold,
+    //   HIF1A scales linearly to 1.0 at anoxia.
+    if (oxygen < hypoxia_o2_threshold)
+        target[HIF1A] = clamp(1.0 - oxygen / hypoxia_o2_threshold, 0.0, 1.0);
     else
         target[HIF1A] = 0.0;
 
@@ -544,7 +573,7 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   Canonical PDAC (KRAS=1, no drug, normoxia): NRF2 = 0.1 (low basal).
     //   At drug_local=1.0 (max dose) + KRAS: NRF2 = 0.5 → ABCB1 = 0.25.
     target[NRF2] = clamp(0.1 * KRAS_
-                       + 0.2 * HIF1A_
+                       + 0.2 * HIF1A_ * hypoxia_shift_mult
                        + 0.4 * drug_local,
                          0.0, 1.0);
 
@@ -562,7 +591,7 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   drug_sensitivity variable in tumor_cell.cpp is stored as 1.0 when
     //   drug is absent, preventing the EA from treating ABCB1 as a basal
     //   survival gene and wasting generations targeting it pre-treatment.
-    target[ABCB1] = clamp(0.5 * NRF2_ + 0.3 * HIF1A_, 0.0, 1.0);
+    target[ABCB1] = clamp(0.5 * NRF2_ + 0.3 * HIF1A_ * hypoxia_shift_mult, 0.0, 1.0);
 
     // =========================================================================
     // GENES WITH NO TUMOR RULE (states persist / decay from previous step)

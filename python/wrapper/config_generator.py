@@ -7,6 +7,10 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+try:
+    from ..ea.knob_schema import map_legacy_gene_to_knob
+except Exception:  # pragma: no cover
+    from python.ea.knob_schema import map_legacy_gene_to_knob  # type: ignore
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,16 +32,12 @@ class ConfigGenerator:
     drug-related XML settings based on intervention content.
     """
 
-    # Default genes treated as requiring the drug substrate when inhibited.
-    DEFAULT_DRUG_RELATED_GENES = {
-        "EGFR",
-        "BCL_XL",
-        "MMP2",
-        "TGFB1",
-        "SHH",
-        "GLI1",
-        "HAS2",
-        "ABCB1",
+    # Knobs treated as affecting drug-delivery context.
+    DEFAULT_DRUG_RELATED_KNOBS = {
+        "tgfb_secretion_rate",
+        "shh_secretion_rate",
+        "efflux_induction_delay",
+        "efflux_strength",
     }
 
     def __init__(self, base_config_xml: Path, base_gene_params: Path):
@@ -54,7 +54,7 @@ class ConfigGenerator:
         if not isinstance(self.gene_params_template, dict):
             raise ValueError(f"Base gene params must be a JSON object: {self.base_gene_params}")
 
-        self.drug_related_genes = set(self.DEFAULT_DRUG_RELATED_GENES)
+        self.drug_related_knobs = set(self.DEFAULT_DRUG_RELATED_KNOBS)
 
     def generate(self, individual: List[Dict[str, Any]], run_dir: Path) -> Tuple[Path, Path]:
         """
@@ -85,7 +85,7 @@ class ConfigGenerator:
         )
 
         intervention_payload = {
-            "interventions": normalized_interventions,
+            "knob_interventions": normalized_interventions,
             "drug_delivery": drug_protocol,
             "gene_params_file": str(run_gene_params_path),
         }
@@ -100,7 +100,7 @@ class ConfigGenerator:
         Build drug-delivery protocol from an intervention list.
 
         Rule:
-        - INHIBIT intervention on a drug-related gene contributes dose
+        - INHIBIT intervention on a drug-related knob contributes dose
           (strength * max_drug_concentration)
         - interventions marked as non-drug delivery are skipped
         """
@@ -112,13 +112,13 @@ class ConfigGenerator:
         boundary_concentration = 0.0
 
         for entry in self._normalize_individual(individual):
-            gene = entry["gene"]
+            knob = entry["knob"]
             effect = entry["effect"]
             strength = float(entry["strength"])
 
             if effect != "INHIBIT":
                 continue
-            if gene not in self.drug_related_genes:
+            if knob not in self.drug_related_knobs:
                 continue
 
             # Allow callers to explicitly mark non-drug interventions.
@@ -132,7 +132,7 @@ class ConfigGenerator:
             boundary_concentration = max(boundary_concentration, dose)
             targets.append(
                 {
-                    "gene": gene,
+                    "knob": knob,
                     "effect": effect,
                     "strength": strength,
                     "dose": dose,
@@ -159,9 +159,17 @@ class ConfigGenerator:
                 LOGGER.warning("Skipping intervention[%d]: expected dict, got %s", idx, type(raw).__name__)
                 continue
 
-            gene = str(raw.get("gene", "")).strip()
-            if not gene:
-                LOGGER.warning("Skipping intervention[%d]: missing gene", idx)
+            knob = str(raw.get("knob", "")).strip()
+            if not knob:
+                legacy_gene = str(raw.get("gene", "")).strip()
+                if legacy_gene:
+                    try:
+                        knob = map_legacy_gene_to_knob(legacy_gene)
+                    except ValueError:
+                        LOGGER.warning("Skipping intervention[%d]: unsupported legacy gene '%s'", idx, legacy_gene)
+                        continue
+            if not knob:
+                LOGGER.warning("Skipping intervention[%d]: missing knob", idx)
                 continue
 
             effect = str(raw.get("effect", "INHIBIT")).strip().upper()
@@ -175,7 +183,7 @@ class ConfigGenerator:
             strength = _clamp(strength, 0.0, 1.0)
 
             item = {
-                "gene": gene,
+                "knob": knob,
                 "effect": effect,
                 "strength": strength,
             }
