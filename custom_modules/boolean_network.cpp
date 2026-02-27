@@ -79,7 +79,7 @@ ThresholdConfig ThresholdConfig::load_from_xml()
 //
 //  60.0  min — transcription factors: nuclear import, transcription, mRNA
 //              half-lives (~30-90 min for most TF mRNAs). Covers KRAS effectors
-//              (MYC, ZEB1), cell-death regulators (BCL_XL, BAX), and pathway TFs.
+//              (MYC, CCND1, ZEB1, SNAI1), cell-death regulators (BCL_XL), and pathway TFs.
 //
 // 360.0  min — structural / secreted proteins: synthesis, folding, secretion,
 //              and ECM incorporation are slow processes. Collagen fibers have
@@ -130,10 +130,10 @@ void BooleanNetwork::assign_default_tau()
     // Transcription factors and their direct targets
     tau[KRAS]   = TAU_TF;          // KRAS:  GTPase cycling (locked mutant, tau irrelevant)
     tau[MYC]    = TAU_TF;          // MYC:   short-lived TF (~30 min mRNA half-life)
-    tau[EGFR]   = TAU_TF;          // EGFR:  RTK activation/internalization
+    tau[CCND1]  = TAU_TF;          // CCND1: Cyclin D1 protein, regulated at transcription + ubiquitin
     tau[TP53]   = TAU_TF;          // TP53:  MDM2-regulated stability (locked mutant)
     tau[BCL_XL] = TAU_TF;          // BCL-XL: anti-apoptotic; KRAS-regulated
-    tau[BAX]    = TAU_TF;          // BAX:   pro-apoptotic; TP53-regulated
+    tau[SNAI1]  = TAU_TF;          // SNAI1: fast EMT TF; responds to TGF-b in hours
     tau[CDKN2A] = TAU_TF;          // CDKN2A: epigenetically silenced (locked mutant)
     tau[SMAD4]  = TAU_TF;          // SMAD4: nuclear TGFb effector (locked mutant)
     tau[RB1]    = TAU_TF;          // RB1:   phosphorylation state changes over hours
@@ -316,11 +316,12 @@ void BooleanNetwork::compute_tumor_targets(double* target,
 {
     // Shorthand aliases for current gene states — read-only
     const double KRAS_   = gene_states[KRAS];
-    const double EGFR_   = gene_states[EGFR];
+    const double MYC_    = gene_states[MYC];
     const double TP53_   = gene_states[TP53];
     const double NRF2_   = gene_states[NRF2];
     const double HIF1A_  = gene_states[HIF1A];
     const double ZEB1_   = gene_states[ZEB1];
+    const double SNAI1_  = gene_states[SNAI1];
     const double CDH1_   = gene_states[CDH1];
     const double CDKN2A_ = gene_states[CDKN2A];
     const double SMAD4_  = gene_states[SMAD4];
@@ -329,16 +330,29 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     // GROWTH AXIS
     // =========================================================================
 
-    // MYC — driven by KRAS, modulated by EGFR availability.
+    // MYC — driven by KRAS; amplifies downstream proliferation program.
     //
     // Biological basis:
     //   KRAS activates ERK and AKT, both of which stabilize MYC protein and
-    //   promote MYC transcription. EGFR reinforces RAS/MAPK signaling; when
-    //   EGFR is pharmacologically blocked (erlotinib), MYC is partially
-    //   suppressed even in the presence of mutant KRAS (~50% reduction).
-    //   The factor (1 - 0.5*(1-EGFR)) = 0.5 + 0.5*EGFR: ranges from 0.5
-    //   (EGFR fully blocked) to 1.0 (EGFR fully active).
-    target[MYC] = clamp(KRAS_ * (0.5 + 0.5 * EGFR_), 0.0, 1.0);
+    //   promote MYC transcription via AP-1 and other TFs. In KRAS-mutant PDAC,
+    //   MYC is essentially constitutively active (tracks KRAS).
+    //   The 0.1 basal term reflects p53-independent baseline expression in any
+    //   cell. With KRAS=1.0 (locked), MYC reaches 1.0.
+    target[MYC] = clamp(0.1 + 0.9 * KRAS_, 0.0, 1.0);
+
+    // CCND1 — Cyclin D1; G1/S accelerator; freed by CDKN2A LOF.
+    //
+    // Biological basis:
+    //   CCND1 transcription is driven by MYC (direct target) and by RAS/ERK
+    //   signaling (KRAS). p16/CDKN2A inhibits CDK4-CyclinD1 complexes; when
+    //   CDKN2A is lost (90% of PDAC), CDK4 is constitutively active and
+    //   CCND1 drives unchecked G1→S entry.
+    //   Rule: CCND1 driven by MYC (70%) + KRAS (20%); scaled by (1 - CDKN2A)
+    //   which in canonical PDAC (CDKN2A=0) = 1.0, giving full CCND1 expression.
+    //   With functional CDKN2A (=1.0) the scale collapses toward 0 — simulating
+    //   CDK4/6 inhibitor (palbociclib) effect when EA inhibits upstream pathway.
+    target[CCND1] = clamp((0.7 * MYC_ + 0.2 * KRAS_) * (1.0 - 0.8 * CDKN2A_),
+                          0.0, 1.0);
 
     // =========================================================================
     // DEATH AXIS
@@ -354,29 +368,54 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   Sum can reach 1.0 in worst-case (KRAS ON + NRF2 ON).
     target[BCL_XL] = clamp(0.3 + 0.5 * KRAS_ + 0.2 * NRF2_, 0.0, 1.0);
 
-    // BAX — pro-apoptotic; TP53-dependent, basally present at low levels.
+    // SNAI1 — Snail; fast EMT initiator TF; first responder to TGF-b.
     //
     // Biological basis:
-    //   BAX is a direct transcriptional target of p53. In PDAC, TP53 is lost,
-    //   so BAX is only basally expressed (0.3 floor from p53-independent
-    //   pathways). When TP53 is restored (therapeutic scenario), BAX rises
-    //   strongly, tipping the BCL_XL/BAX balance toward apoptosis.
-    target[BAX] = clamp(0.3 + 0.5 * TP53_, 0.0, 1.0);
+    //   SNAI1 is a zinc-finger transcription factor that directly represses
+    //   CDH1 (E-cadherin) promoter activity within hours of TGF-beta exposure
+    //   (faster kinetics than ZEB1, which requires miR-200 suppression).
+    //   KRAS-driven ERK also activates SNAI1 via phosphorylation that prevents
+    //   its nuclear export (~0.2 * KRAS_ basal term). HIF1A contributes under
+    //   hypoxia. Together, TGF-b + KRAS + HIF1A create a cooperative gate:
+    //   in canonical PDAC without exogenous TGF-b stimulus, SNAI1 is at ~0.2
+    //   (subthreshold for full EMT), but any paracrine TGF-b signal tips it.
+    target[SNAI1] = clamp(0.5 * tgfb_local + 0.2 * KRAS_ + 0.1 * HIF1A_,
+                          0.0, 1.0);
 
     // =========================================================================
     // BRAKING AXIS
     // =========================================================================
 
-    // RB1 — functional G1/S checkpoint; depends on upstream brakes.
+    // RB1 — convergence node for brake signals; integrates two upstream arms.
     //
     // Biological basis:
-    //   pRB (RB1) is maintained in its active (hypophosphorylated) form by
-    //   CDK4/6 inhibition via p16/CDKN2A. When CDKN2A is deleted, CDK4/6
-    //   constitutively phosphorylates and inactivates RB1 (even if RB1 gene
-    //   is intact). SMAD4 also promotes RB1-mediated quiescence via
-    //   p15/CDKN2B induction. Both lost in PDAC → RB1 functionally ~0.
-    //   Weights: CDKN2A contributes 70% of RB1 functional support; SMAD4 30%.
-    target[RB1] = clamp(CDKN2A_ * 0.7 + SMAD4_ * 0.3, 0.0, 1.0);
+    //   pRB (RB1) is maintained active (hypophosphorylated) when CDK4/6 is
+    //   inhibited. CDKN2A (p16) directly blocks CDK4/6 — the primary arm (70%).
+    //
+    //   SMAD4 contributes via two mechanisms:
+    //     (a) Basal arm: SMAD4 transcriptionally activates p15/CDKN2B to
+    //         reinforce CDK4/6 inhibition independently of p16. (0.3 weight)
+    //     (b) TGF-β conditional arm: TGF-β → SMAD2/3/4 → p15/p21 → RB1.
+    //         This arm is ABSENT in SMAD4-null PDAC: even high tgfb_local
+    //         has no growth-arrest effect. (0.4 * SMAD4_ * tgfb_local term;
+    //         the product is identically zero when SMAD4_ = 0.)
+    //
+    // SMAD4 ASYMMETRY (Critical Caveat #1):
+    //   TGF-β is a tumor suppressor or stroma builder depending on SMAD4
+    //   status in the receiving cell.
+    //   - GROWTH ARREST arm (TGF-β → SMAD2/3/4 → p15 → RB1): requires SMAD4.
+    //     In canonical PDAC (SMAD4=0) this arm is silenced.
+    //   - INVASION arm (TGF-β → SNAI1/ZEB1, SMAD-independent): active
+    //     regardless of SMAD4 — see SNAI1 and ZEB1 rules above.
+    //   - STROMA-BUILDING arm (TGF-β → ACTA2 → CAF activation): active in
+    //     stromal cells (SMAD4=1.0 WT), see compute_stroma_targets().
+    //   Therapeutic SMAD4 restoration (OVEREXPRESS) re-enables growth arrest,
+    //   converting TGF-β from pro-invasion to pro-arrest in tumor cells.
+    //   In canonical PDAC (CDKN2A=0, SMAD4=0): RB1 target = 0 (both brakes broken).
+    target[RB1] = clamp(CDKN2A_ * 0.7
+                      + SMAD4_  * 0.3
+                      + SMAD4_  * tgfb_local * 0.4,
+                        0.0, 1.0);
 
     // =========================================================================
     // INVASION / EMT AXIS
@@ -387,39 +426,46 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     // Biological basis:
     //   ZEB1 is activated by TGF-beta (via non-canonical SMAD-independent
     //   pathways, since SMAD4 is lost in PDAC), by hypoxia (HIF1A binds ZEB1
-    //   promoter), and by KRAS (via ERK). Crucially, CDH1/E-cadherin suppresses
-    //   ZEB1 through miR-200 family induction (CDH1 → miR-200 → represses ZEB1).
-    //   CDH1_feedback is the current CDH1 value used as a repressive input.
+    //   promoter), by KRAS (via ERK), and by SNAI1 (feed-forward: Snail
+    //   activates ZEB1 transcription as the EMT program matures from initiation
+    //   to maintenance). CDH1/E-cadherin suppresses ZEB1 through miR-200 family
+    //   induction (CDH1 → miR-200 → represses ZEB1).
     //   The ZEB1/CDH1 double-negative feedback creates a bistable switch:
     //   epithelial (ZEB1↓, CDH1↑) or mesenchymal (ZEB1↑, CDH1↓) states.
+    //   SNAI1 feed-forward reduces the TGF-b threshold for ZEB1 activation.
     {
         const double CDH1_feedback = CDH1_;
-        target[ZEB1] = clamp(0.3 * tgfb_local
-                           + 0.3 * HIF1A_
-                           + 0.2 * KRAS_
-                           - 0.3 * CDH1_feedback,
+        target[ZEB1] = clamp(0.25 * tgfb_local
+                           + 0.25 * HIF1A_
+                           + 0.15 * KRAS_
+                           + 0.20 * SNAI1_
+                           - 0.25 * CDH1_feedback,
                              0.0, 1.0);
     }
 
-    // CDH1 — E-cadherin; epithelial identity marker; ZEB1-repressed.
+    // CDH1 — E-cadherin; epithelial identity marker; repressed by both EMT TFs.
     //
     // Biological basis:
-    //   ZEB1 directly represses CDH1 transcription. The mutual repression
-    //   (ZEB1 → CDH1 off; CDH1 → ZEB1 off) creates the EMT bistable switch.
-    //   CDH1 = 1 - ZEB1 implements a continuous toggle: as ZEB1 rises,
-    //   E-cadherin falls, weakening cell-cell adhesion and enabling invasion.
-    target[CDH1] = clamp(1.0 - ZEB1_, 0.0, 1.0);
+    //   Both SNAI1 and ZEB1 directly bind and repress the CDH1 promoter.
+    //   SNAI1 acts faster (hours) and ZEB1 acts slower (days) but more stably.
+    //   The weighted combination models the temporal two-phase repression:
+    //   first a SNAI1-driven drop, then a ZEB1-locked mesenchymal state.
+    //   Weights: ZEB1 (0.6) is the dominant long-term repressor; SNAI1 (0.4)
+    //   provides the early fast component.
+    target[CDH1] = clamp(1.0 - 0.6 * ZEB1_ - 0.4 * SNAI1_, 0.0, 1.0);
 
     // MMP2 — matrix metalloproteinase-2; ECM degradation / invasion.
     //
     // Biological basis:
     //   MT1-MMP on tumor cells activates pro-MMP2 in the pericellular space.
     //   MMP2 expression is driven by ZEB1 (EMT-associated invasion program),
-    //   HIF1A (hypoxia upregulates MMP2 via AP-1 and HIF binding sites),
-    //   and KRAS (ERK-dependent transcriptional activation).
-    target[MMP2] = clamp(0.2 * ZEB1_
-                       + 0.3 * HIF1A_
-                       + 0.2 * KRAS_,
+    //   SNAI1 (Snail directly activates MMP2/MT1-MMP transcription in parallel
+    //   with ZEB1 — important because SNAI1 acts faster), HIF1A (hypoxia
+    //   upregulates MMP2 via AP-1 and HIF binding sites), and KRAS.
+    target[MMP2] = clamp(0.20 * ZEB1_
+                       + 0.15 * SNAI1_
+                       + 0.25 * HIF1A_
+                       + 0.15 * KRAS_,
                          0.0, 1.0);
 
     // =========================================================================
@@ -473,31 +519,42 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     //   to the nucleus. KRAS also directly activates NRF2 transcription via
     //   an AP-1 site. Drug exposure generates ROS and electrophiles that
     //   further stabilize NRF2, making it a key node for drug resistance.
-    //   drug_local > 0 term uses a step function: any non-zero drug activates.
+    //
+    //   The drug term is proportional to concentration (0.4 * drug_local),
+    //   not a step function. This allows the EA to see graded NRF2 → ABCB1
+    //   resistance build-up across drug dose levels, enabling discovery of
+    //   dose-timing strategies that minimize resistance induction.
+    //   Canonical PDAC (KRAS=1, no drug, normoxia): NRF2 = 0.1 (low basal).
+    //   At drug_local=1.0 (max dose) + KRAS: NRF2 = 0.5 → ABCB1 = 0.25.
     target[NRF2] = clamp(0.1 * KRAS_
                        + 0.2 * HIF1A_
-                       + 0.3 * (drug_local > 0.0 ? 1.0 : 0.0),
+                       + 0.4 * drug_local,
                          0.0, 1.0);
 
-    // ABCB1 — MDR1/P-glycoprotein drug efflux pump.
+    // ABCB1 — MDR1/P-glycoprotein drug efflux pump; INDUCED resistance gene.
     //
     // Biological basis:
     //   The MDR1 gene promoter contains NRF2-binding antioxidant response
     //   elements (AREs) and HIF1A hypoxia response elements (HREs). Both
     //   stress signals transcriptionally upregulate ABCB1. The pump actively
     //   exports cytotoxic drugs, reducing intracellular drug concentration.
-    //   High ABCB1 → reduced drug_sensitivity (handled in tumor_cell.cpp).
+    //
+    // DRUG-CONDITIONAL NOTE (Critical Caveat #4):
+    //   ABCB1 confers NO constitutive survival benefit — it only reduces
+    //   drug efficacy when cytotoxic substrate is present. The downstream
+    //   drug_sensitivity variable in tumor_cell.cpp is stored as 1.0 when
+    //   drug is absent, preventing the EA from treating ABCB1 as a basal
+    //   survival gene and wasting generations targeting it pre-treatment.
     target[ABCB1] = clamp(0.5 * NRF2_ + 0.3 * HIF1A_, 0.0, 1.0);
 
     // =========================================================================
-    // GENES WITH NO TUMOR RULE (states persist from previous step)
+    // GENES WITH NO TUMOR RULE (states persist / decay from previous step)
     // =========================================================================
     // ACTA2, GLI1, HAS2, COL1A1 — stroma-specific; not updated in tumor cells.
-    // Their target defaults to 0.0 (already zero-initialized above), so if any
-    // residual state exists, it will decay toward 0 with tau_TF.
+    // Their target defaults to 0.0 (zero-initialized above); any residual state
+    // decays toward 0 with tau_TF (~60 min).
     // KRAS, TP53, CDKN2A, SMAD4 — locked mutants, handled in update().
-    // EGFR — not updated here; its state is set externally (drug intervention)
-    //         or held at its initial value. A rule could be added if needed.
+    // RB1 — driven by CDKN2A (primary), SMAD4 (basal), and SMAD4*tgfb (conditional arm).
 }
 
 // ============================================================================
@@ -647,7 +704,7 @@ void BooleanNetwork::compute_stroma_targets(double* target,
     // =========================================================================
     // STROMA-ABSENT GENES (tumor-specific)
     // =========================================================================
-    // KRAS, MYC, EGFR, TP53, BCL_XL, BAX, CDKN2A, SMAD4, RB1,
+    // KRAS, MYC, CCND1, TP53, BCL_XL, SNAI1, CDKN2A, SMAD4, RB1,
     // ZEB1, CDH1, SHH, NRF2, ABCB1 — not expressed in stromal cells.
     // Their targets default to 0.0 (already zero-initialized), so residual
     // state (if any) decays to 0 over tau_TF ~ 60 min.

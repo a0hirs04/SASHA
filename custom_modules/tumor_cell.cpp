@@ -195,10 +195,13 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     // -------------------------------------------------------------------------
     std::vector<double>& densities = pCell->nearest_density_vector();
 
-    const double oxygen = read_density_value(densities, oxygen_index);
-    const double tgfb   = read_density_value(densities, tgfb_index);
-    const double shh    = read_density_value(densities, shh_index);
-    const double drug   = read_density_value(densities, drug_index);
+    const double oxygen        = read_density_value(densities, oxygen_index);
+    const double tgfb          = read_density_value(densities, tgfb_index);
+    const double shh           = read_density_value(densities, shh_index);
+    const double drug          = read_density_value(densities, drug_index);
+    // ECM density read once here; used for physical barrier effects on
+    // proliferation, motility, and drug delivery throughout this function.
+    const double local_ecm_val = read_density_value(densities, ecm_index);
 
     // -------------------------------------------------------------------------
     // STEP 2. Update the per-cell Boolean network state.
@@ -225,24 +228,27 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
 
     // Short aliases for readability; clamp each to [0,1] to avoid propagation
     // of any numerical drift into phenotype rules.
-    const double kras   = clamp_unit((*bn)[KRAS]);
-    const double myc    = clamp_unit((*bn)[MYC]);
-    const double rb1    = clamp_unit((*bn)[RB1]);
-    const double cdkn2a = clamp_unit((*bn)[CDKN2A]);
-    const double smad4  = clamp_unit((*bn)[SMAD4]);
-    const double bcl_xl = clamp_unit((*bn)[BCL_XL]);
-    const double bax    = clamp_unit((*bn)[BAX]);
-    const double tp53   = clamp_unit((*bn)[TP53]);
-    const double zeb1   = clamp_unit((*bn)[ZEB1]);
-    const double mmp2   = clamp_unit((*bn)[MMP2]);
-    const double tgfb1  = clamp_unit((*bn)[TGFB1]);
+    const double kras    = clamp_unit((*bn)[KRAS]);
+    const double myc     = clamp_unit((*bn)[MYC]);
+    const double ccnd1   = clamp_unit((*bn)[CCND1]);
+    const double rb1     = clamp_unit((*bn)[RB1]);
+    const double cdkn2a  = clamp_unit((*bn)[CDKN2A]);
+    const double smad4   = clamp_unit((*bn)[SMAD4]);
+    const double bcl_xl  = clamp_unit((*bn)[BCL_XL]);
+    const double snai1   = clamp_unit((*bn)[SNAI1]);
+    const double tp53    = clamp_unit((*bn)[TP53]);
+    const double zeb1    = clamp_unit((*bn)[ZEB1]);
+    const double mmp2    = clamp_unit((*bn)[MMP2]);
+    const double tgfb1   = clamp_unit((*bn)[TGFB1]);
     const double shh_expr= clamp_unit((*bn)[SHH]);
-    const double nrf2   = clamp_unit((*bn)[NRF2]);
-    const double abcb1  = clamp_unit((*bn)[ABCB1]);
+    const double nrf2    = clamp_unit((*bn)[NRF2]);
+    const double abcb1   = clamp_unit((*bn)[ABCB1]);
 
     // 3a) PROLIFERATION RATE
-    // Growth drive integrates oncogenic KRAS and MYC amplification.
-    const double growth_drive = clamp_unit(kras * (0.5 + 0.5 * myc));
+    // Growth drive: KRAS sets the base signal, MYC amplifies it, CCND1 gates
+    // the cell cycle at G1/S. In canonical PDAC (KRAS=1, MYC≈1, CCND1≈1,
+    // CDKN2A=0), growth_drive approaches 1.0.
+    const double growth_drive = clamp_unit(kras * (0.4 + 0.35 * myc + 0.25 * ccnd1));
 
     // RB1 is a brake on cell-cycle progression. High RB1 lowers effective growth.
     double brake = clamp_unit(1.0 - 0.8 * rb1);
@@ -265,6 +271,26 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
         }
     }
 
+    // Go-vs-Grow tradeoff: ZEB1-high (mesenchymal) cells divert transcriptional
+    // resources from the proliferative program to the motility/invasion program.
+    // ZEB1 directly represses several MYC-target cell-cycle genes (CCND1, CDK4)
+    // and disrupts mitotic spindle assembly in the high-ZEB1 state.
+    // Ceiling at 35% reduction: partial EMT cells maintain moderate proliferation
+    // alongside motility; full EMT (ZEB1=1) trades ~35% growth for peak invasion.
+    if (zeb1 > 0.3)
+    {
+        brake *= clamp_unit(1.0 - 0.35 * zeb1);
+    }
+
+    // ECM physical constraint: dense desmoplastic stroma mechanically compresses
+    // the tumor mass, elevating interstitial fluid pressure and limiting outward
+    // expansion. Releasing this constraint (e.g., SHH inhibition → CAF depletion
+    // → ECM regression) paradoxically accelerates tumor growth by removing the
+    // physical containment — the vismodegib failure mechanism (Caveat #6).
+    // Clinical reference: Rhim et al. 2014, doi:10.1016/j.ccr.2014.04.009.
+    // At baseline ECM=0.1: ~2.5% brake. At desmoplastic ECM=0.8: ~20% brake.
+    brake *= clamp_unit(1.0 - 0.25 * local_ecm_val);
+
     const double base_prolif_rate = get_tumor_base_proliferation_rate(phenotype);
     const double mapped_prolif_rate =
         clamp_nonnegative(base_prolif_rate * growth_drive * brake);
@@ -276,44 +302,69 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     if (apoptosis_index >= 0 &&
         apoptosis_index < static_cast<int>(phenotype.death.rates.size()))
     {
-        // BAX / BCL-XL ratio captures pro-death vs pro-survival balance.
-        const double death_ratio = bax / (bcl_xl + 0.01); // epsilon prevents divide-by-zero.
+        // BCL-XL suppresses apoptosis; TP53 loss (=0) blunts the death signal.
+        // death_suppression: when BCL_XL=0.8 (PDAC default) → 0.2; when
+        // BCL_XL is therapeutically reduced to 0 → 1.0 (full apoptosis).
+        const double death_suppression = clamp_unit(1.0 - bcl_xl);
 
-        // TP53 loss reduces apoptosis floor; TP53 activity restores sensitivity.
+        // p53_factor: TP53 loss sets a low floor (0.2); therapeutic TP53
+        // restoration (tp53→1.0) restores full apoptotic signaling.
         const double p53_factor = clamp_unit(0.2 + 0.8 * tp53);
 
         const double base_apoptosis_rate =
             get_tumor_base_apoptosis_rate(phenotype, apoptosis_index);
 
         double mapped_apoptosis_rate =
-            clamp_nonnegative(base_apoptosis_rate * death_ratio * p53_factor);
+            clamp_nonnegative(base_apoptosis_rate * death_suppression * p53_factor);
         phenotype.death.rates[apoptosis_index] = mapped_apoptosis_rate;
 
         // 3g) DRUG-INDUCED DEATH
         // Drug kill is added only when local drug concentration is meaningful.
         if (drug > 0.01)
         {
-            // Drug sensitivity is computed below and clamped to avoid full immunity.
+            // Drug sensitivity clamped to [0.05, 1.0] to avoid complete immunity.
             double drug_sensitivity = 1.0 - 0.4 * nrf2 - 0.4 * abcb1;
             drug_sensitivity = std::max(0.05, std::min(1.0, drug_sensitivity));
 
-            const double effective_drug = clamp_nonnegative(drug) * drug_sensitivity;
+            // ECM delivery barrier: dense HA (stromal HAS2) and collagen (COL1A1)
+            // compress tumor vasculature, raising interstitial fluid pressure (IFP)
+            // and reducing convective drug transport to tumor cells.
+            // This explains two clinical observations:
+            //   (a) PEGPH20 (HA depletion) improves gemcitabine in preclinical PDAC.
+            //   (b) PEGPH20 alone fails clinically — the COL1A1 collagen barrier
+            //       remains intact, so drug delivery improves only partially.
+            // At ECM=0.1 (baseline): 5% barrier. At ECM=0.8 (desmoplastic): 40% barrier.
+            const double ecm_delivery_barrier = clamp_unit(1.0 - 0.5 * local_ecm_val);
+            const double effective_drug = clamp_nonnegative(drug) * drug_sensitivity
+                                        * ecm_delivery_barrier;
             phenotype.death.rates[apoptosis_index] += effective_drug * 0.001;
         }
     }
 
-    // 3c) MOTILITY (EMT state via ZEB1)
-    const bool is_mesenchymal = (zeb1 > cfg.emt_zeb1_threshold);
+    // 3c) MOTILITY (EMT state via ZEB1 or SNAI1)
+    // SNAI1 can independently trigger mesenchymal motility before ZEB1 rises.
+    const bool is_mesenchymal = (zeb1  > cfg.emt_zeb1_threshold ||
+                                 snai1 > cfg.emt_zeb1_threshold);
     set_custom_data_if_present(pCell, "is_mesenchymal", is_mesenchymal ? 1.0 : 0.0);
 
+    // ECM steric barrier reduces migration speed in both EMT states.
+    // Dense HA (HAS2) and collagen (COL1A1) physically impede cell movement via
+    // increased matrix viscosity and entanglement. Mesenchymal cells use MMP2 to
+    // carve invasion paths but this is rate-limited — modeled as a speed cap.
+    // At ECM=0.1 (baseline): 5% speed reduction. At ECM=0.8: 40% reduction.
+    const double ecm_motility_factor = clamp_unit(1.0 - 0.5 * local_ecm_val);
     if (is_mesenchymal)
     {
-        phenotype.motility.migration_speed = 1.0;                 // faster migration
+        // floor at 0.1 µm/min: mesenchymal cells can still invade even dense ECM
+        phenotype.motility.migration_speed =
+            std::max(0.1, 1.0 * ecm_motility_factor);
         phenotype.mechanics.cell_cell_adhesion_strength = 0.1;    // weaker adhesion
     }
     else
     {
-        phenotype.motility.migration_speed = 0.25;                // slower, epithelial-like
+        // floor at 0.05 µm/min: epithelial cells barely move in thick ECM
+        phenotype.motility.migration_speed =
+            std::max(0.05, 0.25 * ecm_motility_factor);
         phenotype.mechanics.cell_cell_adhesion_strength = 0.4;    // stronger adhesion
     }
 
@@ -341,8 +392,15 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
         phenotype.secretion.secretion_rates[shh_index] = shh_secretion;
     }
 
-    // 3f) DRUG SENSITIVITY (stored for downstream fitness / analysis)
-    double drug_sensitivity = 1.0 - 0.4 * nrf2 - 0.4 * abcb1;
-    drug_sensitivity = std::max(0.05, std::min(1.0, drug_sensitivity));
-    set_custom_data_if_present(pCell, "drug_sensitivity", drug_sensitivity);
+    // 3f) DRUG SENSITIVITY — stored conditionally on drug presence (Caveat #4).
+    // ABCB1 is an INDUCED resistance gene: the efflux pump only matters when
+    // cytotoxic drug substrate is present to export. Storing 1.0 (fully sensitive)
+    // when no drug is present prevents the EA from treating ABCB1 as a constitutive
+    // survival factor and wasting generations targeting it before treatment begins.
+    // When drug IS present, the stored value correctly reflects NRF2 + ABCB1
+    // resistance for fitness evaluation and downstream analysis.
+    const double drug_sensitivity_stored = (drug > 0.01)
+        ? std::max(0.05, std::min(1.0, 1.0 - 0.4 * nrf2 - 0.4 * abcb1))
+        : 1.0;
+    set_custom_data_if_present(pCell, "drug_sensitivity", drug_sensitivity_stored);
 }

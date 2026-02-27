@@ -32,12 +32,12 @@ enum GeneIndex : int
     // ---- Tumor oncogenes & signaling ----
     KRAS   = 0,   ///< KRAS G12D/V; constitutively activates RAS/MAPK, PI3K
     MYC    = 1,   ///< MYC transcription factor; drives proliferation, metabolism
-    EGFR   = 2,   ///< EGFR receptor tyrosine kinase; upstream of KRAS/AKT
+    CCND1  = 2,   ///< Cyclin D1; G1/S accelerator; pairs with CDK4 freed by CDKN2A LOF
 
     // ---- Tumor suppressors / pro-death ----
     TP53   = 3,   ///< p53 guardian of genome; lost in ~75% PDAC
     BCL_XL = 4,   ///< Anti-apoptotic BCL-2 family; navitoclax target
-    BAX    = 5,   ///< Pro-apoptotic BAX; activated by TP53
+    SNAI1  = 5,   ///< Snail EMT initiator TF; fast CDH1 repressor; first responder to TGF-b
 
     // ---- Cell-cycle brakes ----
     CDKN2A = 6,   ///< p16/INK4A CDK4/6 inhibitor; deleted in ~95% PDAC
@@ -126,10 +126,12 @@ inline constexpr std::array<GeneInfo, GENE_COUNT> GENE_INFO = {{
     // reflects heterogeneous expression; updated by Boolean network.
     { "MYC",    CellType::TUMOR,  FunctionalAxis::GROWTH,    false, 0.5, 0.0 },
 
-    // Index 2 — EGFR
-    // Upstream RTK; overexpressed in PDAC. Druggable (erlotinib/cetuximab).
-    // Initialized ON; modest effect due to KRAS bypass.
-    { "EGFR",   CellType::TUMOR,  FunctionalAxis::GROWTH,    true,  1.0, 0.0 },
+    // Index 2 — CCND1
+    // Cyclin D1; pairs with CDK4/6 to drive G1/S transition.
+    // Freed from p16/CDKN2A inhibition in PDAC (CDKN2A LOF ~90%).
+    // Druggable: palbociclib/ribociclib/abemaciclib (CDK4/6 inhibitors).
+    // Initial state 0.5 (dynamically computed; rises quickly under KRAS/MYC drive).
+    { "CCND1",  CellType::TUMOR,  FunctionalAxis::GROWTH,    true,  0.5, 0.0 },
 
     // Index 3 — TP53
     // Tumor suppressor; guardian of genome. Lost (mutated) in ~75% of PDAC.
@@ -141,10 +143,12 @@ inline constexpr std::array<GeneInfo, GENE_COUNT> GENE_INFO = {{
     // High default (0.8) reflects KRAS-driven survival signaling.
     { "BCL_XL", CellType::TUMOR,  FunctionalAxis::DEATH,     true,  0.8, 0.0 },
 
-    // Index 5 — BAX
-    // Pro-apoptotic effector; counterbalances BCL_XL. Activated by TP53.
-    // Low default (0.3) because TP53 is lost and BCL_XL is high.
-    { "BAX",    CellType::TUMOR,  FunctionalAxis::DEATH,     false, 0.3, 0.0 },
+    // Index 5 — SNAI1
+    // Snail EMT transcription factor; fast (hours) CDH1 repressor.
+    // First responder to TGF-beta signal; acts upstream of ZEB1.
+    // Not directly druggable (no approved SNAI1 inhibitors).
+    // Initial state 0.0 (quiescent epithelial; signal-driven).
+    { "SNAI1",  CellType::TUMOR,  FunctionalAxis::INVASION,  false, 0.0, 0.0 },
 
     // Index 6 — CDKN2A
     // p16/INK4A; CDK4/6 inhibitor. Deleted in ~95% PDAC via homozygous deletion.

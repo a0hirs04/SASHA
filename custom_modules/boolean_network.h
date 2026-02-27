@@ -10,7 +10,7 @@
 //   Classical Boolean networks use discrete {0,1} gene states. This model
 //   uses continuous [0.0, 1.0] states so that:
 //     (a) the evolutionary algorithm can evolve graded drug interventions
-//         (e.g., "reduce EGFR to 0.3" rather than simply "block EGFR"),
+//         (e.g., "reduce BCL_XL to 0.3" rather than simply "block BCL_XL"),
 //     (b) partial signaling states are representable (heterogeneous tumors),
 //     (c) smooth bifurcations replace hard switches (more numerically stable).
 //
@@ -191,7 +191,7 @@ public:
     /// @code
     /// {
     ///   "interventions": [
-    ///     {"gene": "EGFR",  "effect": "INHIBIT",    "strength": 0.8, "name": "erlotinib"},
+    ///     {"gene": "CCND1", "effect": "INHIBIT",    "strength": 0.8, "name": "palbociclib"},
     ///     {"gene": "HAS2",  "effect": "INHIBIT",    "strength": 0.6, "name": "PEGPH20"},
     ///     {"gene": "BCL_XL","effect": "INHIBIT",    "strength": 0.7, "name": "navitoclax"},
     ///     {"gene": "MYC",   "effect": "KNOCKDOWN",  "strength": 0.9, "name": "siRNA_MYC"},

@@ -1,0 +1,5 @@
+{
+    "claudeCode.initialPermissionMode": "bypassPermissions",
+    "claudeCode.useCtrlEnterToSend": true,
+    "github.copilot.chat.anthropic.tools.websearch.enabled": true
+}
