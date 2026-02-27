@@ -110,6 +110,7 @@ BooleanNetwork::BooleanNetwork()
 {
     std::fill(gene_states, gene_states + GENE_COUNT, 0.0);
     std::fill(is_mutant,   is_mutant   + GENE_COUNT, false);
+    std::fill(genotype,    genotype    + GENE_COUNT, GeneState::WT);
     assign_default_tau();
 }
 
@@ -202,6 +203,12 @@ void BooleanNetwork::initialize(CellType cell_type, const GeneParams& params)
         gene_states[SMAD4]  = 0.0;
         is_mutant[SMAD4]    = true;
     }
+
+    // ---- Set structural genotype from canonical defaults -------------------
+    // Genotype is fixed for the cell's lifetime; reflects GOF/LOF mutations.
+    // Must be called AFTER mutant locking above so the genotype correctly
+    // reflects the same mutations encoded in is_mutant[].
+    set_default_genotype(cell_type);
 }
 
 // ============================================================================
@@ -358,15 +365,25 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     // DEATH AXIS
     // =========================================================================
 
-    // BCL_XL — anti-apoptotic; basally expressed, boosted by survival signals.
+    // BCL_XL — anti-apoptotic; basally expressed, boosted by KRAS, NRF2, and HIF1A.
     //
     // Biological basis:
     //   BCL-XL is transcriptionally activated by NF-kB (downstream of KRAS)
     //   and by NRF2 (oxidative stress survival). The 0.3 basal term reflects
     //   constitutive expression in many cell types. KRAS contributes 0.5
-    //   via PI3K/AKT/NF-kB. NRF2 contributes 0.2 (stress-induced survival).
-    //   Sum can reach 1.0 in worst-case (KRAS ON + NRF2 ON).
-    target[BCL_XL] = clamp(0.3 + 0.5 * KRAS_ + 0.2 * NRF2_, 0.0, 1.0);
+    //   via PI3K/AKT/NF-kB. NRF2 contributes 0.15 (stress-induced survival).
+    //
+    //   HIF1A contributes 0.1 via a DIRECT arm (Mutation→Behavior Map v1.0,
+    //   HIF1A entry: "Death resistance via BCL-XL upregulation"; Confidence: HIGH):
+    //   HIF1A binds HREs in the BCL2L1 promoter and directly transactivates BCL-XL
+    //   transcription. This is distinct from the indirect NRF2-mediated pathway.
+    //   Mechanistic consequence: severe hypoxia raises BCL-XL by ~0.1 even without
+    //   drug, conferring anoikis resistance to cells in the hypoxic tumor core.
+    //   This is the "hypoxia → death resistance" loop captured in the stress axis.
+    //
+    //   Canonical PDAC (KRAS=1, NRF2=0.1, HIF1A=0): BCL_XL ≈ 0.815.
+    //   Hypoxic PDAC (HIF1A=1): BCL_XL ≈ 0.915 — harder to kill with navitoclax.
+    target[BCL_XL] = clamp(0.3 + 0.5 * KRAS_ + 0.15 * NRF2_ + 0.1 * HIF1A_, 0.0, 1.0);
 
     // SNAI1 — Snail; fast EMT initiator TF; first responder to TGF-b.
     //
@@ -949,4 +966,217 @@ std::vector<Intervention> BooleanNetwork::load_from_json(const std::string& file
               << " intervention(s) from: " << filepath << "\n";
 
     return result;
+}
+
+// ============================================================================
+// set_default_genotype
+//
+// Populates genotype[] from the canonical default table for this cell type.
+// Called automatically by initialize(); may be re-called if the EA overrides
+// structural states via KNOCKDOWN (→LOF) or OVEREXPRESS (→GOF) interventions.
+// ============================================================================
+
+void BooleanNetwork::set_default_genotype(CellType cell_type)
+{
+    const GeneState* src = (cell_type == CellType::TUMOR)
+                           ? TUMOR_DEFAULT_GENOTYPE
+                           : STROMA_DEFAULT_GENOTYPE;
+    for (int i = 0; i < GENE_COUNT; ++i)
+    {
+        genotype[i] = src[i];
+    }
+}
+
+// ============================================================================
+// compute_axis_outcome
+//
+// Implements the dominance voting system from:
+//   "Gene State Representation & Combination Rules v1.0", Parts 3–4.
+//
+// Algorithm:
+//   Step 1: Classify each gene's current activity as active/strong/low using
+//           thresholds on gene_states[]. These map to the signal contribution
+//           table (STRONG_UP ⬆⬆ / UP ⬆ / DOWN ⬇ / STRONG_DOWN ⬇⬇).
+//   Step 2: Apply the dominance voting table to get a qualitative outcome.
+//
+// NOTE: Veto rules (Part 4, Step 3) are NOT applied here — they override the
+//       outcome AFTER this function returns. See tumor_phenotype_update().
+//
+// Activity thresholds:
+//   strong (⬆⬆): gene_states[i] > 0.75  (dominant active; e.g., KRAS locked=1.0)
+//   active (⬆):  gene_states[i] > 0.50
+//   low    (⬇):  gene_states[i] < 0.25  (represents LOF / silenced)
+// ============================================================================
+
+AxisOutcome BooleanNetwork::compute_axis_outcome(FunctionalAxis axis,
+                                                  double tgfb_local,
+                                                  double drug_local) const
+{
+    // Classify gene activity.
+    auto is_strong = [&](GeneIndex g) { return gene_states[g] > 0.75; };
+    auto is_active = [&](GeneIndex g) { return gene_states[g] > 0.50; };
+    auto is_low    = [&](GeneIndex g) { return gene_states[g] < 0.25; };
+
+    // Tally signed votes (positive = up-push; negative = down-push).
+    // Weight: STRONG = 2 votes, regular = 1 vote.
+    int votes = 0;
+    int strong_ups = 0;
+    int strong_downs = 0;
+    bool any_up   = false;
+    bool any_down = false;
+
+    switch (axis)
+    {
+    // ---- GROWTH DRIVE -------------------------------------------------------
+    // From signal contribution table (Part 3, GROWTH DRIVE section):
+    //   KRAS+ → ⬆⬆ (constitutive)
+    //   MYC+  → ⬆⬆
+    //   CDKN2A- → ⬆ (brake removal reads as growth push)
+    //   SMAD4- + TGF-β → ⬆? (conditional: lost brake under TGF-β)
+    //   ZEB1 active → ⬇ (go-vs-grow: diverts resources to motility program)
+    //   HIF1A active → ⬇? (acute hypoxia slows cycling)
+    case FunctionalAxis::GROWTH:
+        if (is_strong(KRAS))  { votes += 2; ++strong_ups; }     // ⬆⬆ constitutive
+        else if (is_active(KRAS)) { votes += 2; ++strong_ups; }  // always GOF; treat as strong
+        if (is_strong(MYC))   { votes += 2; ++strong_ups; }     // ⬆⬆
+        else if (is_active(MYC)) { votes += 1; any_up = true; }  // ⬆ (moderate MYC)
+        if (is_low(CDKN2A))   { votes += 1; any_up = true; }   // ⬆ brake removal
+        // SMAD4 conditional: lost brake reads as growth push when TGF-β present
+        if (is_low(SMAD4) && tgfb_local > TGFB_ACTIVATION_THRESHOLD)
+                              { votes += 1; any_up = true; }    // ⬆? conditional
+        if (is_active(ZEB1))  { votes -= 1; any_down = true; } // ⬇ go-vs-grow
+        // HIF1A: acute hypoxia only — only count DOWN if strongly active
+        if (is_strong(HIF1A)) { votes -= 1; any_down = true; } // ⬇? conditional
+        break;
+
+    // ---- DEATH RESISTANCE ---------------------------------------------------
+    // TP53- → ⬆⬆, BCL-XL+ → ⬆⬆, BAX=WT → ⬇ (outcompeted by BCL-XL)
+    // KRAS+ → ⬆ (PI3K/AKT), ZEB1 → ⬆ (anoikis), HIF1A → ⬆ (autophagy/BCL-XL)
+    // NRF2 → ⬆ (ROS detox), ABCB1 + drug → ⬆⬆ (conditional)
+    case FunctionalAxis::DEATH:
+        if (is_low(TP53))     { votes += 2; ++strong_ups; }     // ⬆⬆ loss of pro-death
+        if (is_strong(BCL_XL)){ votes += 2; ++strong_ups; }     // ⬆⬆ anti-apoptotic
+        else if (is_active(BCL_XL)){ votes += 1; any_up = true; }
+        // BAX WT → DOWN (functionally outcompeted when BCL-XL is high, but still votes)
+        if (!is_active(BCL_XL) && !is_low(BCL_XL))
+                              { votes -= 1; any_down = true; }  // ⬇ BAX pro-death push
+        if (is_active(KRAS))  { votes += 1; any_up = true; }   // ⬆ PI3K/AKT survival
+        if (is_active(ZEB1))  { votes += 1; any_up = true; }   // ⬆ anoikis resistance
+        if (is_active(HIF1A)) { votes += 1; any_up = true; }   // ⬆ autophagy + BCL-XL
+        if (is_active(NRF2))  { votes += 1; any_up = true; }   // ⬆ ROS detox
+        // ABCB1: STRONG_UP conditional on drug presence (Veto 5: zero when no drug)
+        if (is_active(ABCB1) && drug_local > 0.01)
+                              { votes += 2; ++strong_ups; }     // ⬆⬆? conditional
+        break;
+
+    // ---- CELL CYCLE BRAKING -------------------------------------------------
+    // Higher outcome = more responsive to arrest signals.
+    // LOF genes remove brakes → contribute DOWN (braking is reduced).
+    // CDKN2A- → ⬇⬇, TP53- → ⬇⬇, SMAD4- → ⬇, RB1 low → ⬇
+    // MYC+ → ⬇⬇ (overrides checkpoints), KRAS+ → ⬇ (partial override)
+    case FunctionalAxis::BRAKING:
+        // Note: "high" braking outcome = MORE arrest capacity.
+        // LOF genes destroy brakes → strong DOWN (less braking).
+        if (is_low(CDKN2A))   { votes -= 2; ++strong_downs; }  // ⬇⬇ p16 deleted
+        if (is_low(TP53))     { votes -= 2; ++strong_downs; }  // ⬇⬇ p53 lost
+        if (is_low(SMAD4))    { votes -= 1; any_down = true; } // ⬇ TGF-β arrest disabled
+        if (is_low(RB1))      { votes -= 1; any_down = true; } // ⬇ convergence node off
+        if (is_strong(MYC))   { votes -= 2; ++strong_downs; }  // ⬇⬇ overrides checkpoints
+        else if (is_active(MYC)){ votes -= 1; any_down = true; }// ⬇ partial override
+        if (is_active(KRAS))  { votes -= 1; any_down = true; } // ⬇ ERK→MYC→CDK override
+        break;
+
+    // ---- MOTILITY / INVASION ------------------------------------------------
+    // ZEB1 active → ⬆⬆, CDH1 repressed (when ZEB1=ON) → ⬆⬆
+    // MMP2 active → ⬆⬆, SMAD4- + TGF-β → ⬆? (SMAD-independent invasion)
+    // TP53- → ⬆ (GoF integrin recycling), HIF1A → ⬆ (hypoxia-driven migration)
+    case FunctionalAxis::INVASION:
+        if (is_active(ZEB1))  { votes += 2; ++strong_ups; }    // ⬆⬆ EMT master regulator
+        // CDH1 repressed (when ZEB1=ON): contributes STRONG_UP independently
+        if (is_low(CDH1) && is_active(ZEB1))
+                              { votes += 2; ++strong_ups; }     // ⬆⬆ CDH1 repressed
+        if (is_active(MMP2))  { votes += 2; ++strong_ups; }    // ⬆⬆ ECM degradation
+        // SMAD4- + TGF-β: SMAD-independent invasion arm (active regardless of SMAD4)
+        if (is_low(SMAD4) && tgfb_local > TGFB_ACTIVATION_THRESHOLD)
+                              { votes += 1; any_up = true; }    // ⬆? conditional
+        if (is_low(TP53))     { votes += 1; any_up = true; }   // ⬆ GoF integrin recycling
+        if (is_active(HIF1A)) { votes += 1; any_up = true; }   // ⬆ hypoxia-driven migration
+        break;
+
+    // ---- PRO-STROMA SIGNALING -----------------------------------------------
+    // TGFB1 secreted → ⬆⬆, SHH+ → ⬆⬆, KRAS+ → ⬆⬆ (drives both)
+    // GLI1 → ⬆, ACTA2 active → ⬆⬆, HAS2 active → ⬆⬆, COL1A1 → ⬆⬆
+    // HIF1A → ⬆ (CTGF, secondary), MMP2 → ⬇ (ECM degradation opposes buildup)
+    case FunctionalAxis::SECRETION:
+        if (is_active(TGFB1)) { votes += 2; ++strong_ups; }    // ⬆⬆ main barrier builder
+        if (is_active(SHH))   { votes += 2; ++strong_ups; }    // ⬆⬆ paracrine to stroma
+        if (is_active(KRAS))  { votes += 2; ++strong_ups; }    // ⬆⬆ drives TGFB1 + SHH
+        if (is_active(GLI1))  { votes += 1; any_up = true; }   // ⬆ CAF proliferation + ECM
+        if (is_active(ACTA2)) { votes += 2; ++strong_ups; }    // ⬆⬆ full CAF activation
+        if (is_active(HAS2))  { votes += 2; ++strong_ups; }    // ⬆⬆ HA production
+        if (is_active(COL1A1)){ votes += 2; ++strong_ups; }    // ⬆⬆ collagen production
+        if (is_active(HIF1A)) { votes += 1; any_up = true; }   // ⬆ CTGF secondary signals
+        if (is_active(MMP2))  { votes -= 1; any_down = true; } // ⬇ ECM degradation opposes
+        break;
+
+    // ---- STRESS (NRF2/HIF1A, used for immune-evasion axis bookkeeping) -----
+    case FunctionalAxis::STRESS:
+        if (is_active(NRF2))  { votes += 2; ++strong_ups; }
+        if (is_active(HIF1A)) { votes += 2; ++strong_ups; }
+        if (is_active(ABCB1)) { votes += 1; any_up = true; }
+        break;
+    }
+
+    // ---- Dominance voting table (Part 4, Step 2) ----------------------------
+    // AXIS OUTCOME = strongest active signal, modulated by opposition.
+    //
+    // | Active Pushes              | Outcome   |
+    // |----------------------------|-----------|
+    // | All neutral                | BASELINE  |
+    // | Any ⬆ or ⬆⬆, no ⬇        | HIGH/VERY HIGH |
+    // | Any ⬇ or ⬇⬇, no ⬆        | LOW/VERY LOW   |
+    // | Mixed ⬆⬆ and ⬇            | HIGH      |
+    // | Mixed ⬆ and ⬇             | MODERATE  |
+    // | Mixed ⬆⬆ and ⬇⬇           | MODERATE  |
+    // | Single ⬆⬆ alone            | HIGH      |
+    // | Multiple ⬆⬆               | VERY HIGH |
+
+    bool has_strong_up   = (strong_ups   > 0);
+    bool has_strong_down = (strong_downs > 0);
+    any_up   = any_up   || has_strong_up;
+    any_down = any_down || has_strong_down;
+
+    AxisOutcome outcome;
+
+    if (!any_up && !any_down)
+    {
+        // All neutral: axis at normal tissue baseline.
+        outcome = AxisOutcome::BASELINE;
+    }
+    else if (any_up && !any_down)
+    {
+        // Uncontested upward drive.
+        if (strong_ups >= 2)      outcome = AxisOutcome::VERY_HIGH; // Multiple ⬆⬆
+        else if (strong_ups == 1) outcome = AxisOutcome::HIGH;       // Single ⬆⬆ alone
+        else                      outcome = AxisOutcome::MODERATE;   // Only regular ⬆
+    }
+    else if (!any_up && any_down)
+    {
+        // Uncontested downward suppression.
+        if (strong_downs >= 2)    outcome = AxisOutcome::NONE;      // Double ⬇⬇
+        else if (strong_downs == 1)outcome = AxisOutcome::VERY_LOW;  // Single ⬇⬇
+        else                      outcome = AxisOutcome::LOW;        // Only regular ⬇
+    }
+    else
+    {
+        // Contested: mixed up and down signals.
+        if (has_strong_up && !has_strong_down)
+            outcome = AxisOutcome::HIGH;      // Strong up wins over weak down
+        else if (has_strong_up && has_strong_down)
+            outcome = AxisOutcome::MODERATE;  // Titans cancel; residual context decides
+        else
+            outcome = AxisOutcome::MODERATE;  // ⬆ vs ⬇: partial effect
+    }
+
+    return outcome;
 }

@@ -116,9 +116,15 @@ public:
 
     // ---- State ----------------------------------------------------------------
 
-    double gene_states[GENE_COUNT]; ///< Current continuous gene state in [0, 1]
-    double tau[GENE_COUNT];         ///< Time constants (minutes) per gene
-    bool   is_mutant[GENE_COUNT];   ///< If true, gene is locked and not updated
+    double    gene_states[GENE_COUNT]; ///< Current continuous gene activity in [0, 1]
+    double    tau[GENE_COUNT];         ///< Time constants (minutes) per gene
+    bool      is_mutant[GENE_COUNT];   ///< If true, gene is locked and not updated
+
+    /// Structural gene state (GOF/LOF/WT): fixed for the lifetime of a cell.
+    /// Set by set_default_genotype() at initialize(); may be overridden by
+    /// KNOCKDOWN / OVEREXPRESS interventions. Used by compute_axis_outcome()
+    /// to determine dominance voting contributions.
+    GeneState genotype[GENE_COUNT];
 
     // ---- Lifecycle ------------------------------------------------------------
 
@@ -208,6 +214,36 @@ public:
     /// @param filepath  Absolute or relative path to the JSON file.
     /// @returns         Vector of fully resolved Intervention structs.
     static std::vector<Intervention> load_from_json(const std::string& filepath);
+
+    // ---- Dominance Voting (Gene State Representation & Combination Rules v1.0) ---
+
+    /// Set genotype[] from the canonical default table for this cell type.
+    /// Called automatically by initialize(); may be re-called if the EA overrides
+    /// a gene's structural state via KNOCKDOWN / OVEREXPRESS.
+    void set_default_genotype(CellType cell_type);
+
+    /// Compute the qualitative behavioral axis outcome using dominance voting
+    /// over active gene contributions (Part 3–4 of the combination rules document).
+    ///
+    /// Gene activity thresholds used internally:
+    ///   active:  gene_states[i] > 0.50  (gene is functionally ON)
+    ///   strong:  gene_states[i] > 0.75  (dominant, e.g., KRAS=1.0)
+    ///   low:     gene_states[i] < 0.25  (LOF / silenced)
+    ///
+    /// Conditional contributions (◆ entries) are evaluated against:
+    ///   tgfb_local > TGFB_ACTIVATION_THRESHOLD  (for SMAD4 conditional entries)
+    ///   drug_local > 0.01                        (for ABCB1 conditional entry)
+    ///
+    /// Does NOT apply veto rules — caller must apply veto rules separately
+    /// (see tumor_phenotype_update() in tumor_cell.cpp).
+    ///
+    /// @param axis       Which behavioral axis to evaluate
+    /// @param tgfb_local Local TGF-β concentration (for conditional contributions)
+    /// @param drug_local Local drug concentration (for ABCB1 conditional)
+    /// @returns          Qualitative outcome: NONE → VERY_HIGH
+    AxisOutcome compute_axis_outcome(FunctionalAxis axis,
+                                     double tgfb_local,
+                                     double drug_local) const;
 
     // ---- Convenience accessors -----------------------------------------------
 

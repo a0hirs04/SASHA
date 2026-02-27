@@ -283,7 +283,183 @@ inline constexpr double EMT_ZEB1_THRESHOLD = 0.5;
 inline constexpr double STRESS_NRF2_THRESHOLD = 0.5;
 
 // ----------------------------------------------------------------------------
-// 6. ThresholdConfig — runtime threshold values loaded from XML
+// 6. GENE STATE ENUM — Gene State Representation & Combination Rules v1.0
+//
+//    Represents the STRUCTURAL (genetic/epigenetic) state of a gene.
+//    State is FIXED for the lifetime of a cell. Phenotype changes come from
+//    signal-dependent Boolean logic acting on fixed gene states — NOT from
+//    gene state transitions.
+//
+//    GOF/LOF are defined relative to normal pancreatic ductal epithelium
+//    (for tumor genes) or normal pancreatic stellate cells (for stromal genes).
+//
+//    UNK must resolve to WT before simulation begins:
+//      Resolution rule: ? → WT unless the EA or scenario explicitly sets it.
+// ----------------------------------------------------------------------------
+enum class GeneState : int
+{
+    WT  =  0,  ///< Wild-type: normal function (default)
+    GOF =  1,  ///< Gain-of-function: constitutive activation / amplification
+    LOF = -1,  ///< Loss-of-function: deletion, inactivation, epigenetic silencing
+    UNK =  2   ///< Unknown: must resolve before run begins (→ WT by default)
+};
+
+// ----------------------------------------------------------------------------
+// Default PDAC tumor cell genotype — "canonical late-stage PDAC"
+//   KRAS+, MYC+, TP53-, BCL-XL+, CDKN2A-, SMAD4- (all others WT/inducible)
+//   Indexed by GeneIndex enum.
+//
+//   Key PDAC asymmetry (Critical Caveat #1):
+//     SMAD4=LOF in tumor → TGF-β drives invasion (SNAI1/ZEB1) NOT growth arrest.
+//     SMAD4=WT  in stroma → TGF-β fully activates CAF (ACTA2 rule).
+// ----------------------------------------------------------------------------
+inline constexpr GeneState TUMOR_DEFAULT_GENOTYPE[GENE_COUNT] = {
+    GeneState::GOF,  // 0  KRAS   — constitutive G12D/V (~95% PDAC)
+    GeneState::GOF,  // 1  MYC    — transcriptionally upregulated
+    GeneState::WT,   // 2  CCND1  — WT; freed by CDKN2A loss, signal-activated
+    GeneState::LOF,  // 3  TP53   — mutant/deleted (~75% PDAC)
+    GeneState::GOF,  // 4  BCL_XL — overexpressed; anti-apoptotic dominant
+    GeneState::WT,   // 5  SNAI1  — WT; inducible by TGF-β (not constitutive)
+    GeneState::LOF,  // 6  CDKN2A — homozygous deletion (~90% PDAC)
+    GeneState::LOF,  // 7  SMAD4  — deleted/mutant (~55% PDAC)
+    GeneState::WT,   // 8  RB1    — WT but functionally inactivated by CDKN2A loss
+    GeneState::WT,   // 9  ZEB1   — WT; inducible by TGF-β/HIF1A (not constitutive)
+    GeneState::WT,   // 10 CDH1   — WT; expressed until ZEB1 activates
+    GeneState::WT,   // 11 MMP2   — WT; inducible
+    GeneState::WT,   // 12 ACTA2  — stroma gene; WT/unused in tumor cells
+    GeneState::WT,   // 13 TGFB1  — WT; KRAS-driven secretion
+    GeneState::GOF,  // 14 SHH    — GOF; KRAS constitutively drives SHH secretion
+    GeneState::WT,   // 15 GLI1   — stroma gene; WT/unused in tumor cells
+    GeneState::WT,   // 16 HAS2   — stroma gene; WT/unused in tumor cells
+    GeneState::WT,   // 17 COL1A1 — stroma gene; WT/unused in tumor cells
+    GeneState::WT,   // 18 HIF1A  — WT; activated by hypoxia (not constitutive)
+    GeneState::WT,   // 19 NRF2   — WT; activated by oxidative stress (not constitutive)
+    GeneState::WT,   // 20 ABCB1  — WT; activated by NRF2 (not constitutive)
+};
+
+// ----------------------------------------------------------------------------
+// Default stromal cell (quiescent PSC) genotype
+//   All genes WT/quiescent except SHH=LOF (stroma does NOT secrete SHH).
+//   SMAD4=WT (stroma is fully TGF-β responsive — unlike tumor SMAD4=LOF).
+//   Indexed by GeneIndex enum.
+// ----------------------------------------------------------------------------
+inline constexpr GeneState STROMA_DEFAULT_GENOTYPE[GENE_COUNT] = {
+    GeneState::WT,   // 0  KRAS   — not relevant in stroma
+    GeneState::WT,   // 1  MYC    — not relevant in stroma
+    GeneState::WT,   // 2  CCND1  — not relevant in stroma
+    GeneState::WT,   // 3  TP53   — not relevant in stroma
+    GeneState::WT,   // 4  BCL_XL — not relevant in stroma
+    GeneState::WT,   // 5  SNAI1  — not relevant in stroma
+    GeneState::WT,   // 6  CDKN2A — not relevant in stroma
+    GeneState::WT,   // 7  SMAD4  — WT in stroma: TGF-β → ACTA2 arm is ACTIVE
+    GeneState::WT,   // 8  RB1    — not relevant in stroma
+    GeneState::WT,   // 9  ZEB1   — not relevant in stroma
+    GeneState::WT,   // 10 CDH1   — not relevant in stroma
+    GeneState::WT,   // 11 MMP2   — WT; inducible in activated CAFs
+    GeneState::WT,   // 12 ACTA2  — WT; quiescent; activates on TGF-β/SHH signal
+    GeneState::WT,   // 13 TGFB1  — WT; secretion rate is signal-dependent
+    GeneState::LOF,  // 14 SHH    — LOF; stromal cells do NOT secrete SHH (tumor-only)
+    GeneState::WT,   // 15 GLI1   — WT; activates on paracrine SHH signal from tumor
+    GeneState::WT,   // 16 HAS2   — WT; activates when CAF is activated via ACTA2
+    GeneState::WT,   // 17 COL1A1 — WT; activates when CAF is activated via ACTA2
+    GeneState::WT,   // 18 HIF1A  — WT; activated by hypoxia
+    GeneState::WT,   // 19 NRF2   — WT; not modeled in stroma (Cycle 2+)
+    GeneState::WT,   // 20 ABCB1  — WT; not modeled in stroma (Cycle 2+)
+};
+
+// ----------------------------------------------------------------------------
+// 7. AXIS OUTCOME ENUM — Gene State Representation & Combination Rules v1.0
+//
+//    Qualitative output of the dominance voting step (Part 4 of the document).
+//    Numbers enter ONLY at the final mapping step via literature-backed bins.
+//    The combination rules produce a bin; the bin has a pre-set value.
+//
+//    Casting to int gives a 0-6 index usable in PhenoParamBins arrays.
+// ----------------------------------------------------------------------------
+enum class AxisOutcome : int
+{
+    NONE      = 0,  ///< Parameter hard-set to zero (or functionally equivalent)
+    VERY_LOW  = 1,  ///< Parameter at minimum / near-zero
+    LOW       = 2,  ///< Parameter at lower quartile of literature range
+    BASELINE  = 3,  ///< Parameter at normal tissue value
+    MODERATE  = 4,  ///< Parameter at midpoint of literature range
+    HIGH      = 5,  ///< Parameter at upper quartile of literature range
+    VERY_HIGH = 6   ///< Parameter at maximum biologically plausible value
+};
+
+// ----------------------------------------------------------------------------
+// 8. PARAMETER BINS — Literature-backed PhysiCell parameter values
+//
+//    These bins are the ONLY place where qualitative combination logic maps
+//    to simulation numbers. Sources: PDAC cell biology literature.
+//
+//    The EA tunes gene states (interventions); the bins are pre-set.
+//    The combination rules produce a bin; the bin has a pre-set value.
+// ----------------------------------------------------------------------------
+namespace PhenoParamBins
+{
+    // -- PROLIFERATION: G0/G1→S transition rate (per minute) --
+    // PDAC doubling times: 18–72h (Deer et al. 2010, Cancer Biol Ther);
+    // normal pancreatic ductal epithelium: ~3–5 day turnover.
+    inline constexpr double PROLIF[7] = {
+        0.0,          // NONE      — arrested (brake veto: CDKN2A- + TP53- + MYC+)
+        0.0000099,    // VERY_LOW  — ~1 division/7 days (quiescent PSC range)
+        0.0000198,    // LOW       — ~1 division/3.5 days (near-quiescent)
+        0.0000330,    // BASELINE  — ~1 division/48h (normal ductal epithelium)
+        0.000463,     // MODERATE  — ~1 division/36h (slow PDAC)
+        0.000694,     // HIGH      — ~1 division/24h (fast PDAC)
+        0.000926      // VERY_HIGH — ~1 division/18h (maximum PDAC proliferation)
+    };
+
+    // -- APOPTOSIS: intrinsic death rate (per minute), before drug --
+    // Normal pancreatic turnover ~3–7%/day; BCL-XL+ PDAC suppresses to ~0.1%/day.
+    // Death Resistance → invert: HIGH resistance = LOW apoptosis rate.
+    inline constexpr double APOPTOSIS[7] = {
+        0.0,          // NONE      — immortal (BCL-XL veto: death suppressed to floor)
+        0.000006,     // VERY_LOW  — BCL-XL+ KRAS+: ~0.009%/min (near-immortal)
+        0.000014,     // LOW       — partial resistance
+        0.000083,     // BASELINE  — normal tissue turnover (~5%/day ≈ 0.0035%/min)
+        0.000208,     // MODERATE  — drug-sensitive without resistance genes
+        0.000417,     // HIGH      — TP53-restored + drug
+        0.000833      // VERY_HIGH — maximum (drug + BCL-XL blocked + TP53 restored)
+    };
+
+    // -- MIGRATION SPEED (µm/min) --
+    // Mesenchymal PDAC: 0.5–1.0 µm/min; epithelial PDAC: 0.1–0.25 µm/min.
+    inline constexpr double MIGRATION[7] = {
+        0.0,   // NONE      — anchored/non-motile
+        0.05,  // VERY_LOW  — epithelial in dense ECM
+        0.1,   // LOW       — epithelial baseline
+        0.2,   // BASELINE  — partial EMT / SNAI1-activated
+        0.4,   // MODERATE  — ZEB1-low mesenchymal
+        0.7,   // HIGH      — ZEB1-high mesenchymal (veto: ZEB1=active + CDH1=repressed)
+        1.0    // VERY_HIGH — full EMT + no ECM constraint
+    };
+
+    // -- CELL-CELL ADHESION STRENGTH (PhysiCell mechanics units) --
+    // CDH1=1 (epithelial): 0.4; CDH1=0 (full mesenchymal): 0.05.
+    inline constexpr double ADHESION[7] = {
+        0.0,   // NONE      — no adhesion (anoikis-resistant, detached)
+        0.05,  // VERY_LOW  — full mesenchymal, CDH1-null
+        0.1,   // LOW       — mesenchymal, CDH1-low
+        0.2,   // BASELINE  — partial EMT
+        0.3,   // MODERATE  — partial EMT, CDH1-moderate
+        0.4,   // HIGH      — epithelial CDH1-high (veto: ZEB1=inactive + CDH1=high)
+        0.5    // VERY_HIGH — hyperadhesive (not typical PDAC; Cycle 2 organoid modeling)
+    };
+
+    /// Index into a bin array by AxisOutcome (bounds-checked).
+    inline double get(const double (&bins)[7], AxisOutcome o)
+    {
+        int i = static_cast<int>(o);
+        if (i < 0) i = 0;
+        if (i > 6) i = 6;
+        return bins[i];
+    }
+} // namespace PhenoParamBins
+
+// ----------------------------------------------------------------------------
+// 10. ThresholdConfig — runtime threshold values loaded from XML
 //
 //    Single source of truth for all microenvironment thresholds.
 //    Populated once at simulation setup via load_from_xml(), then passed
