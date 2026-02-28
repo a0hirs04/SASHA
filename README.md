@@ -1,51 +1,94 @@
 # PROJECT-NORTHSTAR
 
-## Calibration model
-- Runtime calibration uses **13 knobs from 8 traits** (`config/tumor_calibration_knobs.json`).
-- Active profile defaults to **AsPC-1** and can be switched to **PANC-1** via:
-  - XML: `user_parameters/calibration_profile`
-  - intervention JSON: `"calibration_profile": "AsPC-1|PANC-1"`
+# Stroma World (PDAC Barrier Counterfactual Evolution Engine)
 
-## Partition policy (critical)
-- Knobs are partitioned as:
-  - `Fixed` (5): tumor-defining, read-only
-  - `Observable` (4): measurable state descriptors, read-only
-  - `Targetable` (4): EA/drug-touch surface
-- Targetable set is strictly:
-  - `tgfb_secretion_rate` (1a)
-  - `shh_secretion_rate` (1b)
-  - `efflux_induction_delay` (7a)
-  - `efflux_strength` (7b)
-- Partition is enforced in C++ and Python; non-targetable overrides fail early.
+A simulation-first research platform for discovering **stroma-aware** anti-PDAC strategies using a **counterfactual evolution** framework.
 
-## Intervention schema
-- Canonical payload:
-```json
-{
-  "calibration_profile": "AsPC-1",
-  "knob_interventions": [
-    {"knob": "tgfb_secretion_rate", "effect": "INHIBIT", "strength": 0.6, "name": "example"}
-  ],
-  "drug_delivery": {}
-}
-```
-- One-release legacy bridge is limited to:
-  - `TGFB1 -> tgfb_secretion_rate`
-  - `SHH -> shh_secretion_rate`
-  - `ABCB1 -> efflux_strength`
-- Other legacy gene targets are rejected with partition-violation errors.
+> **Current status:** Phase 1 (World Spec) complete and locked. Implementation in progress.
 
-## EA touch surface
-- EA config now uses `targetable_knobs` (not `druggable_genes`).
-- Individuals are knob-based with at most one intervention per knob and max 4 interventions.
+---
 
-## Reality Anchors
-- `python/validation/validate_biology.py` runs **10 dependency-ordered reality anchors**.
-- Dependency tree enforced at runtime; downstream anchors are skipped when prerequisites fail.
-- Priority anchors for early bug-catching are wired explicitly:
-  - Anchor 1 first (`ANCHOR_1_SELF_ASSEMBLY`)
-  - Anchor 3 early (`ANCHOR_3_SHH_PARADOX`)
-  - Anchor 10 final integration (`ANCHOR_10_SPATIAL_SANCTUARY`)
-- Validation protocol uses replicate medians (`--replicates-per-arm`, default `3`) and a
-  **34-test directional pass/fail matrix** (no calibration constants as pass gates).
-- Runtime summary reports median per-run wall time and projected **~60-run pre-EA HPC budget**.
+## Why this project exists
+
+Pancreatic ductal adenocarcinoma (PDAC) is notoriously resistant to therapy in part because the tumor exists inside a **dense stromal barrier** that limits penetration, alters cell behavior, and creates protected “sanctuaries.” Traditional approaches often optimize therapies in simplified settings and then fail when confronted with barrier dynamics.
+
+This project builds a **minimal-but-faithful PDAC stroma barrier world** and uses **counterfactual evolution** (search over intervention policies under strict safety and realism constraints) to identify strategies that perform well in hostile, PDAC-like microenvironments.
+
+---
+
+## Core idea (plain English)
+
+1. Build a **PDAC-faithful “mini-world”** that reproduces key qualitative PDAC behaviors (barrier formation, drug exclusion, sanctuary formation, and safety tradeoffs).
+2. Define a small set of **targetable intervention knobs** representing actions that can plausibly map to real interventions.
+3. Use an **evolutionary search** (and later, surrogate acceleration) to find robust strategies that:
+   - control tumor burden,
+   - avoid catastrophic spread,
+   - and respect collateral damage constraints.
+
+This is not “magic AI cures cancer.”  
+It is a disciplined engineering pipeline that produces **testable hypotheses and schedules** for validation.
+
+---
+
+## Project roadmap (Phases)
+
+### Phase 0 — Constitution (Mission + Non-negotiables)
+Defines hard constraints:
+- What counts as “success”
+- What is forbidden (no cheating, no omniscience)
+- Safety/collateral limits
+- Versioning + reproducibility requirements
+
+### Phase 1 — Stroma Barrier World Spec (✅ COMPLETE)
+A locked, versioned spec describing:
+- Actors (cell types / world objects)
+- State variables
+- Rules (plain English dynamics)
+- Reality anchors + metrics + pass/fail tests
+- Module wiring (directed influence graph)
+- Assumptions/exclusions and revisit triggers
+
+### Phase 2 — Action Menu Spec (IN PROGRESS / NEXT)
+Defines how interventions are represented:
+- Action definitions + knobs (intensity, duration, timing, scope)
+- Metrics + lab readouts
+- Safety costs and legality rules
+- Sequencing constraints (PDAC-specific)
+
+### Phase 3 — Counterfactual Evolution Engine
+- Strategy/policy search (EA/RL/hybrid)
+- Surrogate scoring + truth checks (to make search feasible)
+- Anti-cheat stress tests + robustness sweeps
+
+### Phase 4 — Strategy Products
+Turn winners into lab-ready playbooks:
+- Minimal action sets (2–6 actions)
+- Sequencing schedules
+- Failure modes + boundary conditions
+- Experiment matrices
+
+### Phase 5 — Wet-lab validation
+Validate in PDAC-relevant systems (progressive ladder):
+- Co-culture → spheroids → organoids → microfluidics → in vivo (later)
+
+### Phase 6 — Calibration loop
+Use lab outcomes to refine:
+- Parameters
+- Missing mechanisms
+- Constraint tuning  
+(with strict change control + regression tests)
+
+### Phase 7 — Production readiness
+Prove it’s a platform:
+- Robustness across virtual patients
+- Safety audit
+- Replayability
+- Documentation + versioned release criteria
+
+---
+
+## What’s in this repository
+
+> **NOTE:** repo structure may change as implementation progresses.
+
+Suggested layout:
