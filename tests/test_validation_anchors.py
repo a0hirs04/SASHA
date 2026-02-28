@@ -36,8 +36,8 @@ def test_anchor_suite_has_expected_order_and_dependencies(ea_test_paths, tmp_pat
     validator = _make_validator(ea_test_paths, tmp_path)
     specs = validator._scenario_specs()  # noqa: SLF001
 
-    # 12 simulation anchors (1-10, three Anchor-8 arms) + 5 virtual Reality Checks = 17
-    assert len(specs) == 17
+    # 13 simulation anchors (1-10, Anchor-7B, three Anchor-8 arms) + 5 virtual Reality Checks = 18
+    assert len(specs) == 18
     assert set(spec.anchor_id for spec in specs) == set(range(1, 16))
     assert specs[0].name == "ANCHOR_1_SELF_ASSEMBLY"
     assert specs[1].name == "ANCHOR_3_SHH_PARADOX"
@@ -72,10 +72,13 @@ def test_anchor_suite_has_expected_order_and_dependencies(ea_test_paths, tmp_pat
         "ANCHOR_10_SPATIAL_SANCTUARY",
     ]
 
-    # CHECK_4 ranks all five treatment strategies
-    assert "ANCHOR_1_SELF_ASSEMBLY" in by_name["CHECK_4_FITNESS_RANKING"].dependencies
-    assert "ANCHOR_3_SHH_PARADOX" in by_name["CHECK_4_FITNESS_RANKING"].dependencies
-    assert "ANCHOR_8_BOTH_DEPLETED_DRUG" in by_name["CHECK_4_FITNESS_RANKING"].dependencies
+    # CHECK_4 ranks four treatment strategies
+    assert by_name["CHECK_4_FITNESS_RANKING"].dependencies == [
+        "ANCHOR_2_DRUG_PENETRATION_MATURITY",
+        "ANCHOR_3_SHH_PARADOX",
+        "ANCHOR_7B_ECM_DEGRADE_ONLY",
+        "ANCHOR_8_BOTH_DEPLETED_DRUG",
+    ]
 
     assert by_name["CHECK_5_SANCTUARY_REGROWTH"].dependencies == [
         "CHECK_1_NATURAL_HISTORY",
@@ -102,9 +105,9 @@ def test_dependency_gate_skips_all_downstream_when_anchor1_fails(ea_test_paths, 
     summary = validator.run_all()
 
     assert calls == ["ANCHOR_1_SELF_ASSEMBLY"]
-    assert summary.total == 17
+    assert summary.total == 18
     assert summary.passed == 0
-    assert summary.failed == 17
+    assert summary.failed == 18
     for result in summary.scenario_results[1:]:
         assert result.exit_code == -2
         assert "failed dependencies" in result.details
@@ -126,8 +129,9 @@ def test_dependency_gate_skips_only_affected_branches(ea_test_paths, tmp_path, m
     summary = validator.run_all()
     by_name = {r.scenario: r for r in summary.scenario_results}
 
-    # A3 failure propagates to A7 and all three A8 arms
+    # A3 failure propagates to A7, A7B, and all three A8 arms
     assert "ANCHOR_7_ECM_DEGRADATION_LIMITS" not in calls
+    assert "ANCHOR_7B_ECM_DEGRADE_ONLY" not in calls
     assert "ANCHOR_8_HA_DEPLETED_DRUG" not in calls
     assert "ANCHOR_8_COL_DEPLETED_DRUG" not in calls
     assert "ANCHOR_8_BOTH_DEPLETED_DRUG" not in calls
@@ -140,6 +144,7 @@ def test_dependency_gate_skips_only_affected_branches(ea_test_paths, tmp_path, m
     assert "ANCHOR_10_SPATIAL_SANCTUARY" not in calls
 
     assert by_name["ANCHOR_7_ECM_DEGRADATION_LIMITS"].exit_code == -2
+    assert by_name["ANCHOR_7B_ECM_DEGRADE_ONLY"].exit_code == -2
     assert by_name["ANCHOR_8_HA_DEPLETED_DRUG"].exit_code == -2
     assert by_name["ANCHOR_8_COL_DEPLETED_DRUG"].exit_code == -2
     assert by_name["ANCHOR_8_BOTH_DEPLETED_DRUG"].exit_code == -2

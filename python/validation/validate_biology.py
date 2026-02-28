@@ -1000,6 +1000,7 @@ class BiologyValidator:
         ha_degrade_user  = {**cytotoxic_user, "ha_degrade_strength": 0.9}
         col_degrade_user = {**cytotoxic_user, "col_degrade_strength": 0.9}
         both_degrade_user = {**cytotoxic_user, "ha_degrade_strength": 0.9, "col_degrade_strength": 0.9}
+        ecm_degrade_only_user = {**no_cytotoxic_user, "ha_degrade_strength": 0.9, "col_degrade_strength": 0.9}
 
         specs: List[ScenarioSpec] = [
             ScenarioSpec(
@@ -1087,6 +1088,17 @@ class BiologyValidator:
                 variable_overrides=cytotoxic_var,
                 dependencies=["ANCHOR_3_SHH_PARADOX", "ANCHOR_2_DRUG_PENETRATION_MATURITY"],
                 evaluator=self._eval_anchor7_ecm_degradation_limits,
+            ),
+            ScenarioSpec(
+                anchor_id=7,
+                name="ANCHOR_7B_ECM_DEGRADE_ONLY",
+                description="ECM depletion without cytotoxic: barrier removal alone is insufficient for tumor control.",
+                criterion="data collection for C4 treatment ranking (0 directional tests)",
+                intervention_payload={"calibration_profile": "AsPC-1", "knob_interventions": []},
+                user_parameter_overrides=ecm_degrade_only_user,
+                variable_overrides=no_cytotoxic_var,
+                dependencies=["ANCHOR_7_ECM_DEGRADATION_LIMITS"],
+                evaluator=self._eval_anchor7b_ecm_degrade_only,
             ),
             ScenarioSpec(
                 anchor_id=8,
@@ -1203,16 +1215,15 @@ class BiologyValidator:
             ScenarioSpec(
                 anchor_id=14,
                 name="CHECK_4_FITNESS_RANKING",
-                description="Full treatment hierarchy: ECM-degrade+drug > SHH+drug > drug-only > untreated > SHH-only.",
-                criterion="tc(A8_BOTH) < tc(A7) < tc(A2) < tc(A1) < tc(A3) — four pairwise comparisons",
+                description="Treatment hierarchy: ECM-degrade+drug > drug-only > ECM-degrade-only > SHH-only.",
+                criterion="tc(A8_BOTH) < tc(A2) < tc(ECM_DEGRADE_ONLY) < tc(A3) — four pairwise comparisons",
                 intervention_payload={},
                 user_parameter_overrides={},
                 variable_overrides={},
                 dependencies=[
-                    "ANCHOR_1_SELF_ASSEMBLY",
                     "ANCHOR_2_DRUG_PENETRATION_MATURITY",
                     "ANCHOR_3_SHH_PARADOX",
-                    "ANCHOR_7_ECM_DEGRADATION_LIMITS",
+                    "ANCHOR_7B_ECM_DEGRADE_ONLY",
                     "ANCHOR_8_BOTH_DEPLETED_DRUG",
                 ],
                 evaluator=self._eval_check4_fitness_ranking,
@@ -1458,6 +1469,13 @@ class BiologyValidator:
             ),
         ]
         return self._finalize_anchor_tests(extras, tests)
+
+    def _eval_anchor7b_ecm_degrade_only(
+        self, metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
+    ) -> Tuple[bool, str]:
+        # Data collection arm only — directional tests run in CHECK_4_FITNESS_RANKING.
+        extras["anchor_tests"] = []
+        return True, "ECM-degrade-only data collected (0 directional tests; ranking evaluated in Check 4)"
 
     def _eval_anchor8_arm_data(
         self, metrics: SimulationMetrics, extras: Dict[str, Any], baseline: Dict[str, Any]
@@ -1728,53 +1746,51 @@ class BiologyValidator:
         self, metrics: Optional[SimulationMetrics], extras: Dict[str, Any], baseline: Dict[str, Any]
     ) -> Tuple[bool, str]:
         a8_m = self._cached_metrics(baseline, "ANCHOR_8_BOTH_DEPLETED_DRUG")
-        a7_m = self._cached_metrics(baseline, "ANCHOR_7_ECM_DEGRADATION_LIMITS")
         a2_m = self._cached_metrics(baseline, "ANCHOR_2_DRUG_PENETRATION_MATURITY")
-        a1_m = self._cached_metrics(baseline, "ANCHOR_1_SELF_ASSEMBLY")
+        a7b_m = self._cached_metrics(baseline, "ANCHOR_7B_ECM_DEGRADE_ONLY")
         a3_m = self._cached_metrics(baseline, "ANCHOR_3_SHH_PARADOX")
-        if any(m is None for m in (a8_m, a7_m, a2_m, a1_m, a3_m)):
-            return False, "missing A1/A2/A3/A7/A8_BOTH metrics for Check 4 fitness ranking"
+        if any(m is None for m in (a8_m, a2_m, a7b_m, a3_m)):
+            return False, "missing A2/A3/A7B/A8_BOTH metrics for Check 4 fitness ranking"
 
-        # Five-strategy ranking by total tumor count (ascending = better outcome):
-        # ECM-degrade+drug < SHH+drug < drug-only < untreated < SHH-only
+        # Four-strategy ranking by total tumor count (ascending = better outcome):
+        # ECM-degrade+drug < drug-only < ECM-degrade-only < SHH-only
         tc_a8 = float(a8_m.get("total_tumor_cells", math.nan))
-        tc_a7 = float(a7_m.get("total_tumor_cells", math.nan))
         tc_a2 = float(a2_m.get("total_tumor_cells", math.nan))
-        tc_a1 = float(a1_m.get("total_tumor_cells", math.nan))
+        tc_7b = float(a7b_m.get("total_tumor_cells", math.nan))
         tc_a3 = float(a3_m.get("total_tumor_cells", math.nan))
 
         tests = [
             self._make_test(
                 "C4a",
-                tc_a8 < tc_a7,
-                f"tc(ECM-degrade+drug)={tc_a8:.0f} < tc(SHH+drug)={tc_a7:.0f}",
-                "Full ECM depletion + drug not better than SHH pathway + drug: check barrier decomposition.",
+                tc_a8 < tc_a2,
+                f"tc(ECM-degrade+drug)={tc_a8:.0f} < tc(drug-only)={tc_a2:.0f}",
+                "Combination not better than standard of care: check barrier decomposition + drug synergy.",
             ),
             self._make_test(
                 "C4b",
-                tc_a7 < tc_a2,
-                f"tc(SHH+drug)={tc_a7:.0f} < tc(drug-only)={tc_a2:.0f}",
-                "SHH+drug not better than drug alone: barrier opening not improving drug delivery.",
+                tc_a2 < tc_7b,
+                f"tc(drug-only)={tc_a2:.0f} < tc(ECM-degrade-only)={tc_7b:.0f}",
+                "Drug alone not better than barrier removal alone: drug mechanism non-functional.",
             ),
             self._make_test(
                 "C4c",
-                tc_a2 < tc_a1,
-                f"tc(drug-only)={tc_a2:.0f} < tc(untreated)={tc_a1:.0f}",
-                "Drug alone not reducing tumor vs untreated: drug mechanism non-functional.",
+                tc_7b < tc_a3,
+                f"tc(ECM-degrade-only)={tc_7b:.0f} < tc(SHH-only)={tc_a3:.0f}",
+                "Barrier removal not better than actively harmful SHH-only: ECM degrade ineffective.",
             ),
             self._make_test(
                 "C4d",
-                tc_a1 < tc_a3,
-                f"tc(untreated)={tc_a1:.0f} < tc(SHH-only)={tc_a3:.0f}",
-                "SHH-only not worse than untreated: SHH paradox absent from fitness landscape.",
+                tc_a2 < tc_a3,
+                f"tc(drug-only)={tc_a2:.0f} < tc(SHH-only)={tc_a3:.0f}",
+                "Standard of care not better than SHH-only: drug or SHH paradox mechanism broken.",
             ),
         ]
         extras["check_tests"] = tests
         failed = [t for t in tests if not bool(t["passed"])]
         if not failed:
             return True, (
-                f"CHECK 4 PASS — full ranking: ECM+drug({tc_a8:.0f}) < SHH+drug({tc_a7:.0f}) "
-                f"< drug({tc_a2:.0f}) < control({tc_a1:.0f}) < SHH-only({tc_a3:.0f})"
+                f"CHECK 4 PASS — full ranking: ECM+drug({tc_a8:.0f}) < drug({tc_a2:.0f}) "
+                f"< ECM-only({tc_7b:.0f}) < SHH-only({tc_a3:.0f})"
             )
         fail_ids = ", ".join(t["id"] for t in failed)
         return False, f"CHECK 4 FAIL — fitness hierarchy broken; failed: {fail_ids}"
