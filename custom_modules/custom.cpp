@@ -477,6 +477,25 @@ double map_hypoxia_threshold_from_knob_6a(double knob_6a)
     return 0.1 * clamp_unit(knob_6a);
 }
 
+double read_custom_data_value_or_default(Cell* pCell,
+                                         const std::string& name,
+                                         double default_value)
+{
+    if (pCell == NULL) return default_value;
+    const int idx = pCell->custom_data.find_variable_index(name);
+    if (idx < 0) return default_value;
+    return pCell->custom_data[idx];
+}
+
+double read_xml_double_or_default(const std::string& name, double default_value)
+{
+    if (parameters.doubles.find_index(name) >= 0)
+    {
+        return parameters.doubles(name);
+    }
+    return default_value;
+}
+
 } // namespace
 
 // SENSING PHASE (reads environment, writes nothing)
@@ -510,10 +529,64 @@ void module1_oxygen_sensing(Cell* pCell, Phenotype& phenotype, double dt, Module
 
 void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
 {
-    (void)pCell;
     (void)phenotype;
     (void)dt;
     assert_expected_phase("module3_stromal_activation", phase, ModulePhase::SENSING);
+
+    if (pCell == NULL) return;
+
+    const std::vector<double>& densities = pCell->nearest_density_vector();
+    const double local_tgfb = read_density_value(densities, tgfb_index);
+    const double local_shh = read_density_value(densities, shh_index);
+
+    const double activation_threshold =
+        read_xml_double_or_default("tgfb_activation_threshold", 0.0);
+    const double shh_threshold =
+        read_xml_double_or_default("shh_activation_threshold", 0.0);
+
+    const double previous_acta2 =
+        read_custom_data_value_or_default(pCell, "acta2_active", 0.0);
+    double updated_acta2 = previous_acta2;
+
+    const bool is_stromal = (pCell->type_name == "stromal_cell");
+    const bool is_caf = (pCell->type_name == "CAF");
+
+    if (is_stromal && previous_acta2 == 0.0)
+    {
+        const double combined_signal = local_tgfb + local_shh;
+        if (combined_signal > activation_threshold)
+        {
+            updated_acta2 = 1.0; // IRREVERSIBLE
+            pCell->type_name = "CAF";
+
+            if (local_shh > 0.0)
+            {
+                set_custom_data_if_present(pCell, "gli1_active", 1.0);
+            }
+        }
+    }
+
+    if (is_caf && previous_acta2 == 1.0)
+    {
+        updated_acta2 = 1.0; // acta2 stays ON permanently
+
+        if (local_shh > shh_threshold)
+        {
+            set_custom_data_if_present(pCell, "gli1_active", 1.0);
+        }
+        else
+        {
+            set_custom_data_if_present(pCell, "gli1_active", 0.0); // GLI1 is reversible
+        }
+    }
+
+    if (previous_acta2 == 1.0 && updated_acta2 == 0.0)
+    {
+        std::cerr << "[module3_stromal_activation] FATAL: acta2_active attempted 1->0 transition.\n";
+        assert(false && "acta2_active is irreversible and cannot transition from 1.0 to 0.0");
+    }
+
+    set_custom_data_if_present(pCell, "acta2_active", updated_acta2);
 }
 
 void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
@@ -724,6 +797,8 @@ void create_cell_types(void)
         ensure_custom_scalar(pStroma, "ecm_production_rate", "dimensionless", 0.0);
         ensure_custom_scalar(pStroma, "local_ecm_density", "dimensionless", 0.0);
         ensure_custom_scalar(pStroma, "hif1a_active", "dimensionless", 0.0);
+        ensure_custom_scalar(pStroma, "acta2_active", "dimensionless", 0.0);
+        ensure_custom_scalar(pStroma, "gli1_active", "dimensionless", 0.0);
     }
     else
     {
