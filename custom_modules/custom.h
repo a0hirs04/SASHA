@@ -18,6 +18,16 @@ extern int ecm_index;
 extern int drug_index;
 
 // ---------------------------------------------------------------------------
+// Phase-gated module execution
+// ---------------------------------------------------------------------------
+enum class ModulePhase
+{
+    SENSING,
+    DECISION,
+    WRITE
+};
+
+// ---------------------------------------------------------------------------
 // PhysiCell custom module entry points
 // ---------------------------------------------------------------------------
 void setup_microenvironment(void);
@@ -26,6 +36,20 @@ void setup_tissue(void);
 
 // Dispatcher for phenotype update.
 void custom_function(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt);
+
+// SENSING PHASE
+void module1_oxygen_sensing(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
+void module3_stromal_activation(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
+void module7_drug_response(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
+
+// DECISION PHASE
+void module5_emt_engine(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
+void module4_proliferation_death(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
+
+// WRITE PHASE
+void module2_paracrine_secretion(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
+void module6_ecm_production(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
+void module8_mechanical_compaction(PhysiCell::Cell* pCell, PhysiCell::Phenotype& phenotype, double dt, ModulePhase phase);
 
 // Optional coloring callback used by standard PhysiCell main.cpp templates.
 std::vector<std::string> my_coloring_function(PhysiCell::Cell* pCell);

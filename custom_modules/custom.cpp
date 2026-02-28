@@ -6,6 +6,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <cassert>
 #include <chrono>
 #include <cmath>
 #include <fstream>
@@ -418,6 +419,159 @@ void apply_ecm_dependent_modifiers(Microenvironment& M, double dt)
 
 } // namespace
 
+namespace
+{
+
+const char* phase_to_string(ModulePhase phase)
+{
+    switch (phase)
+    {
+        case ModulePhase::SENSING: return "SENSING";
+        case ModulePhase::DECISION: return "DECISION";
+        case ModulePhase::WRITE: return "WRITE";
+        default: return "UNKNOWN";
+    }
+}
+
+void assert_expected_phase(const char* module_name, ModulePhase actual, ModulePhase expected)
+{
+    if (actual != expected)
+    {
+        std::cerr << "[phase] FATAL: " << module_name
+                  << " expected phase " << phase_to_string(expected)
+                  << " but received " << phase_to_string(actual) << ".\n";
+        assert(false && "Module invoked with wrong phase");
+    }
+}
+
+void assert_microenvironment_write_allowed(ModulePhase phase, const char* module_name)
+{
+    if (phase != ModulePhase::WRITE)
+    {
+        std::cerr << "[phase] FATAL: " << module_name
+                  << " attempted a microenvironment write during "
+                  << phase_to_string(phase) << " phase.\n";
+        assert(false && "Microenvironment writes are only allowed in WRITE phase");
+    }
+}
+
+double read_density_value(const std::vector<double>& densities, int index)
+{
+    if (index < 0) return 0.0;
+    if (index >= static_cast<int>(densities.size())) return 0.0;
+    return densities[index];
+}
+
+void set_custom_data_if_present(Cell* pCell, const std::string& name, double value)
+{
+    if (pCell == NULL) return;
+    const int idx = pCell->custom_data.find_variable_index(name);
+    if (idx >= 0)
+    {
+        pCell->custom_data[idx] = value;
+    }
+}
+
+double map_hypoxia_threshold_from_knob_6a(double knob_6a)
+{
+    return 0.1 * clamp_unit(knob_6a);
+}
+
+} // namespace
+
+// SENSING PHASE (reads environment, writes nothing)
+void module1_oxygen_sensing(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module1_oxygen_sensing", phase, ModulePhase::SENSING);
+
+    if (pCell == NULL) return;
+
+    const std::vector<double>& densities = pCell->nearest_density_vector();
+    const double local_o2 = read_density_value(densities, oxygen_index);
+
+    double knob_6a = 0.0;
+    if (parameters.doubles.find_index("hypoxia_response_threshold") >= 0)
+    {
+        knob_6a = parameters.doubles("hypoxia_response_threshold");
+    }
+    const double threshold_mapped_from_knob_6a = map_hypoxia_threshold_from_knob_6a(knob_6a);
+
+    if (local_o2 < threshold_mapped_from_knob_6a)
+    {
+        set_custom_data_if_present(pCell, "hif1a_active", 1.0);
+    }
+    else
+    {
+        set_custom_data_if_present(pCell, "hif1a_active", 0.0);
+    }
+}
+
+void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)pCell;
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module3_stromal_activation", phase, ModulePhase::SENSING);
+}
+
+void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)pCell;
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module7_drug_response", phase, ModulePhase::SENSING);
+}
+
+// DECISION PHASE (reads module outputs + environment, writes nothing to fields)
+void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)pCell;
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module5_emt_engine", phase, ModulePhase::DECISION);
+}
+
+void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)pCell;
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module4_proliferation_death", phase, ModulePhase::DECISION);
+}
+
+// WRITE PHASE (writes to microenvironment fields)
+void module2_paracrine_secretion(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)pCell;
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module2_paracrine_secretion", phase, ModulePhase::WRITE);
+    // Placeholder guard for future field writes in this module.
+    assert_microenvironment_write_allowed(phase, "module2_paracrine_secretion");
+}
+
+void module6_ecm_production(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)pCell;
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module6_ecm_production", phase, ModulePhase::WRITE);
+    // Placeholder guard for future field writes in this module.
+    assert_microenvironment_write_allowed(phase, "module6_ecm_production");
+}
+
+void module8_mechanical_compaction(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
+{
+    (void)pCell;
+    (void)phenotype;
+    (void)dt;
+    assert_expected_phase("module8_mechanical_compaction", phase, ModulePhase::WRITE);
+    // Placeholder guard for future field writes in this module.
+    assert_microenvironment_write_allowed(phase, "module8_mechanical_compaction");
+}
+
 void ecm_dependent_diffusion(double dt)
 {
     apply_ecm_dependent_modifiers(microenvironment, dt);
@@ -553,6 +707,7 @@ void create_cell_types(void)
         // Ensure custom outputs used by tumor phenotype code exist.
         ensure_custom_scalar(pTumor, "is_mesenchymal", "dimensionless", 0.0);
         ensure_custom_scalar(pTumor, "drug_sensitivity", "dimensionless", 1.0);
+        ensure_custom_scalar(pTumor, "hif1a_active", "dimensionless", 0.0);
     }
     else
     {
@@ -568,6 +723,7 @@ void create_cell_types(void)
         ensure_custom_scalar(pStroma, "is_activated", "dimensionless", 0.0);
         ensure_custom_scalar(pStroma, "ecm_production_rate", "dimensionless", 0.0);
         ensure_custom_scalar(pStroma, "local_ecm_density", "dimensionless", 0.0);
+        ensure_custom_scalar(pStroma, "hif1a_active", "dimensionless", 0.0);
     }
     else
     {
@@ -687,21 +843,19 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
 
     const std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
 
-    std::unordered_map<int, PhenotypeDispatchFn>::const_iterator it =
-        g_dispatch_by_type.find(pCell->type);
+    // SENSING PHASE (reads environment, writes nothing)
+    module1_oxygen_sensing(pCell, phenotype, dt, ModulePhase::SENSING);
+    module3_stromal_activation(pCell, phenotype, dt, ModulePhase::SENSING);
+    module7_drug_response(pCell, phenotype, dt, ModulePhase::SENSING);
 
-    if (it != g_dispatch_by_type.end() && it->second != NULL)
-    {
-        it->second(pCell, phenotype, dt);
-    }
-    else if (pCell->type_name == "tumor_cell")
-    {
-        tumor_phenotype_update(pCell, phenotype, dt);
-    }
-    else if (pCell->type_name == "stromal_cell")
-    {
-        stromal_phenotype_update(pCell, phenotype, dt);
-    }
+    // DECISION PHASE (reads module outputs + environment, writes nothing to fields)
+    module5_emt_engine(pCell, phenotype, dt, ModulePhase::DECISION);
+    module4_proliferation_death(pCell, phenotype, dt, ModulePhase::DECISION);
+
+    // WRITE PHASE (writes to microenvironment fields)
+    module2_paracrine_secretion(pCell, phenotype, dt, ModulePhase::WRITE);
+    module6_ecm_production(pCell, phenotype, dt, ModulePhase::WRITE);
+    module8_mechanical_compaction(pCell, phenotype, dt, ModulePhase::WRITE);
 
     const std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     const long long elapsed_ns =
