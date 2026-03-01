@@ -81,6 +81,7 @@ int main()
     assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.06));
     assert(nearly_equal(get_ecm_ha_fraction(voxel_a), 0.6));
     std::cout << "PASS Test A" << std::endl;
+    std::cout << "PASS Rule25_caf_produces_HA_and_collagen" << std::endl;
 
     // Test B — GLI1 boosts production.
     caf_a->custom_data[a_gli1] = 1.0;
@@ -89,6 +90,7 @@ int main()
     assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.09));
     assert(get_ecm_density_at_voxel(voxel_a) > 0.06);
     std::cout << "PASS Test B" << std::endl;
+    std::cout << "PASS Rule26_gli1_boosts_ecm_production" << std::endl;
 
     // Test C — Quiescent PSC produces nothing.
     Cell* psc_c = create_cell(*pStroma);

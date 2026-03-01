@@ -56,6 +56,18 @@ int main()
     assert(nearly_equal(get_effective_diffusion_coefficient(drug_index, voxel), d_drug_base));
     std::cout << "PASS Test A" << std::endl;
 
+    // Rule 33 — ECM monotonically decreases drug diffusion.
+    set_voxel_ecm_state(voxel, 0.0, 0.5);
+    const double d0 = get_effective_diffusion_coefficient(drug_index, voxel);
+    set_voxel_ecm_state(voxel, 0.3, 0.5);
+    const double d03 = get_effective_diffusion_coefficient(drug_index, voxel);
+    set_voxel_ecm_state(voxel, 0.6, 0.5);
+    const double d06 = get_effective_diffusion_coefficient(drug_index, voxel);
+    set_voxel_ecm_state(voxel, 0.9, 0.5);
+    const double d09 = get_effective_diffusion_coefficient(drug_index, voxel);
+    assert(d0 > d03 && d03 > d06 && d06 > d09);
+    std::cout << "PASS Rule33_monotonic_diffusion_impedance" << std::endl;
+
     // Test B — Dense ECM, HA-dominant.
     set_voxel_ecm_state(voxel, 0.8, 0.8);
     const double d_drug_b = get_effective_diffusion_coefficient(drug_index, voxel);
@@ -70,6 +82,7 @@ int main()
     assert(nearly_equal(d_drug_c, d_drug_c_expected));
     assert(d_drug_c > d_drug_b);
     std::cout << "PASS Test C" << std::endl;
+    std::cout << "PASS Rule34_ha_impedes_more_than_collagen" << std::endl;
 
     // Test D — HA depletion improves drug diffusion.
     set_voxel_ecm_state(voxel, 0.8, 0.8);
@@ -91,6 +104,14 @@ int main()
     const double ha_change = std::fabs(d_drug_after_ha_depletion_e - d_drug_reference);
     assert(col_change < ha_change);
     std::cout << "PASS Test E" << std::endl;
+
+    // Rule 35 — collagen-dominant ECM is mechanically stiffer than HA-dominant ECM.
+    set_voxel_ecm_state(voxel, 0.7, 0.8); // HA-dominant (collagen 0.2)
+    const double stiff_ha_dom = get_local_mechanical_stiffness(voxel);
+    set_voxel_ecm_state(voxel, 0.7, 0.2); // collagen-dominant (collagen 0.8)
+    const double stiff_col_dom = get_local_mechanical_stiffness(voxel);
+    assert(stiff_col_dom > stiff_ha_dom);
+    std::cout << "PASS Rule35_collagen_stiffer_than_HA" << std::endl;
 
     std::cout << "PASS ecm_diffusion_coupling_test" << std::endl;
     return 0;

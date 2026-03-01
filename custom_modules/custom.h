@@ -83,6 +83,8 @@ void ecm_dependent_diffusion_solver(BioFVM::Microenvironment& M, double dt);
 void register_ecm_dependent_diffusion_solver(void);
 void update_ecm_effective_diffusion_coefficients(BioFVM::Microenvironment& M);
 double get_effective_diffusion_coefficient(int substrate_index, int voxel_index);
+double get_ecm_collagen_fraction(int voxel_index);
+double get_local_mechanical_stiffness(int voxel_index);
 
 // Voxel-level ECM composition storage used by Module 6.
 void reset_ecm_ha_fraction_field(double default_fraction);

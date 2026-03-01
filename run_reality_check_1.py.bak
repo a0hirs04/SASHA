@@ -1,0 +1,515 @@
+#!/usr/bin/env python3
+"""
+Reality Check 1 — Emergent Stroma Barrier Self-Assembly
+
+Setup
+-----
+- 50 tumor cells at domain centre (canonical PDAC genotype)
+- 200 quiescent PSCs in surrounding ring
+- No drug.  No intervention.
+- Simulated time: 6 weeks (60 480 min)
+- 5 replicates with different random seeds
+
+Criteria (must pass in ≥4 of 5 replicates)
+-------------------------------------------
+1. Barrier self-assembles           – mean peritumoral ECM > 0.5
+2. Spatial ECM gradient             – ECM near tumor > ECM at edge
+3. Central hypoxia develops         – O₂ centroid < 0.5 × O₂ boundary
+4. EMT is peripheral, not global    – EMT fraction periphery > core
+5. PDAC-like tumor-stroma ratio     – tumor fraction < 50% by count
+6. No numerical instability         – no NaN, no negative conc, ECM ≤ 1.0
+7. CAF count increases from 0       – activated_cafs_end > 0
+8. TGF-β highest near tumor         – mean TGF-β near tumor > at edge
+"""
+from __future__ import annotations
+
+import json
+import math
+import os
+import shutil
+import subprocess
+import sys
+import time
+import xml.etree.ElementTree as ET
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
+
+import numpy as np
+
+# ---------------------------------------------------------------------------
+# Project root & imports
+# ---------------------------------------------------------------------------
+PROJECT_ROOT = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from python.wrapper.output_parser import OutputParser, SimulationMetrics
+
+# ---------------------------------------------------------------------------
+# Configuration
+# ---------------------------------------------------------------------------
+BINARY = PROJECT_ROOT / "stroma_world"
+BASE_CONFIG = PROJECT_ROOT / "config" / "PhysiCell_settings.xml"
+
+NUM_REPLICATES = 5
+SEEDS = [42, 99, 137, 256, 1001]
+SIM_MAX_TIME_MIN = 40_320.0          # 4 weeks in minutes (28 days)
+QUORUM = 4                            # ≥4 of 5 must pass
+
+# Boundary O₂ (mmHg) from config
+BOUNDARY_O2 = 38.0
+
+
+@dataclass
+class ReplicateResult:
+    seed: int
+    run_dir: Path
+    success: bool
+    wall_time_s: float
+    metrics: Optional[SimulationMetrics] = None
+    criteria: Dict[str, bool] = field(default_factory=dict)
+    details: Dict[str, str] = field(default_factory=dict)
+    spatial: Dict[str, float] = field(default_factory=dict)
+
+
+# ---------------------------------------------------------------------------
+# Config patching
+# ---------------------------------------------------------------------------
+
+def _patch_config(
+    src: Path,
+    dst: Path,
+    output_dir: Path,
+    seed: int,
+    max_time: float,
+) -> None:
+    """Copy base XML and patch seed, max_time, output folder, and disable drug."""
+    tree = ET.parse(src)
+    root = tree.getroot()
+
+    # Set output folder
+    folder = root.find("./save/folder")
+    if folder is not None:
+        folder.text = str(output_dir)
+
+    # Set max time
+    mt = root.find(".//overall/max_time")
+    if mt is not None:
+        mt.text = str(max_time)
+
+    # Set random seed
+    rs = root.find(".//options/random_seed")
+    if rs is not None:
+        rs.text = str(seed)
+
+    # Reduce output frequency for faster runs (every 360 min instead of 60)
+    for interval_node in root.findall(".//save//interval"):
+        interval_node.text = "360"
+
+    # Disable drug completely (no intervention)
+    drug_var = root.find(".//microenvironment_setup/variable[@name='drug']")
+    if drug_var is not None:
+        dbc = drug_var.find("./Dirichlet_boundary_condition")
+        if dbc is not None:
+            dbc.text = "0"
+            dbc.set("enabled", "false")
+        for bv in drug_var.findall("./Dirichlet_options/boundary_value"):
+            bv.text = "0"
+            bv.set("enabled", "false")
+
+    # Push drug_start_time beyond sim end
+    ds = root.find(".//user_parameters/drug_start_time")
+    if ds is not None:
+        ds.text = str(max_time + 10000)
+
+    # Drug concentration = 0
+    dc = root.find(".//user_parameters/drug_concentration")
+    if dc is not None:
+        dc.text = "0"
+
+    tree.write(dst, encoding="utf-8", xml_declaration=True)
+
+
+# ---------------------------------------------------------------------------
+# Run one replicate
+# ---------------------------------------------------------------------------
+
+def _run_replicate(rep_idx: int, seed: int, work_dir: Path) -> ReplicateResult:
+    rep_dir = work_dir / f"replicate_{rep_idx + 1:02d}_seed{seed}"
+    rep_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = rep_dir / "output"
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    config_path = rep_dir / "config.xml"
+    _patch_config(BASE_CONFIG, config_path, output_dir, seed, SIM_MAX_TIME_MIN)
+
+    # Empty intervention
+    intervention = rep_dir / "intervention.json"
+    intervention.write_text(json.dumps({
+        "knob_interventions": [],
+        "drug_delivery": {"enabled": False},
+    }, indent=2), encoding="utf-8")
+
+    print(f"  [rep {rep_idx+1}] seed={seed}  launching simulation …")
+    t0 = time.perf_counter()
+
+    proc = subprocess.run(
+        [str(BINARY), str(config_path), str(intervention)],
+        capture_output=True,
+        text=True,
+        timeout=7200,  # 2-hour hard timeout
+    )
+    wall = time.perf_counter() - t0
+
+    stdout_log = rep_dir / "stdout.log"
+    stderr_log = rep_dir / "stderr.log"
+    stdout_log.write_text(proc.stdout, encoding="utf-8")
+    stderr_log.write_text(proc.stderr, encoding="utf-8")
+
+    if proc.returncode != 0:
+        print(f"  [rep {rep_idx+1}] FAILED  exit_code={proc.returncode}  ({wall:.1f}s)")
+        return ReplicateResult(seed=seed, run_dir=rep_dir, success=False, wall_time_s=wall)
+
+    # Check output files exist
+    xmls = sorted(output_dir.glob("output*.xml"))
+    if not xmls:
+        print(f"  [rep {rep_idx+1}] FAILED  no output snapshots  ({wall:.1f}s)")
+        return ReplicateResult(seed=seed, run_dir=rep_dir, success=False, wall_time_s=wall)
+
+    print(f"  [rep {rep_idx+1}] done    {len(xmls)} snapshots  ({wall:.1f}s)")
+    return ReplicateResult(seed=seed, run_dir=rep_dir, success=True, wall_time_s=wall)
+
+
+# ---------------------------------------------------------------------------
+# Spatial analysis helpers
+# ---------------------------------------------------------------------------
+
+def _sample_nearest(
+    points: np.ndarray,
+    voxel_coords: np.ndarray,
+    values: np.ndarray,
+) -> np.ndarray:
+    """Return field values at voxels nearest to each point."""
+    if points.size == 0 or voxel_coords.size == 0:
+        return np.array([], dtype=float)
+    # Chunk to avoid memory blow-up
+    out = np.empty(points.shape[0], dtype=float)
+    chunk = 500
+    for i in range(0, points.shape[0], chunk):
+        p = points[i:i+chunk]
+        d2 = np.sum((p[:, None, :] - voxel_coords[None, :, :]) ** 2, axis=2)
+        idx = np.argmin(d2, axis=1)
+        out[i:i+chunk] = values[idx]
+    return out
+
+
+def _distance_to_boundary(coords: np.ndarray, all_coords: np.ndarray) -> np.ndarray:
+    """Min distance to domain bounding box for each point."""
+    mins = np.min(all_coords, axis=0)
+    maxs = np.max(all_coords, axis=0)
+    d_lo = coords - mins[None, :]
+    d_hi = maxs[None, :] - coords
+    d = np.minimum(d_lo, d_hi)
+    return np.min(d, axis=1)
+
+
+# ---------------------------------------------------------------------------
+# Evaluate 8 criteria on a single replicate
+# ---------------------------------------------------------------------------
+
+def _evaluate(result: ReplicateResult) -> ReplicateResult:
+    """Compute all 8 criteria from the final snapshot."""
+    output_dir = result.run_dir / "output"
+    parser = OutputParser(output_dir)
+
+    # ---------- parse final snapshot (low-level) ----------
+    final_xml = parser._find_final_snapshot_xml()
+    snapshot = parser._read_physicell_xml(final_xml)
+    matrix = snapshot["cell_matrix"]
+    labels = snapshot["label_name_map"]
+    micro_coords = snapshot["micro_coords"]       # (N_vox, 3)
+    micro_values = snapshot["micro_values"]        # dict of 1-D arrays
+    result.metrics = parser.parse_final_state()
+    m = result.metrics
+
+    # ---------- cell masks ----------
+    def _row(name):
+        entry = labels.get(name)
+        if entry is None:
+            return None
+        idx = int(entry["index"])
+        if idx < 0 or idx >= matrix.shape[0]:
+            return None
+        return matrix[idx, :]
+
+    cell_type = _row("cell_type")
+    dead = _row("dead")
+    death_model = _row("current_death_model")
+    is_mes = _row("is_mesenchymal")
+    positions = parser._get_positions(matrix, labels)  # (N_cells, 3)
+
+    tumor_mask = np.rint(cell_type).astype(int) == 0
+    stroma_mask = np.rint(cell_type).astype(int) == 1
+    live_mask = np.ones(tumor_mask.shape, dtype=bool)
+    if dead is not None:
+        live_mask &= dead <= 0.5
+    if death_model is not None:
+        live_mask &= np.rint(death_model).astype(int) != 100
+    live_tumor_mask = tumor_mask & live_mask
+
+    tumor_pos = positions[tumor_mask] if positions.size else np.empty((0, 3))
+    centroid = np.nanmean(tumor_pos, axis=0) if tumor_pos.size else np.zeros(3)
+
+    # ---------- microenvironment fields ----------
+    o2 = micro_values.get("oxygen")
+    ecm = micro_values.get("ecm_density")
+    tgfb = micro_values.get("tgfb")
+    drug = micro_values.get("drug")
+
+    # ========================== CRITERION 1 ==========================
+    # Barrier self-assembles: mean peritumoral ECM > 0.5
+    peri_ecm = math.nan
+    if ecm is not None and micro_coords.size and tumor_pos.size:
+        tumor_radius = float(np.max(np.linalg.norm(tumor_pos - centroid, axis=1)))
+        voxel_dist = np.linalg.norm(micro_coords - centroid, axis=1)
+        shell_mask = (voxel_dist >= tumor_radius) & (voxel_dist <= tumor_radius + 100.0)
+        if shell_mask.any():
+            peri_ecm = float(np.nanmean(ecm[shell_mask]))
+    c1 = math.isfinite(peri_ecm) and peri_ecm > 0.5
+    result.spatial["peritumoral_ecm"] = peri_ecm
+    result.criteria["barrier_self_assembles"] = c1
+    result.details["barrier_self_assembles"] = (
+        f"peritumoral_ecm={peri_ecm:.4f} {'>' if c1 else '≤'} 0.5"
+    )
+
+    # ========================== CRITERION 2 ==========================
+    # ECM near tumor > ECM at edge
+    ecm_near = math.nan
+    ecm_edge = math.nan
+    if ecm is not None and micro_coords.size and tumor_pos.size:
+        voxel_dist = np.linalg.norm(micro_coords - centroid, axis=1)
+        near_mask = voxel_dist <= tumor_radius + 150.0
+        bd = _distance_to_boundary(micro_coords, micro_coords)
+        edge_mask = bd <= 50.0
+        if near_mask.any():
+            ecm_near = float(np.nanmean(ecm[near_mask]))
+        if edge_mask.any():
+            ecm_edge = float(np.nanmean(ecm[edge_mask]))
+    c2 = (math.isfinite(ecm_near) and math.isfinite(ecm_edge) and ecm_near > ecm_edge)
+    result.spatial["ecm_near_tumor"] = ecm_near
+    result.spatial["ecm_at_edge"] = ecm_edge
+    result.criteria["spatial_ecm_gradient"] = c2
+    result.details["spatial_ecm_gradient"] = (
+        f"ECM_near={ecm_near:.4f} {'>' if c2 else '≤'} ECM_edge={ecm_edge:.4f}"
+    )
+
+    # ========================== CRITERION 3 ==========================
+    # Central hypoxia: O₂ centroid < 0.5 × O₂ boundary
+    o2_centroid = math.nan
+    o2_boundary_actual = BOUNDARY_O2
+    if o2 is not None and micro_coords.size:
+        o2_centroid = float(
+            _sample_nearest(centroid[None, :], micro_coords, o2)[0]
+        )
+        # boundary O₂ from edge voxels
+        bd = _distance_to_boundary(micro_coords, micro_coords)
+        edge_mask = bd <= 30.0
+        if edge_mask.any():
+            o2_boundary_actual = float(np.nanmean(o2[edge_mask]))
+    threshold_o2 = 0.5 * o2_boundary_actual
+    c3 = math.isfinite(o2_centroid) and o2_centroid < threshold_o2
+    result.spatial["o2_centroid"] = o2_centroid
+    result.spatial["o2_boundary"] = o2_boundary_actual
+    result.criteria["central_hypoxia"] = c3
+    result.details["central_hypoxia"] = (
+        f"O₂_centroid={o2_centroid:.2f} {'<' if c3 else '≥'} "
+        f"0.5×O₂_boundary={threshold_o2:.2f}"
+    )
+
+    # ========================== CRITERION 4 ==========================
+    # EMT peripheral > core
+    emt_core = math.nan
+    emt_periph = math.nan
+    if is_mes is not None and tumor_pos.size >= 10:
+        tumor_mesenchymal = is_mes[tumor_mask] > 0.5
+        radial = np.linalg.norm(tumor_pos - centroid, axis=1)
+        core_cut = float(np.quantile(radial, 0.40))
+        periph_cut = float(np.quantile(radial, 0.60))
+        core_m = radial <= core_cut
+        periph_m = radial >= periph_cut
+        if core_m.any():
+            emt_core = float(np.mean(tumor_mesenchymal[core_m]))
+        if periph_m.any():
+            emt_periph = float(np.mean(tumor_mesenchymal[periph_m]))
+    c4 = (math.isfinite(emt_core) and math.isfinite(emt_periph) and emt_periph > emt_core)
+    result.spatial["emt_core_fraction"] = emt_core
+    result.spatial["emt_periphery_fraction"] = emt_periph
+    result.criteria["emt_peripheral_not_global"] = c4
+    result.details["emt_peripheral_not_global"] = (
+        f"EMT_periph={emt_periph:.4f} {'>' if c4 else '≤'} EMT_core={emt_core:.4f}"
+    )
+
+    # ========================== CRITERION 5 ==========================
+    # PDAC-like: tumor fraction < 50%
+    total_cells = m.total_tumor_cells + m.total_stromal_cells
+    tumor_frac = m.total_tumor_cells / max(total_cells, 1)
+    c5 = tumor_frac < 0.50
+    result.spatial["tumor_fraction"] = tumor_frac
+    result.criteria["pdac_like_ratio"] = c5
+    result.details["pdac_like_ratio"] = (
+        f"tumor_frac={tumor_frac:.4f} ({'<' if c5 else '≥'} 0.50)  "
+        f"tumor={m.total_tumor_cells}  stroma={m.total_stromal_cells}"
+    )
+
+    # ========================== CRITERION 6 ==========================
+    # No numerical instability
+    issues: List[str] = []
+
+    # Check metrics for NaN
+    for attr in ("mean_ecm_density", "max_ecm_density", "tumor_extent",
+                 "drug_penetration", "hypoxic_fraction"):
+        v = getattr(m, attr, None)
+        if v is not None and not math.isfinite(v):
+            issues.append(f"{attr}=NaN")
+
+    # ECM > 1.0
+    if ecm is not None and np.any(ecm > 1.0 + 1e-9):
+        issues.append(f"ECM max={np.max(ecm):.6f} > 1.0")
+
+    # Negative concentrations
+    for fname, fvals in micro_values.items():
+        if fvals is not None and np.any(fvals < -1e-12):
+            issues.append(f"{fname} has negative values (min={np.min(fvals):.6e})")
+
+    # O₂ > boundary
+    if o2 is not None and np.any(o2 > BOUNDARY_O2 + 1e-6):
+        issues.append(f"O₂ max={np.max(o2):.4f} > boundary {BOUNDARY_O2}")
+
+    c6 = len(issues) == 0
+    result.criteria["no_numerical_instability"] = c6
+    result.details["no_numerical_instability"] = (
+        "clean" if c6 else f"ISSUES: {'; '.join(issues)}"
+    )
+
+    # ========================== CRITERION 7 ==========================
+    # CAF count increases from 0
+    c7 = m.activated_cafs > 0
+    result.criteria["caf_activation"] = c7
+    result.details["caf_activation"] = f"activated_cafs={m.activated_cafs}"
+
+    # ========================== CRITERION 8 ==========================
+    # TGF-β highest near tumor, decreasing outward
+    tgfb_near = math.nan
+    tgfb_edge = math.nan
+    if tgfb is not None and micro_coords.size and tumor_pos.size:
+        voxel_dist = np.linalg.norm(micro_coords - centroid, axis=1)
+        near_mask = voxel_dist <= tumor_radius + 150.0
+        bd = _distance_to_boundary(micro_coords, micro_coords)
+        edge_mask = bd <= 50.0
+        if near_mask.any():
+            tgfb_near = float(np.nanmean(tgfb[near_mask]))
+        if edge_mask.any():
+            tgfb_edge = float(np.nanmean(tgfb[edge_mask]))
+    c8 = (math.isfinite(tgfb_near) and math.isfinite(tgfb_edge) and tgfb_near > tgfb_edge)
+    result.spatial["tgfb_near_tumor"] = tgfb_near
+    result.spatial["tgfb_at_edge"] = tgfb_edge
+    result.criteria["tgfb_gradient"] = c8
+    result.details["tgfb_gradient"] = (
+        f"TGFβ_near={tgfb_near:.4f} {'>' if c8 else '≤'} TGFβ_edge={tgfb_edge:.4f}"
+    )
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Main
+# ---------------------------------------------------------------------------
+
+def main() -> int:
+    if not BINARY.exists():
+        print(f"ERROR: binary not found at {BINARY}")
+        return 1
+    if not BASE_CONFIG.exists():
+        print(f"ERROR: config not found at {BASE_CONFIG}")
+        return 1
+
+    work_dir = PROJECT_ROOT / "build" / "reality_check_1"
+    if work_dir.exists():
+        shutil.rmtree(work_dir)
+    work_dir.mkdir(parents=True)
+
+    print("=" * 72)
+    print("  REALITY CHECK 1 — Emergent Stroma Barrier Self-Assembly")
+    print(f"  Replicates: {NUM_REPLICATES}   Seeds: {SEEDS}")
+    print(f"  Sim time: {SIM_MAX_TIME_MIN:.0f} min ({SIM_MAX_TIME_MIN/60/24:.1f} days)")
+    print(f"  Quorum: ≥{QUORUM}/{NUM_REPLICATES}")
+    print("=" * 72)
+
+    # ---- Run replicates ----
+    results: List[ReplicateResult] = []
+    total_t0 = time.perf_counter()
+    for i, seed in enumerate(SEEDS[:NUM_REPLICATES]):
+        r = _run_replicate(i, seed, work_dir)
+        if r.success:
+            r = _evaluate(r)
+        results.append(r)
+    total_wall = time.perf_counter() - total_t0
+
+    # ---- Tally ----
+    CRITERIA_NAMES = [
+        ("barrier_self_assembles",    "1. Barrier self-assembles"),
+        ("spatial_ecm_gradient",      "2. Spatial ECM gradient"),
+        ("central_hypoxia",           "3. Central hypoxia develops"),
+        ("emt_peripheral_not_global", "4. EMT peripheral, not global"),
+        ("pdac_like_ratio",           "5. Tumor-stroma ratio PDAC-like"),
+        ("no_numerical_instability",  "6. No numerical instability"),
+        ("caf_activation",            "7. CAF count increases"),
+        ("tgfb_gradient",             "8. TGF-β gradient near tumor"),
+    ]
+
+    # ---- Per-replicate report ----
+    print()
+    for i, r in enumerate(results):
+        hdr = f"Replicate {i+1}  (seed={r.seed}, {r.wall_time_s:.1f}s)"
+        if not r.success:
+            print(f"  {hdr}  — SIMULATION FAILED")
+            continue
+        all_pass = all(r.criteria.get(k, False) for k, _ in CRITERIA_NAMES)
+        tag = "✓ ALL PASS" if all_pass else "✗ SOME FAIL"
+        print(f"  {hdr}  — {tag}")
+        for key, label in CRITERIA_NAMES:
+            ok = r.criteria.get(key, False)
+            detail = r.details.get(key, "")
+            mark = "PASS" if ok else "FAIL"
+            print(f"    [{mark}] {label}: {detail}")
+        print()
+
+    # ---- Aggregate across replicates ----
+    print("=" * 72)
+    print("  AGGREGATE  (≥4/5 replicates must pass each criterion)")
+    print("=" * 72)
+
+    any_failure = False
+    for key, label in CRITERIA_NAMES:
+        passing = sum(
+            1 for r in results
+            if r.success and r.criteria.get(key, False)
+        )
+        ok = passing >= QUORUM
+        mark = "PASS" if ok else "FAIL"
+        if not ok:
+            any_failure = True
+        print(f"  [{mark}] {label}  ({passing}/{NUM_REPLICATES} replicates)")
+
+    print()
+    print(f"  Total wall time: {total_wall:.1f}s  ({total_wall/60:.1f} min)")
+    if any_failure:
+        print("\n  *** REALITY CHECK 1: FAIL ***")
+        return 1
+    else:
+        print("\n  *** REALITY CHECK 1: PASS ***")
+        return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

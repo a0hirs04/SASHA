@@ -85,12 +85,8 @@
     </options>
 
     <!-- ==================== MICROENVIRONMENT ====================
-         5 diffusible fields governing tumor-stroma crosstalk:
-           0. oxygen      — nutrient/hypoxia signal
-           1. tgfb        — tumor-secreted stromal activator
-           2. shh         — Hedgehog pathway ligand (tumor → stroma)
-           3. ecm_density — non-diffusing structural ECM field
-           4. drug        — chemotherapy agent (introduced at t=drug_start_time) -->
+         Exactly 5 fields governing tumor-stroma dynamics:
+           oxygen, tgfb, shh, drug, ecm_density -->
     <microenvironment_setup>
 
         <!-- 1. OXYGEN
@@ -109,95 +105,89 @@
                 <boundary_value ID="xmax" enabled="true">38</boundary_value>
                 <boundary_value ID="ymin" enabled="true">38</boundary_value>
                 <boundary_value ID="ymax" enabled="true">38</boundary_value>
-                <boundary_value ID="zmin" enabled="false">38</boundary_value>
-                <boundary_value ID="zmax" enabled="false">38</boundary_value>
+                <boundary_value ID="zmin" enabled="true">38</boundary_value>
+                <boundary_value ID="zmax" enabled="true">38</boundary_value>
             </Dirichlet_options>
         </variable>
 
         <!-- 2. TGF-BETA (tgfb)
-             Secreted by tumor cells; diffuses through stroma.
-             Activates fibroblast-to-CAF transition via Boolean network.
-             No boundary supply — purely paracrine, decays naturally. -->
+             Diffusing/decaying paracrine signal.
+             Boundary is a Dirichlet sink at 0 so signal is absorbed at edges. -->
         <variable name="tgfb" units="dimensionless" ID="1">
             <physical_parameter_set>
                 <diffusion_coefficient units="micron^2/min">1000.0</diffusion_coefficient>
                 <decay_rate units="1/min">0.01</decay_rate>
             </physical_parameter_set>
             <initial_condition units="dimensionless">0</initial_condition>
-            <Dirichlet_boundary_condition units="dimensionless" enabled="false">0</Dirichlet_boundary_condition>
+            <Dirichlet_boundary_condition units="dimensionless" enabled="true">0</Dirichlet_boundary_condition>
             <Dirichlet_options>
-                <boundary_value ID="xmin" enabled="false">0</boundary_value>
-                <boundary_value ID="xmax" enabled="false">0</boundary_value>
-                <boundary_value ID="ymin" enabled="false">0</boundary_value>
-                <boundary_value ID="ymax" enabled="false">0</boundary_value>
-                <boundary_value ID="zmin" enabled="false">0</boundary_value>
-                <boundary_value ID="zmax" enabled="false">0</boundary_value>
+                <boundary_value ID="xmin" enabled="true">0</boundary_value>
+                <boundary_value ID="xmax" enabled="true">0</boundary_value>
+                <boundary_value ID="ymin" enabled="true">0</boundary_value>
+                <boundary_value ID="ymax" enabled="true">0</boundary_value>
+                <boundary_value ID="zmin" enabled="true">0</boundary_value>
+                <boundary_value ID="zmax" enabled="true">0</boundary_value>
             </Dirichlet_options>
         </variable>
 
         <!-- 3. SONIC HEDGEHOG (shh)
-             Secreted by tumor cells; activates GLI1 in stromal cells.
-             Drives ECM production and stromal desmoplasia.
-             No boundary supply — purely paracrine. -->
+             Diffusing/decaying paracrine signal from tumor cells.
+             Boundary is a Dirichlet sink at 0. -->
         <variable name="shh" units="dimensionless" ID="2">
             <physical_parameter_set>
                 <diffusion_coefficient units="micron^2/min">1000.0</diffusion_coefficient>
                 <decay_rate units="1/min">0.01</decay_rate>
             </physical_parameter_set>
             <initial_condition units="dimensionless">0</initial_condition>
-            <Dirichlet_boundary_condition units="dimensionless" enabled="false">0</Dirichlet_boundary_condition>
+            <Dirichlet_boundary_condition units="dimensionless" enabled="true">0</Dirichlet_boundary_condition>
             <Dirichlet_options>
-                <boundary_value ID="xmin" enabled="false">0</boundary_value>
-                <boundary_value ID="xmax" enabled="false">0</boundary_value>
-                <boundary_value ID="ymin" enabled="false">0</boundary_value>
-                <boundary_value ID="ymax" enabled="false">0</boundary_value>
-                <boundary_value ID="zmin" enabled="false">0</boundary_value>
-                <boundary_value ID="zmax" enabled="false">0</boundary_value>
+                <boundary_value ID="xmin" enabled="true">0</boundary_value>
+                <boundary_value ID="xmax" enabled="true">0</boundary_value>
+                <boundary_value ID="ymin" enabled="true">0</boundary_value>
+                <boundary_value ID="ymax" enabled="true">0</boundary_value>
+                <boundary_value ID="zmin" enabled="true">0</boundary_value>
+                <boundary_value ID="zmax" enabled="true">0</boundary_value>
             </Dirichlet_options>
         </variable>
 
-        <!-- 4. ECM DENSITY (ecm_density)
-             Non-diffusing structural field representing extracellular matrix.
-             D=0 and decay=0: field only changes via cell secretion/remodeling.
-             Initial value 0.1 = sparse baseline matrix (normal pancreatic stroma).
-             Stromal cells deposit ECM (via ecm_production_rate custom variable);
-             MMP2 activity degrades it. Updated in custom C++ code. -->
-        <variable name="ecm_density" units="dimensionless" ID="3">
-            <physical_parameter_set>
-                <diffusion_coefficient units="micron^2/min">0.0</diffusion_coefficient>
-                <decay_rate units="1/min">0.0</decay_rate>
-            </physical_parameter_set>
-            <initial_condition units="dimensionless">0.1</initial_condition>
-            <Dirichlet_boundary_condition units="dimensionless" enabled="false">0.1</Dirichlet_boundary_condition>
-            <Dirichlet_options>
-                <boundary_value ID="xmin" enabled="false">0.1</boundary_value>
-                <boundary_value ID="xmax" enabled="false">0.1</boundary_value>
-                <boundary_value ID="ymin" enabled="false">0.1</boundary_value>
-                <boundary_value ID="ymax" enabled="false">0.1</boundary_value>
-                <boundary_value ID="zmin" enabled="false">0.1</boundary_value>
-                <boundary_value ID="zmax" enabled="false">0.1</boundary_value>
-            </Dirichlet_options>
-        </variable>
-
-        <!-- 5. DRUG
-             Chemotherapy agent introduced at t=drug_start_time (see user_parameters).
-             Fast diffusion, moderate decay. Dirichlet boundary turned ON
-             programmatically at drug_start_time in custom C++ code.
-             Initial concentration = 0 (no drug at simulation start). -->
-        <variable name="drug" units="dimensionless" ID="4">
+        <!-- 4. DRUG
+             Diffusing/decaying therapy field.
+             Baseline boundary value is 0; scenarios/EA can raise boundary dosing. -->
+        <variable name="drug" units="dimensionless" ID="3">
             <physical_parameter_set>
                 <diffusion_coefficient units="micron^2/min">5000.0</diffusion_coefficient>
                 <decay_rate units="1/min">0.002</decay_rate>
             </physical_parameter_set>
             <initial_condition units="dimensionless">0</initial_condition>
-            <Dirichlet_boundary_condition units="dimensionless" enabled="false">0</Dirichlet_boundary_condition>
+            <Dirichlet_boundary_condition units="dimensionless" enabled="true">0</Dirichlet_boundary_condition>
             <Dirichlet_options>
-                <boundary_value ID="xmin" enabled="false">0</boundary_value>
-                <boundary_value ID="xmax" enabled="false">0</boundary_value>
-                <boundary_value ID="ymin" enabled="false">0</boundary_value>
-                <boundary_value ID="ymax" enabled="false">0</boundary_value>
-                <boundary_value ID="zmin" enabled="false">0</boundary_value>
-                <boundary_value ID="zmax" enabled="false">0</boundary_value>
+                <boundary_value ID="xmin" enabled="true">0</boundary_value>
+                <boundary_value ID="xmax" enabled="true">0</boundary_value>
+                <boundary_value ID="ymin" enabled="true">0</boundary_value>
+                <boundary_value ID="ymax" enabled="true">0</boundary_value>
+                <boundary_value ID="zmin" enabled="true">0</boundary_value>
+                <boundary_value ID="zmax" enabled="true">0</boundary_value>
+            </Dirichlet_options>
+        </variable>
+
+        <!-- 5. ECM DENSITY (ecm_density)
+             Non-diffusing structural field representing extracellular matrix.
+             D=0 enforces immobility (Rule 28). Very slow decay models turnover.
+             Boundary is clamped to 0 (no stroma at edge). -->
+        <variable name="ecm_density" units="dimensionless" ID="4">
+            <physical_parameter_set>
+                <diffusion_coefficient units="micron^2/min">0.0</diffusion_coefficient>
+                <decay_rate units="1/min">0.0001</decay_rate>
+            </physical_parameter_set>
+            <initial_condition units="dimensionless">0</initial_condition>
+            <Dirichlet_boundary_condition units="dimensionless" enabled="true">0</Dirichlet_boundary_condition>
+            <Dirichlet_options>
+                <boundary_value ID="xmin" enabled="true">0</boundary_value>
+                <boundary_value ID="xmax" enabled="true">0</boundary_value>
+                <boundary_value ID="ymin" enabled="true">0</boundary_value>
+                <boundary_value ID="ymax" enabled="true">0</boundary_value>
+                <boundary_value ID="zmin" enabled="true">0</boundary_value>
+                <boundary_value ID="zmax" enabled="true">0</boundary_value>
             </Dirichlet_options>
         </variable>
 
@@ -232,13 +222,11 @@
             <phenotype>
 
                 <!-- CYCLE: Live model (code 5)
-                     Single "live" phase; division rate 0.00072/min.
-                     Doubling time = ln(2) / 0.00072 ≈ 962 min (~16 h intrinsic).
-                     Effective ~24h with contact inhibition and oxygen dependence
-                     applied in custom C++ phenotype update function. -->
+                     Single "live" phase; transition rate driven by
+                     base_proliferation_rate (Knob 3a) in custom C++ logic. -->
                 <cycle code="5" name="live">
                     <phase_transition_rates units="1/min">
-                        <rate start_index="0" end_index="0" fixed_duration="false">0.00072</rate>
+                        <rate start_index="0" end_index="0" fixed_duration="false">0.01</rate>
                     </phase_transition_rates>
                 </cycle>
 
@@ -246,7 +234,7 @@
                     <!-- APOPTOSIS (code 100): standard PhysiCell default rate
                          Increased programmatically under drug exposure or stress. -->
                     <model code="100" name="apoptosis">
-                        <death_rate units="1/min">5.316e-05</death_rate>
+                        <death_rate units="1/min">0.00015</death_rate>
                         <phase_durations units="min">
                             <duration index="0" fixed_duration="true">516</duration>
                         </phase_durations>
@@ -295,7 +283,7 @@
                 <!-- MECHANICS: moderate adhesion, high repulsion
                      Adhesion affinity to stroma = 0.5 (heterotypic adhesion weaker) -->
                 <mechanics>
-                    <cell_cell_adhesion_strength units="micron/min">0.4</cell_cell_adhesion_strength>
+                    <cell_cell_adhesion_strength units="micron/min">5.0</cell_cell_adhesion_strength>
                     <cell_cell_repulsion_strength units="micron/min">10.0</cell_cell_repulsion_strength>
                     <relative_maximum_adhesion_distance units="dimensionless">1.25</relative_maximum_adhesion_distance>
                     <cell_adhesion_affinities>
@@ -315,9 +303,9 @@
                 <!-- MOTILITY: active 2D migration, moderate speed and persistence
                      Chemotaxis disabled here; oxygen-directed bias applied in custom code -->
                 <motility>
-                    <speed units="micron/min">0.5</speed>
+                    <speed units="micron/min">0.1</speed>
                     <persistence_time units="min">10</persistence_time>
-                    <migration_bias units="dimensionless">0.5</migration_bias>
+                    <migration_bias units="dimensionless">0.0</migration_bias>
                     <options>
                         <enabled>true</enabled>
                         <use_2D>true</use_2D>
@@ -341,10 +329,9 @@
                 </motility>
 
                 <!-- SECRETION:
-                     - tgfb: 0.05/min → activates stromal CAF transition
-                     - shh:  0.02/min → drives GLI1 in stroma (desmoplasia)
-                     - oxygen: net uptake 10/min (high metabolic demand)
-                     - ecm_density and drug: no secretion from tumor cells -->
+                     - tgfb and shh secretion rates are configurable user parameters
+                     - oxygen uptake models consumption
+                     - drug uptake models sink behavior -->
                 <secretion>
                     <substrate name="oxygen">
                         <secretion_rate units="1/min">0</secretion_rate>
@@ -353,13 +340,13 @@
                         <net_export_rate units="total substrate/min">0</net_export_rate>
                     </substrate>
                     <substrate name="tgfb">
-                        <secretion_rate units="1/min">0.05</secretion_rate>
+                        <secretion_rate units="1/min">0.5</secretion_rate>
                         <secretion_target units="dimensionless">1</secretion_target>
                         <uptake_rate units="1/min">0</uptake_rate>
                         <net_export_rate units="total substrate/min">0</net_export_rate>
                     </substrate>
                     <substrate name="shh">
-                        <secretion_rate units="1/min">0.02</secretion_rate>
+                        <secretion_rate units="1/min">0.3</secretion_rate>
                         <secretion_target units="dimensionless">1</secretion_target>
                         <uptake_rate units="1/min">0</uptake_rate>
                         <net_export_rate units="total substrate/min">0</net_export_rate>
@@ -373,7 +360,7 @@
                     <substrate name="drug">
                         <secretion_rate units="1/min">0</secretion_rate>
                         <secretion_target units="dimensionless">1</secretion_target>
-                        <uptake_rate units="1/min">0</uptake_rate>
+                        <uptake_rate units="1/min">0.01</uptake_rate>
                         <net_export_rate units="total substrate/min">0</net_export_rate>
                     </substrate>
                 </secretion>
@@ -476,6 +463,48 @@
                 <apoptosis_threshold conserved="false" units="dimensionless"
                                      description="Stress threshold above which apoptosis is induced">0.5</apoptosis_threshold>
 
+                <!-- Actor 1 identity (stored as integer-valued doubles) -->
+                <cell_id conserved="false" units="none"
+                         description="Unique immutable tumor cell identifier">-1.0</cell_id>
+                <parent_id conserved="false" units="none"
+                           description="Parent tumor cell identifier; -1 for founders">-1.0</parent_id>
+
+                <!-- Actor 1 genotype state (categorical: 0=WT, 1=GOF, 2=LOF) -->
+                <gene_state_KRAS conserved="false" units="none">1.0</gene_state_KRAS>
+                <gene_state_TP53 conserved="false" units="none">2.0</gene_state_TP53>
+                <gene_state_CDKN2A conserved="false" units="none">2.0</gene_state_CDKN2A>
+                <gene_state_SMAD4 conserved="false" units="none">2.0</gene_state_SMAD4>
+                <gene_state_BCL_XL conserved="false" units="none">1.0</gene_state_BCL_XL>
+                <gene_state_MYC conserved="false" units="none">0.0</gene_state_MYC>
+                <gene_state_EGFR conserved="false" units="none">0.0</gene_state_EGFR>
+                <gene_state_RB1 conserved="false" units="none">0.0</gene_state_RB1>
+                <gene_state_BAX conserved="false" units="none">0.0</gene_state_BAX>
+                <gene_state_ZEB1 conserved="false" units="none">0.0</gene_state_ZEB1>
+                <gene_state_CDH1 conserved="false" units="none">0.0</gene_state_CDH1>
+                <gene_state_MMP2 conserved="false" units="none">0.0</gene_state_MMP2>
+                <gene_state_TGFB1 conserved="false" units="none">0.0</gene_state_TGFB1>
+                <gene_state_SHH conserved="false" units="none">0.0</gene_state_SHH>
+                <gene_state_HIF1A conserved="false" units="none">0.0</gene_state_HIF1A>
+                <gene_state_NRF2 conserved="false" units="none">0.0</gene_state_NRF2>
+                <gene_state_ABCB1 conserved="false" units="none">0.0</gene_state_ABCB1>
+                <gene_state_HAS2 conserved="false" units="none">0.0</gene_state_HAS2>
+                <gene_state_COL1A1 conserved="false" units="none">0.0</gene_state_COL1A1>
+                <gene_state_GLI1 conserved="false" units="none">0.0</gene_state_GLI1>
+                <gene_state_ACTA2 conserved="false" units="none">0.0</gene_state_ACTA2>
+
+                <!-- Actor 1 dynamic state -->
+                <hif1a_active conserved="false" units="dimensionless">0.0</hif1a_active>
+                <zeb1_active conserved="false" units="dimensionless">0.0</zeb1_active>
+                <cdh1_expressed conserved="false" units="dimensionless">1.0</cdh1_expressed>
+                <nrf2_active conserved="false" units="dimensionless">0.0</nrf2_active>
+                <abcb1_active conserved="false" units="dimensionless">0.0</abcb1_active>
+                <mmp2_active conserved="false" units="dimensionless">0.0</mmp2_active>
+                <intracellular_drug conserved="false" units="dimensionless">0.0</intracellular_drug>
+                <time_since_drug_exposure conserved="false" units="hour">-1.0</time_since_drug_exposure>
+                <time_alive conserved="false" units="min">0.0</time_alive>
+                <emt_extent conserved="false" units="dimensionless">0.0</emt_extent>
+                <mechanical_pressure conserved="false" units="dimensionless">0.0</mechanical_pressure>
+
             </custom_data>
         </cell_definition>
 
@@ -495,14 +524,14 @@
                      Represents quiescent stellate cells with minimal turnover. -->
                 <cycle code="5" name="live">
                     <phase_transition_rates units="1/min">
-                        <rate start_index="0" end_index="0" fixed_duration="false">0.00036</rate>
+                        <rate start_index="0" end_index="0" fixed_duration="false">0.0</rate>
                     </phase_transition_rates>
                 </cycle>
 
                 <death>
                     <!-- APOPTOSIS: very low rate; stromal cells are long-lived -->
                     <model code="100" name="apoptosis">
-                        <death_rate units="1/min">1e-05</death_rate>
+                        <death_rate units="1/min">0.0</death_rate>
                         <phase_durations units="min">
                             <duration index="0" fixed_duration="true">516</duration>
                         </phase_durations>
@@ -570,9 +599,9 @@
                 <!-- MOTILITY: slow, low persistence (semi-sessile fibroblasts)
                      Stromal cells creep rather than migrate; no directed chemotaxis by default -->
                 <motility>
-                    <speed units="micron/min">0.1</speed>
-                    <persistence_time units="min">5</persistence_time>
-                    <migration_bias units="dimensionless">0.5</migration_bias>
+                    <speed units="micron/min">0.05</speed>
+                    <persistence_time units="min">10</persistence_time>
+                    <migration_bias units="dimensionless">0.0</migration_bias>
                     <options>
                         <enabled>true</enabled>
                         <use_2D>true</use_2D>
@@ -666,37 +695,37 @@
 
             </phenotype>
 
-            <!-- CUSTOM DATA: CAF / PSC activation markers
-                 All initialized to 0 (quiescent stellate cell state).
-                 Updated by boolean_network.cpp each phenotype timestep
-                 based on tgfb and shh substrate concentrations. -->
+            <!-- CUSTOM DATA: Actor 2 stromal schema (PSC/CAF two-mode state) -->
             <custom_data>
 
-                <!-- CAF activation markers -->
-                <ACTA2 conserved="false" units="dimensionless"
-                       description="Alpha-smooth muscle actin; canonical CAF activation marker">0.0</ACTA2>
-                <GLI1 conserved="false" units="dimensionless"
-                      description="GLI1 Hedgehog pathway TF; activated by SHH from tumor cells">0.0</GLI1>
-                <HAS2 conserved="false" units="dimensionless"
-                      description="Hyaluronan synthase 2; drives hyaluronic acid ECM production">0.0</HAS2>
-                <COL1A1 conserved="false" units="dimensionless"
-                        description="Collagen I alpha-1 chain; collagen fiber deposition marker">0.0</COL1A1>
+                <!-- Identity -->
+                <cell_id conserved="false" units="none">-1.0</cell_id>
+                <parent_id conserved="false" units="none">-1.0</parent_id>
 
-                <!-- Secretion activity (mirrors secretion rates, set by Boolean network) -->
-                <TGFB1_expr conserved="false" units="dimensionless"
-                            description="Autocrine TGF-beta1 expression in activated stroma">0.0</TGFB1_expr>
-                <MMP2 conserved="false" units="dimensionless"
-                      description="MMP2 matrix metalloproteinase; ECM remodeling activity">0.0</MMP2>
+                <!-- Genotype subset (categorical: 0=WT, 1=GOF, 2=LOF) -->
+                <gene_state_SMAD4 conserved="false" units="none">0.0</gene_state_SMAD4>
+                <gene_state_ACTA2 conserved="false" units="none">0.0</gene_state_ACTA2>
+                <gene_state_GLI1 conserved="false" units="none">0.0</gene_state_GLI1>
+                <gene_state_HAS2 conserved="false" units="none">0.0</gene_state_HAS2>
+                <gene_state_COL1A1 conserved="false" units="none">0.0</gene_state_COL1A1>
+                <gene_state_TGFB1 conserved="false" units="none">0.0</gene_state_TGFB1>
+                <gene_state_SHH conserved="false" units="none">0.0</gene_state_SHH>
 
-                <!-- Stress response -->
-                <HIF1A conserved="false" units="dimensionless"
-                       description="HIF-1alpha hypoxia response; activated under low oxygen">0.0</HIF1A>
+                <!-- Activation states -->
+                <acta2_active conserved="false" units="dimensionless">0.0</acta2_active>
+                <gli1_active conserved="false" units="dimensionless">0.0</gli1_active>
+                <activation_mode conserved="false" units="dimensionless">0.0</activation_mode>
 
-                <!-- Phenotypic state flags -->
-                <is_activated conserved="false" units="dimensionless"
-                              description="CAF activation state: 0=quiescent PSC, 1=activated CAF">0.0</is_activated>
-                <ecm_production_rate conserved="false" units="dimensionless"
-                                     description="Current ECM secretion rate; set by Boolean network output">0.0</ecm_production_rate>
+                <!-- Hypoxia response -->
+                <hif1a_active conserved="false" units="dimensionless">0.0</hif1a_active>
+
+                <!-- ECM / feedback -->
+                <ecm_production_rate conserved="false" units="dimensionless">0.0</ecm_production_rate>
+                <tgfb_secretion_active conserved="false" units="dimensionless">0.0</tgfb_secretion_active>
+
+                <!-- Clocks / mechanics -->
+                <time_alive conserved="false" units="min">0.0</time_alive>
+                <mechanical_pressure conserved="false" units="dimensionless">0.0</mechanical_pressure>
 
             </custom_data>
         </cell_definition>
@@ -789,7 +818,7 @@
         <apoptosis_resistance type="double" units="dimensionless"
             description="Knob 4 (Fixed): basal apoptosis resistance">0.85</apoptosis_resistance>
         <base_proliferation_rate type="double" units="1/min"
-            description="Tumor baseline proliferation transition rate">0.01</base_proliferation_rate>
+            description="Tumor baseline proliferation transition rate">0.00048</base_proliferation_rate>
         <go_grow_penalty type="double" units="dimensionless"
             description="Fractional proliferation penalty when zeb1_active=1">0.3</go_grow_penalty>
         <hypoxia_proliferation_modifier type="double" units="dimensionless"
@@ -797,7 +826,7 @@
         <hypoxia_death_resistance_bonus type="double" units="dimensionless"
             description="Additive death-resistance modifier when hif1a_active=1">0.1</hypoxia_death_resistance_bonus>
         <contact_inhibition_threshold type="double" units="dimensionless"
-            description="Mechanical pressure threshold above which tumor proliferation is arrested">5.0</contact_inhibition_threshold>
+            description="Mechanical pressure threshold above which tumor proliferation is arrested">0.5</contact_inhibition_threshold>
         <drug_kill_coefficient type="double" units="1/min"
             description="Maps effective intracellular drug to apoptosis rate contribution">0.01</drug_kill_coefficient>
         <efflux_drug_reduction type="double" units="dimensionless"

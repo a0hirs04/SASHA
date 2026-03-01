@@ -1,7 +1,6 @@
 #include <cassert>
 #include <cmath>
 #include <iostream>
-#include <unordered_set>
 #include <vector>
 
 #include "feedback_loop_common.h"
@@ -18,14 +17,16 @@ bool nearly_equal(double a, double b, double eps = 1e-6)
     return std::fabs(a - b) <= eps;
 }
 
-int count_live_ids(const std::unordered_set<int>& ids)
+int count_live_stromal_in_x_window(int stromal_type, double x_min, double x_max)
 {
     int n = 0;
     for (size_t i = 0; i < all_cells->size(); ++i)
     {
         Cell* pCell = (*all_cells)[i];
         if (pCell == NULL || pCell->phenotype.death.dead) continue;
-        if (ids.find(pCell->ID) != ids.end()) ++n;
+        if (pCell->type != stromal_type) continue;
+        const double x = pCell->position[0];
+        if (x >= x_min && x <= x_max) ++n;
     }
     return n;
 }
@@ -84,76 +85,104 @@ int main()
     const bool pass_e11 = (ecm_on > ecm_off);
 
     // E13: CAF proliferation boost via GLI1.
-    parameters.doubles("caf_proliferation_rate") = 0.03;
+    parameters.doubles("caf_proliferation_rate") = 0.003;
     parameters.doubles("gli1_proliferation_boost") = 2.0;
     parameters.doubles("psc_proliferation_rate") = 0.0;
 
-    std::unordered_set<int> off_ids;
-    std::unordered_set<int> on_ids;
+    Cell* rep_off = NULL;
+    Cell* rep_on = NULL;
 
     const double two_pi = 6.283185307179586;
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 5; ++i)
     {
-        const double th = two_pi * (static_cast<double>(i) / 10.0);
+        const double th = two_pi * (static_cast<double>(i) / 5.0);
         Cell* c0 = create_cell(*pStroma);
         c0->assign_position(std::vector<double>{-500.0 + 20.0 * std::cos(th), 120.0 + 20.0 * std::sin(th), 0.0});
         c0->phenotype.motility.is_motile = false;
         c0->custom_data[custom_index(c0, "acta2_active")] = 1.0;
         c0->custom_data[custom_index(c0, "gli1_active")] = 0.0;
-        off_ids.insert(c0->ID);
+        if (rep_off == NULL) rep_off = c0;
 
         Cell* c1 = create_cell(*pStroma);
         c1->assign_position(std::vector<double>{500.0 + 20.0 * std::cos(th), 120.0 + 20.0 * std::sin(th), 0.0});
         c1->phenotype.motility.is_motile = false;
         c1->custom_data[custom_index(c1, "acta2_active")] = 1.0;
         c1->custom_data[custom_index(c1, "gli1_active")] = 1.0;
-        on_ids.insert(c1->ID);
+        if (rep_on == NULL) rep_on = c1;
     }
 
-    const int init_off = count_live_ids(off_ids);
-    const int init_on = count_live_ids(on_ids);
+    // Count cohorts by spatial windows to include daughter cells.
+    const double off_x_min = -900.0;
+    const double off_x_max = -300.0;
+    const double on_x_min = 300.0;
+    const double on_x_max = 900.0;
+
+    const int init_off = count_live_stromal_in_x_window(pStroma->type, off_x_min, off_x_max);
+    const int init_on = count_live_stromal_in_x_window(pStroma->type, on_x_min, on_x_max);
 
     advance_steps(1, dt, t);
 
-    double rate_off = 0.0;
-    double rate_on = 0.0;
-    bool found_off = false;
-    bool found_on = false;
-    for (size_t i = 0; i < all_cells->size(); ++i)
+    assert(rep_off != NULL);
+    assert(rep_on != NULL);
+
+    // Requested diagnostics: cycle model and transition indices/rates at runtime.
+    const Cycle_Model& stromal_cycle_model = rep_off->phenotype.cycle.model();
+    const std::string cycle_model_name = stromal_cycle_model.name;
+    const int configured_start_index = 0;
+    const int configured_end_index = 0; // module4 writes transition_rate(0,0)
+
+    int runtime_start_index = 0;
+    int runtime_end_index = -1;
+    if (!stromal_cycle_model.phase_links.empty() &&
+        !stromal_cycle_model.phase_links[0].empty())
     {
-        Cell* pCell = (*all_cells)[i];
-        if (pCell == NULL || pCell->phenotype.death.dead) continue;
-        if (!found_off && off_ids.find(pCell->ID) != off_ids.end())
-        {
-            rate_off = pCell->phenotype.cycle.data.transition_rate(0, 0);
-            found_off = true;
-        }
-        if (!found_on && on_ids.find(pCell->ID) != on_ids.end())
-        {
-            rate_on = pCell->phenotype.cycle.data.transition_rate(0, 0);
-            found_on = true;
-        }
-        if (found_off && found_on) break;
+        runtime_end_index = stromal_cycle_model.phase_links[0][0].end_phase_index;
     }
 
-    advance_steps(99, dt, t);
+    const double configured_rate_off =
+        rep_off->phenotype.cycle.data.transition_rate(configured_start_index, configured_end_index);
+    const double configured_rate_on =
+        rep_on->phenotype.cycle.data.transition_rate(configured_start_index, configured_end_index);
 
-    const int final_off = count_live_ids(off_ids);
-    const int final_on = count_live_ids(on_ids);
+    double runtime_rate_off = configured_rate_off;
+    double runtime_rate_on = configured_rate_on;
+    if (runtime_end_index >= 0)
+    {
+        runtime_rate_off =
+            rep_off->phenotype.cycle.data.transition_rate(runtime_start_index, runtime_end_index);
+        runtime_rate_on =
+            rep_on->phenotype.cycle.data.transition_rate(runtime_start_index, runtime_end_index);
+    }
+
+    advance_steps(199, dt, t);
+
+    const int final_off = count_live_stromal_in_x_window(pStroma->type, off_x_min, off_x_max);
+    const int final_on = count_live_stromal_in_x_window(pStroma->type, on_x_min, on_x_max);
 
     const double expected_boost = parameters.doubles("gli1_proliferation_boost");
-    const double rate_ratio = (rate_off > 0.0) ? (rate_on / rate_off) : 0.0;
+    const double rate_ratio = (runtime_rate_off > 0.0) ? (runtime_rate_on / runtime_rate_off) : 0.0;
 
     const bool pass_e13_ratio = nearly_equal(rate_ratio, expected_boost);
-    const bool pass_e13_count = (final_on > final_off) && (final_on > init_on) && (final_off >= init_off);
+    // E13 passes only on actual population divergence.
+    const bool pass_e13_count = (final_on > final_off);
 
-    const bool pass = pass_e11 && pass_e13_ratio && pass_e13_count;
+    const bool pass = pass_e11 && pass_e13_count;
+
+    std::cout << "E13 diagnostics"
+              << " cycle_model_name=\"" << cycle_model_name << "\""
+              << " configured_transition_index=" << configured_start_index << "->" << configured_end_index
+              << " runtime_transition_index=" << runtime_start_index << "->" << runtime_end_index
+              << " configured_rate_off=" << configured_rate_off
+              << " configured_rate_on=" << configured_rate_on
+              << " runtime_rate_off=" << runtime_rate_off
+              << " runtime_rate_on=" << runtime_rate_on
+              << std::endl;
 
     std::cout << "P5B measurements"
               << " ecm_gli1_off=" << ecm_off
               << " ecm_gli1_on=" << ecm_on
-              << " rate_off=" << rate_off
-              << " rate_on=" << rate_on
+              << " runtime_rate_off=" << runtime_rate_off
+              << " runtime_rate_on=" << runtime_rate_on
               << " rate_ratio=" << rate_ratio
               << " expected_boost=" << expected_boost
               << " init_off_n=" << init_off

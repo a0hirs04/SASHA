@@ -40,6 +40,7 @@ std::vector<double> g_effective_o2_diffusion_by_voxel;
 std::vector<double> g_effective_drug_diffusion_by_voxel;
 std::vector<double> g_effective_tgfb_diffusion_by_voxel;
 std::vector<double> g_effective_shh_diffusion_by_voxel;
+std::vector<double> g_local_mechanical_stiffness_by_voxel;
 bool g_module_trace_enabled = false;
 std::vector<ModuleTraceEntry> g_module_trace_log;
 
@@ -77,6 +78,149 @@ void ensure_custom_scalar(Cell_Definition* pCD,
     {
         pCD->custom_data.add_variable(name, units, default_value);
     }
+}
+
+double read_custom_or_fallback(Cell* pCell, const std::string& name, double fallback)
+{
+    if (pCell == NULL) return fallback;
+    const int idx = pCell->custom_data.find_variable_index(name);
+    if (idx < 0) return fallback;
+    return pCell->custom_data[idx];
+}
+
+void write_custom_if_present(Cell* pCell, const std::string& name, double value)
+{
+    if (pCell == NULL) return;
+    const int idx = pCell->custom_data.find_variable_index(name);
+    if (idx >= 0)
+    {
+        pCell->custom_data[idx] = value;
+    }
+}
+
+void assign_tumor_identity_if_unset(Cell* pCell)
+{
+    if (pCell == NULL) return;
+
+    const int cell_id_idx = pCell->custom_data.find_variable_index("cell_id");
+    const int parent_id_idx = pCell->custom_data.find_variable_index("parent_id");
+    if (cell_id_idx >= 0 && pCell->custom_data[cell_id_idx] < 0.0)
+    {
+        pCell->custom_data[cell_id_idx] = static_cast<double>(pCell->ID);
+    }
+    if (parent_id_idx >= 0 && pCell->custom_data[parent_id_idx] < 0.0)
+    {
+        pCell->custom_data[parent_id_idx] = -1.0;
+    }
+}
+
+void assign_stromal_identity_if_unset(Cell* pCell)
+{
+    if (pCell == NULL) return;
+
+    const int cell_id_idx = pCell->custom_data.find_variable_index("cell_id");
+    const int parent_id_idx = pCell->custom_data.find_variable_index("parent_id");
+    if (cell_id_idx >= 0 && pCell->custom_data[cell_id_idx] < 0.0)
+    {
+        pCell->custom_data[cell_id_idx] = static_cast<double>(pCell->ID);
+    }
+    if (parent_id_idx >= 0 && pCell->custom_data[parent_id_idx] < 0.0)
+    {
+        pCell->custom_data[parent_id_idx] = -1.0;
+    }
+}
+
+void tumor_division_callback(Cell* pParent, Cell* pChild)
+{
+    if (pParent == NULL || pChild == NULL) return;
+
+    const double parent_cell_id = [&]() -> double
+    {
+        const double stored = read_custom_or_fallback(pParent, "cell_id", -1.0);
+        if (stored >= 0.0) return stored;
+        return static_cast<double>(pParent->ID);
+    }();
+
+    write_custom_if_present(pParent, "cell_id", parent_cell_id);
+
+    // Rule 4: daughter receives new unique ID and records parent lineage.
+    write_custom_if_present(pChild, "cell_id", static_cast<double>(pChild->ID));
+    write_custom_if_present(pChild, "parent_id", parent_cell_id);
+
+    // Rule 5: reset all dynamic tumor state on daughter.
+    write_custom_if_present(pChild, "hif1a_active", 0.0);
+    write_custom_if_present(pChild, "zeb1_active", 0.0);
+    write_custom_if_present(pChild, "cdh1_expressed", 1.0);
+    write_custom_if_present(pChild, "nrf2_active", 0.0);
+    write_custom_if_present(pChild, "abcb1_active", 0.0);
+    write_custom_if_present(pChild, "mmp2_active", 0.0);
+    write_custom_if_present(pChild, "intracellular_drug", 0.0);
+    write_custom_if_present(pChild, "time_since_drug_exposure", -1.0);
+    write_custom_if_present(pChild, "emt_extent", 0.0);
+    write_custom_if_present(pChild, "time_alive", 0.0);
+}
+
+void stromal_division_callback(Cell* pParent, Cell* pChild)
+{
+    if (pParent == NULL || pChild == NULL) return;
+
+    const double parent_cell_id = [&]() -> double
+    {
+        const double stored = read_custom_or_fallback(pParent, "cell_id", -1.0);
+        if (stored >= 0.0) return stored;
+        return static_cast<double>(pParent->ID);
+    }();
+
+    write_custom_if_present(pParent, "cell_id", parent_cell_id);
+    write_custom_if_present(pChild, "cell_id", static_cast<double>(pChild->ID));
+    write_custom_if_present(pChild, "parent_id", parent_cell_id);
+}
+
+void rebuild_stromal_custom_schema(Cell_Definition* pStroma, const Cell_Definition* pTumor)
+{
+    if (pStroma == NULL) return;
+
+    Custom_Cell_Data schema;
+    auto add_scalar = [&](const std::string& name, const std::string& units, double value)
+    {
+        schema.add_variable(name, units, value);
+    };
+
+    // Actor 2 identity.
+    add_scalar("cell_id", "none", -1.0);
+    add_scalar("parent_id", "none", -1.0);
+
+    // Actor 2 stromal genotype subset (categorical codes, 0=WT).
+    add_scalar("gene_state_SMAD4", "none", 0.0);
+    add_scalar("gene_state_ACTA2", "none", 0.0);
+    add_scalar("gene_state_GLI1", "none", 0.0);
+    add_scalar("gene_state_HAS2", "none", 0.0);
+    add_scalar("gene_state_COL1A1", "none", 0.0);
+    add_scalar("gene_state_TGFB1", "none", 0.0);
+    add_scalar("gene_state_SHH", "none", 0.0);
+
+    // Activation / state variables.
+    add_scalar("acta2_active", "dimensionless", 0.0);
+    add_scalar("gli1_active", "dimensionless", 0.0);
+    add_scalar("activation_mode", "dimensionless", 0.0);
+    add_scalar("hif1a_active", "dimensionless", 0.0);
+    add_scalar("ecm_production_rate", "dimensionless", 0.0);
+    add_scalar("tgfb_secretion_active", "dimensionless", 0.0);
+    add_scalar("time_alive", "min", 0.0);
+    add_scalar("mechanical_pressure", "dimensionless", 0.0);
+
+    // Keep vector lengths aligned with tumor custom data to avoid per-cell
+    // serialization/index mismatches in output routines.
+    const size_t target_size =
+        (pTumor != NULL) ? pTumor->custom_data.variables.size() : schema.variables.size();
+    int pad_counter = 0;
+    while (schema.variables.size() < target_size)
+    {
+        add_scalar("_stromal_reserved_" + std::to_string(pad_counter), "none", 0.0);
+        ++pad_counter;
+    }
+
+    pStroma->custom_data = schema;
 }
 
 std::vector<std::string> get_process_arguments()
@@ -610,6 +754,11 @@ void set_ecm_ha_fraction(int voxel_index, double value)
     g_ecm_ha_fraction_by_voxel[voxel_index] = std::max(0.0, std::min(1.0, value));
 }
 
+double get_ecm_collagen_fraction(int voxel_index)
+{
+    return 1.0 - get_ecm_ha_fraction(voxel_index);
+}
+
 void update_ecm_effective_diffusion_coefficients(Microenvironment& M)
 {
     const unsigned int n_voxels = M.number_of_voxels();
@@ -630,6 +779,7 @@ void update_ecm_effective_diffusion_coefficients(Microenvironment& M)
     g_effective_tgfb_diffusion_by_voxel.assign(n_voxels, base_tgfb);
     g_effective_shh_diffusion_by_voxel.assign(n_voxels, base_shh);
     g_effective_drug_diffusion_by_voxel.assign(n_voxels, base_drug);
+    g_local_mechanical_stiffness_by_voxel.assign(n_voxels, 0.0);
 
     if (ecm_index < 0)
     {
@@ -648,6 +798,9 @@ void update_ecm_effective_diffusion_coefficients(Microenvironment& M)
         const double ha_frac =
             (n < g_ecm_ha_fraction_by_voxel.size()) ? clamp_unit(g_ecm_ha_fraction_by_voxel[n]) : 0.5;
         const double col_frac = 1.0 - ha_frac;
+
+        // Collagen-dominant stiffness term used by mechanical modules.
+        g_local_mechanical_stiffness_by_voxel[n] = ecm * col_frac;
 
         if (base_o2 > 0.0)
         {
@@ -717,6 +870,13 @@ double get_effective_diffusion_coefficient(int substrate_index, int voxel_index)
     return 0.0;
 }
 
+double get_local_mechanical_stiffness(int voxel_index)
+{
+    if (voxel_index < 0) return 0.0;
+    if (voxel_index >= static_cast<int>(g_local_mechanical_stiffness_by_voxel.size())) return 0.0;
+    return std::max(0.0, g_local_mechanical_stiffness_by_voxel[voxel_index]);
+}
+
 // SENSING PHASE (reads environment, writes nothing)
 void module1_oxygen_sensing(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
 {
@@ -749,12 +909,19 @@ void module1_oxygen_sensing(Cell* pCell, Phenotype& phenotype, double dt, Module
 
 void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
 {
-    (void)phenotype;
     (void)dt;
     assert_expected_phase("module3_stromal_activation", phase, ModulePhase::SENSING);
     log_module_trace("module3_stromal_activation", phase, {"tgfb", "shh"}, {});
 
     if (pCell == NULL) return;
+
+    Cell_Definition* pStromaDef = find_cell_definition("stromal_cell");
+    const bool is_stromal =
+        (pStromaDef != NULL) && (pCell->type == pStromaDef->type);
+    if (!is_stromal)
+    {
+        return;
+    }
 
     const std::vector<double>& densities = pCell->nearest_density_vector();
     const double local_tgfb = read_density_value(densities, tgfb_index);
@@ -764,13 +931,20 @@ void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, Mo
         read_xml_double_or_default("tgfb_activation_threshold", 0.0);
     const double shh_threshold =
         read_xml_double_or_default("shh_activation_threshold", 0.0);
+    const double ecm_production_rate_base =
+        read_xml_double_or_default("ecm_production_rate_base", 0.0);
+    const double ecm_production_rate_boosted =
+        read_xml_double_or_default("ecm_production_rate_boosted", 0.0);
+    const double psc_migration_speed =
+        read_xml_double_or_default("psc_migration_speed", 0.05);
+    const double caf_migration_speed =
+        read_xml_double_or_default("caf_migration_speed", 0.1);
 
     const double previous_acta2 =
         read_custom_data_value_or_default(pCell, "acta2_active", 0.0);
+    double updated_gli1 =
+        read_custom_data_value_or_default(pCell, "gli1_active", 0.0);
     double updated_acta2 = previous_acta2;
-
-    const bool is_stromal = (pCell->type_name == "stromal_cell");
-    const bool is_caf = (pCell->type_name == "CAF");
 
     if (is_stromal && previous_acta2 == 0.0)
     {
@@ -778,26 +952,25 @@ void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, Mo
         if (combined_signal > activation_threshold)
         {
             updated_acta2 = 1.0; // IRREVERSIBLE
-            pCell->type_name = "CAF";
 
             if (local_shh > 0.0)
             {
-                set_custom_data_if_present(pCell, "gli1_active", 1.0);
+                updated_gli1 = 1.0;
             }
         }
     }
 
-    if (is_caf && previous_acta2 == 1.0)
+    if (updated_acta2 == 1.0)
     {
         updated_acta2 = 1.0; // acta2 stays ON permanently
 
         if (local_shh > shh_threshold)
         {
-            set_custom_data_if_present(pCell, "gli1_active", 1.0);
+            updated_gli1 = 1.0;
         }
         else
         {
-            set_custom_data_if_present(pCell, "gli1_active", 0.0); // GLI1 is reversible
+            updated_gli1 = 0.0; // GLI1 is reversible
         }
     }
 
@@ -808,6 +981,29 @@ void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, Mo
     }
 
     set_custom_data_if_present(pCell, "acta2_active", updated_acta2);
+    set_custom_data_if_present(pCell, "gli1_active", updated_gli1);
+
+    if (updated_acta2 == 1.0)
+    {
+        set_custom_data_if_present(pCell, "activation_mode", 1.0);
+        set_custom_data_if_present(pCell, "tgfb_secretion_active", 1.0);
+        if (updated_gli1 == 1.0)
+        {
+            set_custom_data_if_present(pCell, "ecm_production_rate", ecm_production_rate_boosted);
+        }
+        else
+        {
+            set_custom_data_if_present(pCell, "ecm_production_rate", ecm_production_rate_base);
+        }
+        phenotype.motility.migration_speed = caf_migration_speed;
+    }
+    else
+    {
+        set_custom_data_if_present(pCell, "activation_mode", 0.0);
+        set_custom_data_if_present(pCell, "tgfb_secretion_active", 0.0);
+        set_custom_data_if_present(pCell, "ecm_production_rate", 0.0);
+        phenotype.motility.migration_speed = psc_migration_speed;
+    }
 }
 
 void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
@@ -886,7 +1082,7 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     }
     else
     {
-        if (nrf2_active == 1.0)
+        if (nrf2_active > 0.0)
         {
             nrf2_active = nrf2_active - nrf2_decay_rate * dt;
             nrf2_active = std::max(0.0, nrf2_active);
@@ -1101,7 +1297,30 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
         const double tgfb_brake_sensitivity =
             read_xml_double_or_default("tgfb_brake_sensitivity", 0.0);
 
+        const double gene_state_kras =
+            read_custom_data_value_or_default(pCell, "gene_state_KRAS", 1.0);
+        const double gene_state_myc =
+            read_custom_data_value_or_default(pCell, "gene_state_MYC", 0.0);
+
+        const bool kras_is_wt = (gene_state_kras < 0.5);
+        const bool kras_is_gof = (gene_state_kras >= 0.5 && gene_state_kras < 1.5);
+        const bool myc_is_wt = (gene_state_myc < 0.5);
+        const bool myc_is_gof = (gene_state_myc >= 0.5 && gene_state_myc < 1.5);
+
+        // Rule 1: KRAS/MYC genotype modulates growth drive.
+        // Keep canonical PDAC baseline (KRAS=GOF, MYC=WT) at multiplier 1.0.
+        double genotype_proliferation_multiplier = 1.0;
+        if (kras_is_wt && myc_is_wt)
+        {
+            genotype_proliferation_multiplier = 0.5;
+        }
+        else if (kras_is_gof && myc_is_gof)
+        {
+            genotype_proliferation_multiplier = 1.5;
+        }
+
         double proliferation = base_proliferation_rate;
+        proliferation = proliferation * genotype_proliferation_multiplier;
 
         if (zeb1_active == 1.0)
         {
@@ -1562,7 +1781,35 @@ void create_cell_types(void)
     if (pTumor != NULL)
     {
         pTumor->functions.update_phenotype = custom_function;
+        pTumor->functions.cell_division_function = tumor_division_callback;
         g_dispatch_by_type[pTumor->type] = tumor_phenotype_update;
+
+        // Actor 1 identity.
+        ensure_custom_scalar(pTumor, "cell_id", "none", -1.0);
+        ensure_custom_scalar(pTumor, "parent_id", "none", -1.0);
+
+        // Actor 1 genotype state (categorical: 0=WT, 1=GOF, 2=LOF).
+        ensure_custom_scalar(pTumor, "gene_state_KRAS", "none", 1.0);
+        ensure_custom_scalar(pTumor, "gene_state_TP53", "none", 2.0);
+        ensure_custom_scalar(pTumor, "gene_state_CDKN2A", "none", 2.0);
+        ensure_custom_scalar(pTumor, "gene_state_SMAD4", "none", 2.0);
+        ensure_custom_scalar(pTumor, "gene_state_BCL_XL", "none", 1.0);
+        ensure_custom_scalar(pTumor, "gene_state_MYC", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_EGFR", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_RB1", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_BAX", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_ZEB1", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_CDH1", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_MMP2", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_TGFB1", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_SHH", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_HIF1A", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_NRF2", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_ABCB1", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_HAS2", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_COL1A1", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_GLI1", "none", 0.0);
+        ensure_custom_scalar(pTumor, "gene_state_ACTA2", "none", 0.0);
 
         // Ensure custom outputs used by tumor phenotype code exist.
         ensure_custom_scalar(pTumor, "is_mesenchymal", "dimensionless", 0.0);
@@ -1577,6 +1824,7 @@ void create_cell_types(void)
         ensure_custom_scalar(pTumor, "intracellular_drug", "dimensionless", 0.0);
         ensure_custom_scalar(pTumor, "mechanical_pressure", "dimensionless", 0.0);
         ensure_custom_scalar(pTumor, "time_since_drug_exposure", "hour", -1.0);
+        ensure_custom_scalar(pTumor, "time_alive", "min", 0.0);
     }
     else
     {
@@ -1586,24 +1834,30 @@ void create_cell_types(void)
     if (pStroma != NULL)
     {
         pStroma->functions.update_phenotype = custom_function;
+        pStroma->functions.cell_division_function = stromal_division_callback;
         g_dispatch_by_type[pStroma->type] = stromal_phenotype_update;
 
-        // Ensure custom outputs used by stromal phenotype code exist.
-        ensure_custom_scalar(pStroma, "is_activated", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "ecm_production_rate", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "local_ecm_density", "dimensionless", 0.0);
+        // Replace inherited tumor-centric schema with Actor 2 stromal schema.
+        rebuild_stromal_custom_schema(pStroma, pTumor);
+
+        // Ensure required Actor 2 stromal fields exist.
+        ensure_custom_scalar(pStroma, "cell_id", "none", -1.0);
+        ensure_custom_scalar(pStroma, "parent_id", "none", -1.0);
+        ensure_custom_scalar(pStroma, "gene_state_SMAD4", "none", 0.0);
+        ensure_custom_scalar(pStroma, "gene_state_ACTA2", "none", 0.0);
+        ensure_custom_scalar(pStroma, "gene_state_GLI1", "none", 0.0);
+        ensure_custom_scalar(pStroma, "gene_state_HAS2", "none", 0.0);
+        ensure_custom_scalar(pStroma, "gene_state_COL1A1", "none", 0.0);
+        ensure_custom_scalar(pStroma, "gene_state_TGFB1", "none", 0.0);
+        ensure_custom_scalar(pStroma, "gene_state_SHH", "none", 0.0);
         ensure_custom_scalar(pStroma, "hif1a_active", "dimensionless", 0.0);
         ensure_custom_scalar(pStroma, "acta2_active", "dimensionless", 0.0);
         ensure_custom_scalar(pStroma, "gli1_active", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "zeb1_active", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "cdh1_expressed", "dimensionless", 1.0);
-        ensure_custom_scalar(pStroma, "mmp2_active", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "emt_extent", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "abcb1_active", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "nrf2_active", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "intracellular_drug", "dimensionless", 0.0);
+        ensure_custom_scalar(pStroma, "activation_mode", "dimensionless", 0.0);
+        ensure_custom_scalar(pStroma, "tgfb_secretion_active", "dimensionless", 0.0);
+        ensure_custom_scalar(pStroma, "ecm_production_rate", "dimensionless", 0.0);
+        ensure_custom_scalar(pStroma, "time_alive", "min", 0.0);
         ensure_custom_scalar(pStroma, "mechanical_pressure", "dimensionless", 0.0);
-        ensure_custom_scalar(pStroma, "time_since_drug_exposure", "hour", -1.0);
     }
     else
     {
@@ -1688,6 +1942,7 @@ void setup_tissue(void)
 
         Cell* pCell = create_cell(*pTumor);
         pCell->assign_position(position);
+        assign_tumor_identity_if_unset(pCell);
         initialize_boolean_network_for_cell(pCell, CellType::TUMOR);
     }
 
@@ -1703,7 +1958,7 @@ void setup_tissue(void)
 
         Cell* pCell = create_cell(*pStroma);
         pCell->assign_position(position);
-        initialize_boolean_network_for_cell(pCell, CellType::STROMA);
+        assign_stromal_identity_if_unset(pCell);
     }
 
     load_interventions_at_setup();
@@ -1720,6 +1975,27 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
 {
     if (pCell == NULL) return;
     if (dt <= 0.0) return;
+
+    Cell_Definition* pTumorDef = find_cell_definition("tumor_cell");
+    Cell_Definition* pStromaDef = find_cell_definition("stromal_cell");
+    if (pTumorDef != NULL && pCell->type == pTumorDef->type)
+    {
+        assign_tumor_identity_if_unset(pCell);
+    }
+    if (pStromaDef != NULL && pCell->type == pStromaDef->type)
+    {
+        assign_stromal_identity_if_unset(pCell);
+        // Rule 21: stromal SMAD4 is immutable WT.
+        set_custom_data_if_present(pCell, "gene_state_SMAD4", 0.0);
+    }
+
+    if (phenotype.death.dead)
+    {
+        phenotype.secretion.set_all_secretion_to_zero();
+        phenotype.secretion.set_all_uptake_to_zero();
+        set_custom_data_if_present(pCell, "mechanical_pressure", 0.0);
+        return;
+    }
 
     const std::chrono::steady_clock::time_point t0 = std::chrono::steady_clock::now();
 
