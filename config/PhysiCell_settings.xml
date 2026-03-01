@@ -767,11 +767,17 @@
         <number_of_tumor_cells type="int" units="none"
             description="Number of tumor cells placed in cluster at domain center">50</number_of_tumor_cells>
         <number_of_stromal_cells type="int" units="none"
-            description="Number of stromal cells scattered uniformly across domain">200</number_of_stromal_cells>
+            description="Number of PSCs placed in annular ring around tumor">500</number_of_stromal_cells>
 
         <!-- Tumor cluster geometry -->
         <tumor_cluster_radius type="double" units="micron"
             description="Radius of initial tumor cell cluster centered at origin">100.0</tumor_cluster_radius>
+
+        <!-- Stromal seeding ring (annulus around tumor center) -->
+        <stroma_inner_radius type="double" units="micron"
+            description="Inner radius of PSC seeding annulus">100.0</stroma_inner_radius>
+        <stroma_outer_radius type="double" units="micron"
+            description="Outer radius of PSC seeding annulus">300.0</stroma_outer_radius>
 
         <!-- Mechanics voxel size — passed to Cell_Container constructor in main.cpp
              Set to 30 microns as specified (larger than microenvironment voxel = 20 µm) -->
@@ -832,7 +838,7 @@
         <efflux_drug_reduction type="double" units="dimensionless"
             description="Fractional reduction in effective drug when abcb1_active=1">0.7</efflux_drug_reduction>
         <caf_proliferation_rate type="double" units="1/min"
-            description="Baseline CAF proliferation transition rate">0.003</caf_proliferation_rate>
+            description="Baseline CAF proliferation transition rate">0.0001</caf_proliferation_rate>
         <gli1_proliferation_boost type="double" units="dimensionless"
             description="CAF proliferation multiplier when gli1_active=1">1.3</gli1_proliferation_boost>
         <psc_proliferation_rate type="double" units="1/min"

@@ -73,6 +73,11 @@ def evaluate_replicate(rep_dir: Path, seed: int):
     is_activated = _row("is_activated")
     if is_activated is None:
         is_activated = _row("ACTA2")
+    # Stromal cells use a different custom-data schema (rebuild_stromal_custom_schema).
+    # PhysiCell outputs labels from tumor cell_definition 0; stromal "acta2_active"
+    # (offset 9) occupies the same matrix row as tumor "ZEB1" (offset 9).
+    if is_activated is None:
+        is_activated = _row("ZEB1")
     positions = parser._get_positions(matrix, labels)
 
     cell_type_int = np.rint(cell_type).astype(int) if cell_type is not None else np.zeros(matrix.shape[1], dtype=int)

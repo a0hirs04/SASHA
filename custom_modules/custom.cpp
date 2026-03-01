@@ -11,6 +11,7 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <random>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -1377,6 +1378,8 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
             read_xml_double_or_default("gli1_proliferation_boost", 1.0);
         const double psc_proliferation_rate =
             read_xml_double_or_default("psc_proliferation_rate", 0.0);
+        const double contact_inhibition_threshold =
+            read_xml_double_or_default("contact_inhibition_threshold", 0.0);
 
         if (acta2_active == 1.0)
         {
@@ -1384,6 +1387,11 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
             if (gli1_active == 1.0)
             {
                 caf_rate = caf_rate * gli1_proliferation_boost;
+            }
+            // Rule 37: CAFs are physical cells subject to contact inhibition.
+            if (mechanical_pressure > contact_inhibition_threshold)
+            {
+                caf_rate = 0.0;
             }
             phenotype.cycle.data.transition_rate(0, 0) = caf_rate;
             phenotype.death.rates[apoptosis_index] = 0.0;
@@ -1946,15 +1954,33 @@ void setup_tissue(void)
         initialize_boolean_network_for_cell(pCell, CellType::TUMOR);
     }
 
-    // ---- Place stromal cells uniformly throughout the domain ----
+    // ---- Place stromal cells in annular ring around tumor center ----
+    double stroma_inner = 100.0;
+    double stroma_outer = 300.0;
+    if (parameters.doubles.find_index("stroma_inner_radius") >= 0)
+    {
+        stroma_inner = parameters.doubles("stroma_inner_radius");
+    }
+    if (parameters.doubles.find_index("stroma_outer_radius") >= 0)
+    {
+        stroma_outer = parameters.doubles("stroma_outer_radius");
+    }
+    if (stroma_inner < 0.0) stroma_inner = 0.0;
+    if (stroma_outer <= stroma_inner) stroma_outer = stroma_inner + 200.0;
+
+    const double r_inner2 = stroma_inner * stroma_inner;
+    const double r_outer2 = stroma_outer * stroma_outer;
+
     for (int i = 0; i < n_stroma; ++i)
     {
+        // Uniform sampling in annulus: r = sqrt(U * (R2^2 - R1^2) + R1^2)
+        const double r = std::sqrt(UniformRandom() * (r_outer2 - r_inner2) + r_inner2);
+        const double theta = two_pi * UniformRandom();
+
         std::vector<double> position(3, 0.0);
-        position[0] = Xmin + UniformRandom() * x_range;
-        position[1] = Ymin + UniformRandom() * y_range;
-        position[2] = default_microenvironment_options.simulate_2D
-                    ? 0.0
-                    : (Zmin + UniformRandom() * z_range);
+        position[0] = x_center + r * std::cos(theta);
+        position[1] = y_center + r * std::sin(theta);
+        position[2] = z_center;
 
         Cell* pCell = create_cell(*pStroma);
         pCell->assign_position(position);
@@ -1968,7 +1994,8 @@ void setup_tissue(void)
     std::cerr << "[setup_tissue] Placed tumor=" << n_tumor
               << " stromal=" << n_stroma
               << " cluster_radius=" << tumor_cluster_radius
-              << "um in " << ms << " ms\n";
+              << "um stroma_ring=[" << stroma_inner << "," << stroma_outer << "]um"
+              << " in " << ms << " ms\n";
 }
 
 void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
@@ -2012,6 +2039,81 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
     module2_paracrine_secretion(pCell, phenotype, dt, ModulePhase::WRITE);
     module6_ecm_production(pCell, phenotype, dt, ModulePhase::WRITE);
     module8_mechanical_compaction(pCell, phenotype, dt, ModulePhase::WRITE);
+
+    // ---- ONE-TIME DIAGNOSTIC at t≈360 for PSC proliferation debugging ----
+    {
+        static std::atomic<bool> diag_done(false);
+        const double sim_time = PhysiCell_globals.current_time;
+        if (!diag_done.load(std::memory_order_relaxed) && sim_time >= 360.0)
+        {
+            bool expected = false;
+            if (diag_done.compare_exchange_strong(expected, true,
+                    std::memory_order_acq_rel))
+            {
+                std::cerr << "\n[DIAG_T360_STROMAL] === One-time stromal diagnostic at t="
+                          << sim_time << " ===\n";
+
+                Cell_Definition* pSD = find_cell_definition("stromal_cell");
+                if (pSD != NULL)
+                {
+                    // Collect all live stromal cells
+                    std::vector<Cell*> pscs;
+                    std::vector<Cell*> cafs;
+                    for (auto* c : *all_cells)
+                    {
+                        if (c == NULL || c->phenotype.death.dead) continue;
+                        if (c->type != pSD->type) continue;
+                        const double a2 = read_custom_data_value_or_default(c, "acta2_active", -999.0);
+                        if (a2 < 0.5)
+                            pscs.push_back(c);
+                        else
+                            cafs.push_back(c);
+                    }
+                    std::cerr << "[DIAG_T360_STROMAL] Total live stromal: "
+                              << (pscs.size() + cafs.size())
+                              << "  PSCs(acta2=0): " << pscs.size()
+                              << "  CAFs(acta2=1): " << cafs.size() << "\n";
+
+                    // Print 5 random PSCs
+                    std::mt19937 rng(42);
+                    if (pscs.size() > 5)
+                    {
+                        std::shuffle(pscs.begin(), pscs.end(), rng);
+                    }
+                    const size_t n_show = std::min(pscs.size(), (size_t)5);
+                    for (size_t i = 0; i < n_show; ++i)
+                    {
+                        Cell* c = pscs[i];
+                        const double rate = c->phenotype.cycle.data.transition_rate(0, 0);
+                        const double a2 = read_custom_data_value_or_default(c, "acta2_active", -999.0);
+                        const double am = read_custom_data_value_or_default(c, "activation_mode", -999.0);
+                        std::cerr << "[DIAG_T360_STROMAL] PSC #" << i
+                                  << "  ID=" << c->ID
+                                  << "  transition_rate(0,0)=" << rate
+                                  << "  acta2_active=" << a2
+                                  << "  activation_mode=" << am << "\n";
+                    }
+
+                    // Also print 3 CAFs for comparison
+                    const size_t n_caf_show = std::min(cafs.size(), (size_t)3);
+                    for (size_t i = 0; i < n_caf_show; ++i)
+                    {
+                        Cell* c = cafs[i];
+                        const double rate = c->phenotype.cycle.data.transition_rate(0, 0);
+                        const double a2 = read_custom_data_value_or_default(c, "acta2_active", -999.0);
+                        const double am = read_custom_data_value_or_default(c, "activation_mode", -999.0);
+                        std::cerr << "[DIAG_T360_STROMAL] CAF #" << i
+                                  << "  ID=" << c->ID
+                                  << "  transition_rate(0,0)=" << rate
+                                  << "  acta2_active=" << a2
+                                  << "  activation_mode=" << am << "\n";
+                    }
+                }
+                std::cerr << "[DIAG_T360_STROMAL] === end diagnostic ===\n\n";
+            }
+        }
+    }
+    // ---- END DIAGNOSTIC ----
 
     const std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
     const long long elapsed_ns =

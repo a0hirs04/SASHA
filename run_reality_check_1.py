@@ -54,6 +54,62 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from python.wrapper.output_parser import OutputParser, SimulationMetrics
 
 # ---------------------------------------------------------------------------
+# Stromal custom-data column mapping
+# ---------------------------------------------------------------------------
+# PhysiCell writes output labels from cell_definition 0 (tumor_cell) only.
+# Stromal cells have a different custom-data schema (rebuild_stromal_custom_schema).
+# Both share the same base row offset, but the variable at each offset differs.
+#
+# Stromal schema offset:                    Tumor XML label at same offset:
+#   0  cell_id                               KRAS
+#   1  parent_id                             MYC
+#   2  gene_state_SMAD4                      EGFR
+#   3  gene_state_ACTA2                      TP53
+#   4  gene_state_GLI1                       CDKN2A
+#   5  gene_state_HAS2                       SMAD4
+#   6  gene_state_COL1A1                     RB1
+#   7  gene_state_TGFB1                      BCL_XL
+#   8  gene_state_SHH                        BAX
+#   9  acta2_active                          ZEB1
+#  10  gli1_active                           CDH1
+#  11  activation_mode                       MMP2
+#  12  hif1a_active                          TGFB1_expr
+#  13  ecm_production_rate                   SHH_expr
+#  14  tgfb_secretion_active                 HIF1A
+#  15  time_alive                            NRF2
+#  16  mechanical_pressure                   ABCB1
+#
+# To read stromal variable X, look up the tumor label at the same offset.
+STROMAL_TO_TUMOR_LABEL: Dict[str, str] = {
+    "acta2_active":          "ZEB1",
+    "gli1_active":           "CDH1",
+    "activation_mode":       "MMP2",
+    "hif1a_active":          "TGFB1_expr",
+    "ecm_production_rate":   "SHH_expr",
+    "tgfb_secretion_active": "HIF1A",
+    "time_alive":            "NRF2",
+    "mechanical_pressure":   "ABCB1",
+}
+
+
+def _stromal_row(
+    matrix: np.ndarray,
+    labels: Dict[str, Dict[str, Any]],
+    stromal_var_name: str,
+) -> Optional[np.ndarray]:
+    """Read a stromal-specific custom-data row using the tumor-label offset mapping."""
+    tumor_label = STROMAL_TO_TUMOR_LABEL.get(stromal_var_name)
+    if tumor_label is None:
+        return None
+    entry = labels.get(tumor_label)
+    if entry is None:
+        return None
+    idx = int(entry["index"])
+    if idx < 0 or idx >= matrix.shape[0]:
+        return None
+    return matrix[idx, :]
+
+# ---------------------------------------------------------------------------
 # Configuration
 # ---------------------------------------------------------------------------
 BINARY = PROJECT_ROOT / "stroma_world"
@@ -61,12 +117,12 @@ BASE_CONFIG = PROJECT_ROOT / "config" / "PhysiCell_settings.xml"
 
 NUM_REPLICATES = 5
 SEEDS = [42, 99, 137, 256, 1001]
-SIM_MAX_TIME_MIN = 10_080.0          # 7 days (28 snapshot intervals of 360 min)
+SIM_MAX_TIME_MIN = 30_240.0          # 21 days (84 snapshot intervals of 360 min)
 QUORUM = 4                            # >=4 of 5 must pass
 BOUNDARY_O2 = 38.0                    # mmHg
 
-# Time-series checkpoints (minutes)
-TARGET_TIMES = [1440, 2880, 4320, 7200, 10080]
+# Time-series checkpoints (minutes) — days 1, 3, 7, 14, 21
+TARGET_TIMES = [1440, 4320, 10080, 20160, 30240]
 
 # HPC SLURM settings
 SLURM_PARTITION = "compute"
@@ -195,13 +251,15 @@ def _compute_live_population_snapshot(snapshot: Dict[str, Any]) -> Dict[str, Any
     live_tumor_mask = tumor_mask & live_mask
     live_stroma_mask = stroma_mask & live_mask
 
-    acta2 = _row("acta2_active")
-    if acta2 is None:
-        acta2 = _row("is_activated")
-    if acta2 is None:
-        acta2 = _row("ACTA2")
-    live_caf_mask = live_stroma_mask & (acta2 > 0.5) if acta2 is not None else np.zeros_like(live_stroma_mask)
+    # Read acta2_active for stromal cells via the column-offset mapping.
+    # The tumor-schema label at stromal offset 9 is "ZEB1".
+    acta2_stromal = _stromal_row(matrix, labels, "acta2_active")
+    if acta2_stromal is not None:
+        live_caf_mask = live_stroma_mask & (acta2_stromal > 0.5)
+    else:
+        live_caf_mask = np.zeros_like(live_stroma_mask)
 
+    # EMT fraction: read from tumor cells only using the correct tumor label.
     is_mes = _row("is_mesenchymal")
     if is_mes is None:
         is_mes = _row("zeb1_active")

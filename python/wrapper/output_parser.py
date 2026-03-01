@@ -23,6 +23,24 @@ except ImportError:  # pragma: no cover
 
 LOGGER = logging.getLogger(__name__)
 
+# ---------------------------------------------------------------------------
+# Stromal custom-data column mapping
+# ---------------------------------------------------------------------------
+# PhysiCell writes output labels from cell_definition 0 (tumor_cell) only.
+# Stromal cells use a different custom-data schema, so the variable at each
+# offset differs from what the label says.  Map stromal variable names to the
+# tumor label that occupies the same column offset.
+_STROMAL_TO_TUMOR_LABEL: Dict[str, str] = {
+    "acta2_active":          "ZEB1",
+    "gli1_active":           "CDH1",
+    "activation_mode":       "MMP2",
+    "hif1a_active":          "TGFB1_expr",
+    "ecm_production_rate":   "SHH_expr",
+    "tgfb_secretion_active": "HIF1A",
+    "time_alive":            "NRF2",
+    "mechanical_pressure":   "ABCB1",
+}
+
 
 @dataclass
 class SimulationMetrics:
@@ -218,6 +236,12 @@ class OutputParser:
         is_activated = self._get_row(cell_matrix, label_name_map, "is_activated")
         if is_activated is None:
             is_activated = self._get_row(cell_matrix, label_name_map, "ACTA2")
+        if is_activated is None:
+            # Stromal custom data uses a different schema; acta2_active is at
+            # the same column offset as tumor label "ZEB1".
+            tumor_label = _STROMAL_TO_TUMOR_LABEL.get("acta2_active")
+            if tumor_label:
+                is_activated = self._get_row(cell_matrix, label_name_map, tumor_label)
         activated_cafs = int(np.sum(stroma_mask & (is_activated > 0.5))) if is_activated is not None else 0
 
         is_mesenchymal = self._get_row(cell_matrix, label_name_map, "is_mesenchymal")
