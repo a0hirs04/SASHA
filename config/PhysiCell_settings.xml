@@ -864,7 +864,7 @@
         <hif1a_nrf2_priming_bonus type="double" units="dimensionless"
             description="Stress-signal bonus under hypoxia for earlier NRF2 activation">0.02</hif1a_nrf2_priming_bonus>
         <emt_induction_threshold type="double" units="dimensionless"
-            description="Knob 5a (Observable): EMT induction threshold">0.10</emt_induction_threshold>
+            description="Knob 5a (Observable): EMT induction threshold">0.30</emt_induction_threshold>
         <emt_phenotype_extent type="int" units="dimensionless"
             description="Knob 5b for EMT engine (1=LOW, 2=MEDIUM, 3=HIGH)">3</emt_phenotype_extent>
         <hif1a_emt_boost type="double" units="dimensionless"
@@ -902,7 +902,7 @@
         <crowding_base_pressure type="double" units="dimensionless"
             description="Additive crowding baseline so contact inhibition fires even without ECM">0.02</crowding_base_pressure>
         <stromal_contact_emt_boost type="double" units="dimensionless"
-            description="Juxtacrine EMT boost for tumor cells adjacent to activated CAFs">0.15</stromal_contact_emt_boost>
+            description="Juxtacrine EMT boost for tumor cells adjacent to activated CAFs">0.00</stromal_contact_emt_boost>
         <host_death_ceiling type="int" units="cells"
             description="Max live tumor cells before simulation halts (safety valve)">50000</host_death_ceiling>
 
