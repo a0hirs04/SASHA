@@ -899,6 +899,10 @@
             description="Knob 8 (Fixed): mechanical compaction / solid-stress strength">0.6</mechanical_compaction_strength>
         <compaction_ecm_increment type="double" units="dimensionless"
             description="Passive ECM density increment per solid-stress unit per step">0.01</compaction_ecm_increment>
+        <crowding_base_pressure type="double" units="dimensionless"
+            description="Additive crowding baseline so contact inhibition fires even without ECM">0.3</crowding_base_pressure>
+        <host_death_ceiling type="int" units="cells"
+            description="Max live tumor cells before simulation halts (safety valve)">50000</host_death_ceiling>
 
     </user_parameters>
 

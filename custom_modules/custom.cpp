@@ -1642,8 +1642,10 @@ void module8_mechanical_compaction(Cell* pCell, Phenotype& phenotype, double dt,
     const double ecm_stiffness = ecm_at_voxel * collagen_fraction;
     const double mechanical_compaction_strength =
         read_xml_double_or_default("mechanical_compaction_strength", 0.0);
+    const double crowding_base =
+        read_xml_double_or_default("crowding_base_pressure", 0.3);
     const double solid_stress =
-        cell_density_proxy * ecm_stiffness * mechanical_compaction_strength;
+        cell_density_proxy * (crowding_base + ecm_stiffness * mechanical_compaction_strength);
 
     set_custom_data_if_present(pCell, "mechanical_pressure", solid_stress);
 
@@ -2005,6 +2007,64 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
 {
     if (pCell == NULL) return;
     if (dt <= 0.0) return;
+
+    // ---- HOST DEATH CEILING: periodic check (once per 360-min interval) ----
+    {
+        static std::atomic<double> next_ceiling_check(360.0);
+        static std::atomic<bool> ceiling_triggered(false);
+        const double sim_time = PhysiCell_globals.current_time;
+
+        if (!ceiling_triggered.load(std::memory_order_relaxed) &&
+            sim_time >= next_ceiling_check.load(std::memory_order_relaxed))
+        {
+            // Only one thread performs the check
+            double expected_next = next_ceiling_check.load(std::memory_order_acquire);
+            if (sim_time >= expected_next &&
+                next_ceiling_check.compare_exchange_strong(expected_next,
+                    expected_next + 360.0, std::memory_order_acq_rel))
+            {
+                const double host_death_ceiling =
+                    read_xml_double_or_default("host_death_ceiling", 50000.0);
+                Cell_Definition* pTD = find_cell_definition("tumor_cell");
+                if (pTD != NULL)
+                {
+                    int live_tumor = 0;
+                    for (auto* c : *all_cells)
+                    {
+                        if (c != NULL && !c->phenotype.death.dead &&
+                            c->type == pTD->type)
+                        {
+                            live_tumor++;
+                        }
+                    }
+                    if (static_cast<double>(live_tumor) > host_death_ceiling)
+                    {
+                        std::cerr << "\n[HOST_DEATH_CEILING] t=" << sim_time
+                                  << " live_tumor=" << live_tumor
+                                  << " > ceiling=" << host_death_ceiling
+                                  << "  — halting simulation.\n";
+                        // Create marker file
+                        std::string marker_path =
+                            PhysiCell_settings.folder + "/HOST_DEATH.txt";
+                        std::ofstream marker(marker_path);
+                        if (marker.is_open())
+                        {
+                            marker << "HOST_DEATH_CEILING reached at t="
+                                   << sim_time << " with " << live_tumor
+                                   << " live tumor cells (ceiling="
+                                   << host_death_ceiling << ")\n";
+                            marker.close();
+                        }
+                        // Force simulation to end at next loop iteration
+                        PhysiCell_settings.max_time = sim_time;
+                        ceiling_triggered.store(true, std::memory_order_release);
+                        return;
+                    }
+                }
+            }
+        }
+        if (ceiling_triggered.load(std::memory_order_relaxed)) return;
+    }
 
     Cell_Definition* pTumorDef = find_cell_definition("tumor_cell");
     Cell_Definition* pStromaDef = find_cell_definition("stromal_cell");
