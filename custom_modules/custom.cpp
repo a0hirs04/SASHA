@@ -1142,7 +1142,6 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
 // DECISION PHASE (reads module outputs + environment, writes nothing to fields)
 void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhase phase)
 {
-    (void)dt;
     assert_expected_phase("module5_emt_engine", phase, ModulePhase::DECISION);
     log_module_trace("module5_emt_engine", phase, {"tgfb"}, {});
 
@@ -1193,16 +1192,18 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
         induction_signal = induction_signal + hif1a_emt_boost;
     }
 
+    // Read local ECM density once (used by Fixes C, D, and ECM-EMT boost)
+    const double local_ecm = (ecm_index >= 0)
+        ? read_density_value(densities, ecm_index) : 0.0;
+
     // ── ECM-contact EMT boost (smooth ramp + cap) ───────────────────
     // Tumor cells in dense ECM (peritumoral ring) get a gradual EMT push.
     // Periphery-specific by construction: ECM only exists where CAFs
     // deposited it (ECM ~0.8–1.0 in ring), while tumor core is degraded (~0).
     //
-    //   ecm_excess = max(0, local_ecm - ecm_emt_threshold)
-    //   ecm_gate   = min(1, ecm_excess / ecm_emt_ramp)
-    //   ecm_boost  = min(ecm_emt_strength * ecm_gate, ecm_emt_cap)
-    //
-    // ECM=0.0 → boost=0.  ECM=0.35 → boost≈0.07.  ECM≥0.6 → boost=0.25 (capped).
+    // Fix C addition: require an activated CAF neighbor within interaction
+    // distance. This prevents self-amplifying EMT cascades in ECM zones
+    // where the stroma has already been consumed or is absent.
     const double ecm_emt_strength =
         read_xml_double_or_default("ecm_emt_strength", 0.0);
     if (ecm_emt_strength > 0.0)
@@ -1213,43 +1214,137 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
             read_xml_double_or_default("ecm_emt_ramp", 0.3);
         const double ecm_emt_cap =
             read_xml_double_or_default("ecm_emt_cap", 0.25);
-        const double local_ecm = (ecm_index >= 0)
-            ? read_density_value(densities, ecm_index) : 0.0;
+        const double ecm_emt_require_caf =
+            read_xml_double_or_default("ecm_emt_require_caf_contact", 1.0);
 
-        const double ecm_excess = std::max(0.0, local_ecm - ecm_emt_threshold);
-        const double ecm_gate   = std::min(1.0, ecm_excess / ecm_emt_ramp);
-        const double ecm_boost  = std::min(ecm_emt_strength * ecm_gate, ecm_emt_cap);
-        induction_signal += ecm_boost;
+        bool apply_ecm_boost = true;
+
+        // Fix C gate: only apply ECM boost if an activated CAF is nearby
+        if (ecm_emt_require_caf > 0.5)
+        {
+            apply_ecm_boost = false;
+            Cell_Definition* pStromaDef = find_cell_definition("stromal_cell");
+            if (pStromaDef != NULL)
+            {
+                for (int n = 0; n < (int)pCell->state.neighbors.size(); n++)
+                {
+                    Cell* pN = pCell->state.neighbors[n];
+                    if (pN == NULL || pN->phenotype.death.dead) continue;
+                    if (pN->type != pStromaDef->type) continue;
+                    double a2 = read_custom_data_value_or_default(pN, "acta2_active", 0.0);
+                    if (a2 >= 0.5)
+                    {
+                        apply_ecm_boost = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (apply_ecm_boost)
+        {
+            const double ecm_excess = std::max(0.0, local_ecm - ecm_emt_threshold);
+            const double ecm_gate   = std::min(1.0, ecm_excess / ecm_emt_ramp);
+            const double ecm_boost  = std::min(ecm_emt_strength * ecm_gate, ecm_emt_cap);
+            induction_signal += ecm_boost;
+        }
     }
 
-    if (induction_signal > emt_induction_threshold)
+    // ── Fix B: Hysteresis + time delay for EMT activation ───────────
+    // EMT ON  requires signal > emt_induction_threshold sustained for
+    //         emt_activation_delay minutes (prevents instant flipping).
+    // EMT OFF requires signal < emt_off_threshold (hysteresis prevents
+    //         flickering; off-threshold << on-threshold).
+    const double emt_off_threshold =
+        read_xml_double_or_default("emt_off_threshold", 0.15);
+    const double emt_activation_delay =
+        read_xml_double_or_default("emt_activation_delay", 360.0);
+    const double current_zeb1 =
+        read_custom_data_value_or_default(pCell, "zeb1_active", 0.0);
+    double emt_signal_time =
+        read_custom_data_value_or_default(pCell, "emt_signal_time", 0.0);
+
+    bool emt_on = false;
+
+    if (current_zeb1 < 0.5)
+    {
+        // Currently epithelial: need signal above threshold for delay minutes
+        if (induction_signal > emt_induction_threshold)
+        {
+            emt_signal_time += dt;
+            if (emt_signal_time >= emt_activation_delay)
+            {
+                emt_on = true;
+            }
+        }
+        else
+        {
+            emt_signal_time = 0.0; // signal dropped: reset timer
+        }
+    }
+    else
+    {
+        // Currently mesenchymal: hysteresis keeps EMT on unless signal
+        // drops well below the on-threshold
+        if (induction_signal < emt_off_threshold)
+        {
+            emt_on = false;
+            emt_signal_time = 0.0;
+        }
+        else
+        {
+            emt_on = true;
+            emt_signal_time = emt_activation_delay; // keep timer saturated
+        }
+    }
+    set_custom_data_if_present(pCell, "emt_signal_time", emt_signal_time);
+
+    if (emt_on)
     {
         set_custom_data_if_present(pCell, "zeb1_active", 1.0);
         set_custom_data_if_present(pCell, "cdh1_expressed", 0.0);
 
+        double emt_motility = motility_epithelial;
+        double emt_adhesion = adhesion_epithelial;
+
         if (emt_phenotype_extent == 1)
         {
-            phenotype.motility.migration_speed = motility_mesenchymal_low;
-            phenotype.mechanics.cell_cell_adhesion_strength = adhesion_mesenchymal_low;
+            emt_motility = motility_mesenchymal_low;
+            emt_adhesion = adhesion_mesenchymal_low;
             set_custom_data_if_present(pCell, "mmp2_active", 0.0);
             set_custom_data_if_present(pCell, "emt_extent", 1.0);
         }
 
         if (emt_phenotype_extent == 2)
         {
-            phenotype.motility.migration_speed = motility_mesenchymal_med;
-            phenotype.mechanics.cell_cell_adhesion_strength = adhesion_mesenchymal_med;
+            emt_motility = motility_mesenchymal_med;
+            emt_adhesion = adhesion_mesenchymal_med;
             set_custom_data_if_present(pCell, "mmp2_active", 1.0);
             set_custom_data_if_present(pCell, "emt_extent", 2.0);
         }
 
         if (emt_phenotype_extent == 3)
         {
-            phenotype.motility.migration_speed = motility_mesenchymal_high;
-            phenotype.mechanics.cell_cell_adhesion_strength = adhesion_mesenchymal_high;
+            emt_motility = motility_mesenchymal_high;
+            emt_adhesion = adhesion_mesenchymal_high;
             set_custom_data_if_present(pCell, "mmp2_active", 1.0);
             set_custom_data_if_present(pCell, "emt_extent", 3.0);
         }
+
+        // Fix D: Dense ECM impedes EMT cell motility.
+        // Even mesenchymal cells cannot move freely through very dense
+        // collagen matrix. Motility drops linearly to zero at the block
+        // threshold (e.g. ECM >= 0.8 → motility = 0).
+        const double ecm_motility_block =
+            read_xml_double_or_default("ecm_motility_block_threshold", 0.8);
+        if (ecm_motility_block > 0.0 && local_ecm > 0.0)
+        {
+            double ecm_motility_factor = std::max(0.0, 1.0 - local_ecm / ecm_motility_block);
+            emt_motility *= ecm_motility_factor;
+        }
+
+        phenotype.motility.migration_speed = emt_motility;
+        phenotype.mechanics.cell_cell_adhesion_strength = emt_adhesion;
     }
     else
     {
@@ -1395,9 +1490,18 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
 
         const double drug_kill_rate = effective_drug * drug_kill_coefficient;
 
+        // Fix A: EMT cells pay a death-rate cost (anoikis-like apoptosis)
+        const double emt_death_increase =
+            read_xml_double_or_default("emt_death_increase", 0.0);
+        double emt_death_penalty = 0.0;
+        if (zeb1_active == 1.0)
+        {
+            emt_death_penalty = emt_death_increase;
+        }
+
         const double total_apoptosis_rate = std::max(
             0.0,
-            base_death_rate * (1.0 - death_resistance_modifier) + drug_kill_rate);
+            base_death_rate * (1.0 - death_resistance_modifier) + drug_kill_rate + emt_death_penalty);
 
         phenotype.death.rates[apoptosis_index] = total_apoptosis_rate;
     }
