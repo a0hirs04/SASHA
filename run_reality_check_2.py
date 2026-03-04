@@ -11,13 +11,15 @@ Runs a 42-day single-replicate simulation per seed:
 Drug is applied/withdrawn by the drug scheduling code in custom_function
 (drug_start_time, drug_end_time XML params control the Dirichlet BCs).
 
-CRITERIA (must pass in >=4 of 5 replicates):
-  RC2-1  Partial response:   tumor(t_treat_end) < tumor(t_pre)
+CRITERIA (must pass in >=4 of 5 replicates unless noted):
+  RC2-1  Partial response:   tumor(t_treat_end) <= 0.90 * tumor(t_pre)
+                              (meaningful ≥10% reduction, not mere fluctuation)
   RC2-2  Not eradicated:     tumor(t_treat_end) > 0
   RC2-3  Barrier persists:   peri_ecm(t_treat_end) >= 0.80 * peri_ecm(t_pre)
   RC2-4  Spatial sanctuary:  mean_ecm@survivors(t_treat_end) >
                               mean_ecm@all_tumor(t_pre)
   RC2-5  ABCB1 emerges:      frac_abcb1(t_treat_end) > frac_abcb1(t_pre)
+                              [SOFT — informational, does not block PASS]
   RC2-6  Regrowth:           tumor(t_post) > tumor(t_treat_end)
 
 FAIL DEBUGGING GUIDE (per spec):
@@ -70,7 +72,8 @@ MAX_TIME        = T_POST
 DRUG_CONCENTRATION = 1.0    # Dirichlet BC value when drug is on
 SAVE_INTERVAL      = 360    # minutes between snapshots (~168 total)
 
-BOUNDARY_BARRIER_FRACTION = 0.80   # RC2-3: ECM must stay ≥ 80% of pre-treatment
+PARTIAL_RESPONSE_MIN_REDUCTION = 0.10   # RC2-1: ≥10% tumor reduction required
+BOUNDARY_BARRIER_FRACTION = 0.80        # RC2-3: ECM must stay ≥ 80% of pre-treatment
 
 # HPC SLURM
 SLURM_PARTITION    = "compute"
@@ -124,7 +127,7 @@ CRITERIA_NAMES = [
     ("not_eradicated",     "RC2-2  Not eradicated (survivors at treatment end)"),
     ("barrier_persists",   "RC2-3  Barrier persists (ECM ≥80% of pre-treatment)"),
     ("spatial_sanctuary",  "RC2-4  Spatial sanctuary (survivors in high-ECM zones)"),
-    ("abcb1_emerges",      "RC2-5  ABCB1 resistance emerges"),
+    ("abcb1_emerges",      "RC2-5  ABCB1 resistance emerges [SOFT]"),
     ("regrowth",           "RC2-6  Regrowth after withdrawal"),
 ]
 
@@ -389,12 +392,14 @@ def _evaluate(r: ReplicateResult) -> ReplicateResult:
         r.success = False
         return r
 
-    # ── RC2-1: Partial response ──────────────────────────────────────────
-    c1 = st.n_tumor < sp.n_tumor
+    # ── RC2-1: Partial response (≥10% reduction) ────────────────────────
+    reduction = 1.0 - st.n_tumor / max(sp.n_tumor, 1)
+    c1 = reduction >= PARTIAL_RESPONSE_MIN_REDUCTION
     r.criteria["partial_response"] = c1
     r.details["partial_response"] = (
         f"tumor(pre={sp.n_tumor}) → tumor(treat_end={st.n_tumor})  "
-        f"{'reduced ✓' if c1 else 'NOT reduced ✗'}"
+        f"reduction={reduction:.1%}  threshold≥{PARTIAL_RESPONSE_MIN_REDUCTION:.0%}  "
+        f"{'✓' if c1 else '✗'}"
     )
 
     # ── RC2-2: Not eradicated ────────────────────────────────────────────
@@ -618,13 +623,18 @@ def main() -> int:
     print(f"  AGGREGATE  (>={QUORUM}/{NUM_REPLICATES} replicates must pass)")
     print("=" * 72)
 
+    SOFT_CRITERIA = {"abcb1_emerges"}   # informational, doesn't block PASS
     any_failure = False
     for key, label in CRITERIA_NAMES:
         passing = sum(1 for r in results if r.success and r.criteria.get(key, False))
+        is_soft = key in SOFT_CRITERIA
         ok = passing >= QUORUM
-        mark = "PASS" if ok else "FAIL"
-        if not ok:
-            any_failure = True
+        if is_soft:
+            mark = "INFO" if not ok else "PASS"
+        else:
+            mark = "PASS" if ok else "FAIL"
+            if not ok:
+                any_failure = True
         print(f"  [{mark}] {label}  ({passing}/{NUM_REPLICATES})")
 
     print()

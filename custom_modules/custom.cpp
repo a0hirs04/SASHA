@@ -2248,7 +2248,9 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
                 if (drug_index >= 0)
                 {
                     const int n_vox = (int)microenvironment.mesh.voxels.size();
-                    // Zero Dirichlet BC value so diffusion drives drug out
+                    // Zero Dirichlet BC value so boundary stops supplying drug.
+                    // Interior density is NOT wiped — drug dissipates
+                    // naturally via diffusion + cellular decay/uptake.
                     for (int n = 0; n < n_vox; n++)
                     {
                         if (microenvironment.mesh.voxels[n].is_Dirichlet)
@@ -2257,13 +2259,8 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
                                 n, drug_index, 0.0);
                         }
                     }
-                    // Instantly clear drug density (simulate washout)
-                    for (int n = 0; n < n_vox; n++)
-                    {
-                        microenvironment(n)[drug_index] = 0.0;
-                    }
                     std::cerr << "[DRUG_SCHEDULE] t=" << sim_time
-                              << " Drug WITHDRAWN\n";
+                              << " Drug WITHDRAWN (BC→0, interior dissipates)\n";
                 }
             }
         }
