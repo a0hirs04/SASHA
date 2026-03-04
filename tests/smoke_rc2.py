@@ -16,7 +16,7 @@ Checks (all must pass):
                                (any directional response, even weak)
   S4  No NaN / negative:       all cell coords finite, no negative cell counts
 
-Expected wall time: 2–5 minutes on 16 cores.
+Expected wall time: 2–3 minutes on 128-core compute node via SLURM.
 """
 from __future__ import annotations
 
@@ -25,6 +25,7 @@ import os
 import shutil
 import subprocess
 import sys
+import textwrap
 import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -45,11 +46,23 @@ T_FINAL        = 12960.0   # 3 days washout
 SAVE_INTERVAL  = 360       # every 6 hours → 36 snapshots
 
 SEED           = 42
-OMP_THREADS    = min(os.cpu_count() or 4, 16)
+
+# SLURM settings
+SLURM_PARTITION = "compute"
+SLURM_CPUS      = 128
+SLURM_MEM       = "128G"
+SLURM_TIME      = "00:30:00"     # 30 min wall (generous for a 9-day sim)
+SLURM_POLL      = 10             # seconds between polls
 
 BINARY         = PROJECT_ROOT / "stroma_world"
 BASE_CONFIG    = PROJECT_ROOT / "config" / "PhysiCell_settings.xml"
 WORK_DIR       = PROJECT_ROOT / "build" / "rc2_smoke"
+
+TERMINAL_STATES = {
+    "COMPLETED", "FAILED", "CANCELLED", "TIMEOUT",
+    "OUT_OF_MEMORY", "NODE_FAIL", "PREEMPTED",
+    "BOOT_FAIL", "DEADLINE",
+}
 
 
 def _patch_config(src: Path, dst: Path, output_dir: Path) -> None:
@@ -64,7 +77,7 @@ def _patch_config(src: Path, dst: Path, output_dir: Path) -> None:
     _set("./save/folder", str(output_dir))
     _set(".//overall/max_time", str(T_FINAL))
     _set(".//options/random_seed", str(SEED))
-    _set(".//parallel/omp_num_threads", str(OMP_THREADS))
+    _set(".//parallel/omp_num_threads", str(SLURM_CPUS))
 
     for n in root.findall(".//save//interval"):
         n.text = str(SAVE_INTERVAL)
@@ -184,6 +197,38 @@ def _read_snapshot(output_dir: Path, target_time: float):
     }
 
 
+def _query_job(job_id: str):
+    """Return (state, exit_code, is_terminal)."""
+    try:
+        r = subprocess.run(
+            ["sacct", "-j", job_id, "--format=State,ExitCode",
+             "--noheader", "--parsable2"],
+            capture_output=True, text=True, check=False, timeout=30,
+        )
+        for line in r.stdout.strip().splitlines():
+            parts = line.strip().split("|")
+            if len(parts) >= 2:
+                state = parts[0].strip().split()[0] if parts[0].strip() else "UNKNOWN"
+                try:
+                    exit_code = int(parts[1].split(":")[0])
+                except (ValueError, IndexError):
+                    exit_code = -1
+                return state, exit_code, state in TERMINAL_STATES
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(
+            ["squeue", "-j", job_id, "--format=%T", "--noheader"],
+            capture_output=True, text=True, check=False, timeout=15,
+        )
+        state = r.stdout.strip()
+        if not state:
+            return "COMPLETED", 0, True
+        return state, 0, False
+    except Exception:
+        return "UNKNOWN", -1, False
+
+
 def main() -> int:
     if not BINARY.exists():
         print(f"ERROR: binary not found: {BINARY}")
@@ -208,49 +253,93 @@ def main() -> int:
             shutil.copy(src, local_cfg / f)
 
     print("=" * 60)
-    print("  RC2 SMOKE TEST")
+    print("  RC2 SMOKE TEST  (SLURM)")
     print(f"  Phases: establish 0–{T_ESTABLISH:.0f} | drug {T_TREAT_START:.0f}–{T_TREAT_END:.0f} | washout {T_TREAT_END:.0f}–{T_FINAL:.0f}")
-    print(f"  Seed={SEED}  OMP={OMP_THREADS}  save_interval={SAVE_INTERVAL}")
+    print(f"  Seed={SEED}  CPUs={SLURM_CPUS}  save_interval={SAVE_INTERVAL}")
     print("=" * 60)
 
-    # Run simulation
-    t0 = time.perf_counter()
-    env = os.environ.copy()
-    env["OMP_NUM_THREADS"] = str(OMP_THREADS)
-    env["OMP_PROC_BIND"] = "spread"
-    env["OMP_PLACES"] = "cores"
+    # Write SLURM script
+    slurm_script = WORK_DIR / "smoke.slurm.sh"
+    slurm_script.write_text(textwrap.dedent(f"""\
+        #!/bin/bash
+        #SBATCH --job-name=rc2_smoke
+        #SBATCH --partition={SLURM_PARTITION}
+        #SBATCH --nodes=1
+        #SBATCH --ntasks-per-node=1
+        #SBATCH --cpus-per-task={SLURM_CPUS}
+        #SBATCH --mem={SLURM_MEM}
+        #SBATCH --time={SLURM_TIME}
+        #SBATCH --output={WORK_DIR}/slurm_%j.out
+        #SBATCH --error={WORK_DIR}/slurm_%j.err
 
-    proc = subprocess.run(
-        [str(BINARY), str(config_path)],
-        cwd=str(PROJECT_ROOT),
-        env=env,
-        capture_output=True,
-        text=True,
-        timeout=1200,   # 20 min hard cap
+        set -euo pipefail
+        export OMP_NUM_THREADS={SLURM_CPUS}
+        export OMP_PROC_BIND=spread
+        export OMP_PLACES=cores
+
+        cd {PROJECT_ROOT}
+        echo "=== RC2 SMOKE TEST  seed={SEED} ==="
+        echo "Start: $(date)"
+        {BINARY} {config_path}
+        echo "End:   $(date)"
+    """), encoding="utf-8")
+    slurm_script.chmod(0o755)
+
+    # Submit
+    result = subprocess.run(
+        ["sbatch", "--parsable", str(slurm_script)],
+        capture_output=True, text=True, check=False,
     )
+    if result.returncode != 0:
+        print(f"  ERROR: sbatch failed: {result.stderr.strip()}")
+        return 1
+
+    job_id = result.stdout.strip().split(";")[0]
+    print(f"  Submitted SLURM job {job_id}")
+
+    # Poll until done
+    t0 = time.perf_counter()
+    while True:
+        time.sleep(SLURM_POLL)
+        state, exit_code, terminal = _query_job(job_id)
+        elapsed = time.perf_counter() - t0
+        n_snaps = len(list(output_dir.glob("output*.xml")))
+        print(f"    [{elapsed:5.0f}s] {state}  snapshots={n_snaps}/~36")
+        if terminal:
+            break
+
     wall = time.perf_counter() - t0
+    print(f"\n  Job {job_id} finished: {state}  exit={exit_code}  wall={wall:.1f}s")
 
-    # Check for stderr DRUG_SCHEDULE messages
-    stderr_lines = proc.stderr.strip().split("\n") if proc.stderr else []
-    drug_on_msg  = [l for l in stderr_lines if "Drug ON" in l]
-    drug_off_msg = [l for l in stderr_lines if "Drug WITHDRAWN" in l]
+    if state != "COMPLETED" or exit_code != 0:
+        print(f"\n  *** SMOKE FAIL: SLURM job {state} exit={exit_code} ***")
+        # Dump stderr file
+        for errfile in sorted(WORK_DIR.glob("slurm_*.err")):
+            print(f"\n  {errfile.name} (last 30 lines):")
+            lines = errfile.read_text().strip().splitlines()
+            for l in lines[-30:]:
+                print(f"    {l}")
+        return 1
 
-    print(f"\n  Simulation finished in {wall:.1f}s  exit_code={proc.returncode}")
-    print(f"  Snapshots: {len(list(output_dir.glob('output*.xml')))}")
+    # Read DRUG_SCHEDULE messages from stderr
+    drug_on_msg = []
+    drug_off_msg = []
+    for errfile in sorted(WORK_DIR.glob("slurm_*.err")):
+        for l in errfile.read_text().splitlines():
+            if "Drug ON" in l:
+                drug_on_msg.append(l)
+            if "Drug WITHDRAWN" in l:
+                drug_off_msg.append(l)
+
+    n_snaps = len(list(output_dir.glob("output*.xml")))
+    print(f"  Snapshots: {n_snaps}")
     if drug_on_msg:
         print(f"  {drug_on_msg[0].strip()}")
     if drug_off_msg:
         print(f"  {drug_off_msg[0].strip()}")
 
-    if proc.returncode != 0:
-        print(f"\n  *** SMOKE FAIL: simulation crashed ***")
-        print(f"  Last 20 stderr lines:")
-        for l in stderr_lines[-20:]:
-            print(f"    {l}")
-        return 1
-
     # Read checkpoints
-    snap_mid_treat = _read_snapshot(output_dir, (T_TREAT_START + T_TREAT_END) / 2.0)   # mid-treatment
+    snap_mid_treat = _read_snapshot(output_dir, (T_TREAT_START + T_TREAT_END) / 2.0)
     snap_pre       = _read_snapshot(output_dir, T_TREAT_START)
     snap_treat_end = _read_snapshot(output_dir, T_TREAT_END)
     snap_final     = _read_snapshot(output_dir, T_FINAL)
@@ -340,11 +429,13 @@ def main() -> int:
         return 0
     else:
         print("\n  *** RC2 SMOKE TEST: FAIL ***")
-        # Dump last stderr for debug
-        if stderr_lines:
-            print("\n  Last 30 stderr lines:")
-            for l in stderr_lines[-30:]:
-                print(f"    {l}")
+        # Dump SLURM stderr for debug
+        for errfile in sorted(WORK_DIR.glob("slurm_*.err")):
+            lines = errfile.read_text().strip().splitlines()
+            if lines:
+                print(f"\n  {errfile.name} (last 30 lines):")
+                for l in lines[-30:]:
+                    print(f"    {l}")
         return 1
 
 
