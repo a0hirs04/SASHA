@@ -1193,43 +1193,33 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
         induction_signal = induction_signal + hif1a_emt_boost;
     }
 
-    // Stromal-contact EMT boost: peripheral tumor cells adjacent to activated
-    // CAFs receive a juxtacrine signaling boost (PDAC biology — CAF-derived
-    // TGF-β / IL-6 at the tumor-stroma interface drives EMT preferentially
-    // at the periphery rather than globally).
-    const double stromal_contact_emt_boost =
-        read_xml_double_or_default("stromal_contact_emt_boost", 0.0);
-    if (stromal_contact_emt_boost > 0.0)
+    // ── ECM-contact EMT boost (smooth ramp + cap) ───────────────────
+    // Tumor cells in dense ECM (peritumoral ring) get a gradual EMT push.
+    // Periphery-specific by construction: ECM only exists where CAFs
+    // deposited it (ECM ~0.8–1.0 in ring), while tumor core is degraded (~0).
+    //
+    //   ecm_excess = max(0, local_ecm - ecm_emt_threshold)
+    //   ecm_gate   = min(1, ecm_excess / ecm_emt_ramp)
+    //   ecm_boost  = min(ecm_emt_strength * ecm_gate, ecm_emt_cap)
+    //
+    // ECM=0.0 → boost=0.  ECM=0.35 → boost≈0.07.  ECM≥0.6 → boost=0.25 (capped).
+    const double ecm_emt_strength =
+        read_xml_double_or_default("ecm_emt_strength", 0.0);
+    if (ecm_emt_strength > 0.0)
     {
-        Cell_Definition* pStromaDef = find_cell_definition("stromal_cell");
-        if (pStromaDef != NULL)
-        {
-            const double contact_dist_sq = 30.0 * 30.0; // 30 µm
-            const double px = pCell->position[0];
-            const double py = pCell->position[1];
-            bool has_caf_contact = false;
-            for (auto* c : *all_cells)
-            {
-                if (c == NULL || c->phenotype.death.dead) continue;
-                if (c->type != pStromaDef->type) continue;
-                const double dx = c->position[0] - px;
-                const double dy = c->position[1] - py;
-                if (dx * dx + dy * dy < contact_dist_sq)
-                {
-                    const double a2 =
-                        read_custom_data_value_or_default(c, "acta2_active", 0.0);
-                    if (a2 > 0.5)
-                    {
-                        has_caf_contact = true;
-                        break;
-                    }
-                }
-            }
-            if (has_caf_contact)
-            {
-                induction_signal += stromal_contact_emt_boost;
-            }
-        }
+        const double ecm_emt_threshold =
+            read_xml_double_or_default("ecm_emt_threshold", 0.3);
+        const double ecm_emt_ramp =
+            read_xml_double_or_default("ecm_emt_ramp", 0.3);
+        const double ecm_emt_cap =
+            read_xml_double_or_default("ecm_emt_cap", 0.25);
+        const double local_ecm = (ecm_index >= 0)
+            ? read_density_value(densities, ecm_index) : 0.0;
+
+        const double ecm_excess = std::max(0.0, local_ecm - ecm_emt_threshold);
+        const double ecm_gate   = std::min(1.0, ecm_excess / ecm_emt_ramp);
+        const double ecm_boost  = std::min(ecm_emt_strength * ecm_gate, ecm_emt_cap);
+        induction_signal += ecm_boost;
     }
 
     if (induction_signal > emt_induction_threshold)

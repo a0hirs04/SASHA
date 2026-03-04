@@ -902,7 +902,15 @@
         <crowding_base_pressure type="double" units="dimensionless"
             description="Additive crowding baseline so contact inhibition fires even without ECM">0.02</crowding_base_pressure>
         <stromal_contact_emt_boost type="double" units="dimensionless"
-            description="Juxtacrine EMT boost for tumor cells adjacent to activated CAFs">0.00</stromal_contact_emt_boost>
+            description="LEGACY (unused)">0.00</stromal_contact_emt_boost>
+        <ecm_emt_threshold type="double" units="dimensionless"
+            description="ECM density below which ECM-EMT boost is zero">0.3</ecm_emt_threshold>
+        <ecm_emt_ramp type="double" units="dimensionless"
+            description="Width of smooth ramp above ecm_emt_threshold (gate goes 0->1 over this range)">0.3</ecm_emt_ramp>
+        <ecm_emt_strength type="double" units="dimensionless"
+            description="Scaling factor for ECM-EMT boost (multiplied by gate)">0.4</ecm_emt_strength>
+        <ecm_emt_cap type="double" units="dimensionless"
+            description="Maximum ECM-EMT boost added to induction_signal">0.25</ecm_emt_cap>
         <host_death_ceiling type="int" units="cells"
             description="Max live tumor cells before simulation halts (safety valve)">50000</host_death_ceiling>
 
