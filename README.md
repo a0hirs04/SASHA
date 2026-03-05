@@ -2,6 +2,8 @@
 
 # Stroma World (PDAC Barrier Counterfactual Evolution Engine)
 
+**Author:** Muniir Hirsi
+
 A simulation-first research platform for discovering **stroma-aware** anti-PDAC strategies using a **counterfactual evolution** framework.
 
 > **Current status:** Phase 1 (World Spec) complete and locked. Implementation in progress.
