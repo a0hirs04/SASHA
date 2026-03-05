@@ -54,7 +54,7 @@ DRUG_CONCENTRATION = 1.0
 
 SLURM_PARTITION = os.environ.get("RC3_SLURM_PARTITION", os.environ.get("SLURM_PARTITION", "cpu384g"))
 SLURM_CPUS = int(os.environ.get("RC3_SLURM_CPUS", os.environ.get("SLURM_CPUS", "32")))
-SLURM_MEM = os.environ.get("RC3_SLURM_MEM", os.environ.get("SLURM_MEM", "384G"))
+SLURM_MEM = os.environ.get("RC3_SLURM_MEM", os.environ.get("SLURM_MEM", "0"))
 SLURM_TIME = os.environ.get("RC3_SLURM_TIME", "06:00:00")
 SLURM_POLL_INTERVAL = 20
 
