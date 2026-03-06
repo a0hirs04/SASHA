@@ -532,12 +532,34 @@ void apply_ecm_dependent_modifiers(Microenvironment& M, double dt)
         return;
     }
 
+    // XML flags control which substrates get the dt-aware correction.
+    // dt_correct_drug_impedance_only (default 1): fix drug only, legacy for others.
+    // dt_correct_all_substrates      (default 0): override — fix all substrates.
+    static int s_mode = -1;
+    if (s_mode < 0)
+    {
+        double flag_all = 0.0, flag_drug = 1.0;
+        if (parameters.doubles.find_index("dt_correct_all_substrates") >= 0)
+            flag_all = parameters.doubles("dt_correct_all_substrates");
+        if (parameters.doubles.find_index("dt_correct_drug_impedance_only") >= 0)
+            flag_drug = parameters.doubles("dt_correct_drug_impedance_only");
+        if (flag_all > 0.5)
+            s_mode = 2;  // dt-aware for all
+        else if (flag_drug > 0.5)
+            s_mode = 1;  // dt-aware for drug only (default)
+        else
+            s_mode = 0;  // legacy for all
+    }
+
     auto base_diffusion_or_zero = [&M](int substrate_index) -> double
     {
         if (substrate_index < 0) return 0.0;
         if (substrate_index >= static_cast<int>(M.diffusion_coefficients.size())) return 0.0;
         return std::max(0.0, M.diffusion_coefficients[substrate_index]);
     };
+
+    const bool dt_correct_drug = (s_mode >= 1);
+    const bool dt_correct_others = (s_mode >= 2);
 
     const unsigned int n_voxels = M.number_of_voxels();
     for (unsigned int n = 0; n < n_voxels; ++n)
@@ -557,25 +579,32 @@ void apply_ecm_dependent_modifiers(Microenvironment& M, double dt)
         const double base_shh = base_diffusion_or_zero(shh_index);
         const double base_drug = base_diffusion_or_zero(drug_index);
 
+        // Oxygen, TGF-β, SHH: legacy form (RC1-calibrated) unless dt_correct_all
         if (base_o2 > 0.0 && n < g_effective_o2_diffusion_by_voxel.size())
         {
             const double ratio = clamp_unit(g_effective_o2_diffusion_by_voxel[n] / base_o2);
-            rho[oxygen_index] = clamp_nonnegative(rho[oxygen_index] * ratio);
+            rho[oxygen_index] = clamp_nonnegative(
+                rho[oxygen_index] * (dt_correct_others ? std::pow(ratio, dt) : ratio));
         }
         if (base_tgfb > 0.0 && n < g_effective_tgfb_diffusion_by_voxel.size())
         {
             const double ratio = clamp_unit(g_effective_tgfb_diffusion_by_voxel[n] / base_tgfb);
-            rho[tgfb_index] = clamp_nonnegative(rho[tgfb_index] * ratio);
+            rho[tgfb_index] = clamp_nonnegative(
+                rho[tgfb_index] * (dt_correct_others ? std::pow(ratio, dt) : ratio));
         }
         if (base_shh > 0.0 && n < g_effective_shh_diffusion_by_voxel.size())
         {
             const double ratio = clamp_unit(g_effective_shh_diffusion_by_voxel[n] / base_shh);
-            rho[shh_index] = clamp_nonnegative(rho[shh_index] * ratio);
+            rho[shh_index] = clamp_nonnegative(
+                rho[shh_index] * (dt_correct_others ? std::pow(ratio, dt) : ratio));
         }
+
+        // Drug: dt-aware correction (fixes exponential sink at small dt_diffusion)
         if (base_drug > 0.0 && n < g_effective_drug_diffusion_by_voxel.size())
         {
             const double ratio = clamp_unit(g_effective_drug_diffusion_by_voxel[n] / base_drug);
-            rho[drug_index] = clamp_nonnegative(rho[drug_index] * ratio);
+            rho[drug_index] = clamp_nonnegative(
+                rho[drug_index] * (dt_correct_drug ? std::pow(ratio, dt) : ratio));
         }
     }
 }
@@ -1855,6 +1884,19 @@ void setup_microenvironment(void)
     reset_ecm_ha_fraction_field(read_xml_double_or_default("ecm_ha_fraction_default", 0.5));
 
     register_ecm_dependent_diffusion_solver();
+
+    // Log ECM impedance correction mode at startup.
+    {
+        const double flag_all  = read_xml_double_or_default("dt_correct_all_substrates", 0.0);
+        const double flag_drug = read_xml_double_or_default("dt_correct_drug_impedance_only", 1.0);
+        const char* mode_str = "legacy (all substrates)";
+        if (flag_all > 0.5)
+            mode_str = "dt-aware (ALL substrates)";
+        else if (flag_drug > 0.5)
+            mode_str = "dt-aware DRUG ONLY (O2/TGFb/SHH legacy)";
+        std::cerr << "[setup_microenvironment] ECM impedance correction mode: "
+                  << mode_str << "\n";
+    }
 
     const ThresholdConfig cfg = ThresholdConfig::load_from_xml();
     set_threshold_config(cfg);

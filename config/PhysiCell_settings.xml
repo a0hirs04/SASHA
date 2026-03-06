@@ -927,6 +927,10 @@
             description="Fix D: ECM density at which EMT motility drops to zero (linear ramp)">0.8</ecm_motility_block_threshold>
         <host_death_ceiling type="int" units="cells"
             description="Max live tumor cells before simulation halts (safety valve)">50000</host_death_ceiling>
+        <dt_correct_drug_impedance_only type="double" units="dimensionless"
+            description="If >0.5, apply timestep-invariant pow(ratio,dt) ECM impedance correction to drug substrate only. Legacy (raw ratio) for O2/TGFb/SHH.">1.0</dt_correct_drug_impedance_only>
+        <dt_correct_all_substrates type="double" units="dimensionless"
+            description="If >0.5, override: apply dt-aware correction to ALL substrates (breaks RC1 calibration).">0.0</dt_correct_all_substrates>
 
     </user_parameters>
 

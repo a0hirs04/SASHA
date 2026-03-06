@@ -3,8 +3,8 @@
 # Watches SLURM jobs 17696 (rc1_baseline_seed42) and 17697 (rc2_probe_seed42)
 # Press Ctrl+C to stop.
 
-JOB_RC1=17696
-JOB_RC2=17697
+JOB_RC1=17700
+JOB_RC2=17701
 
 DIR_RC1="/home/a0hirs04/PROJECT-NORTHSTAR/build/step1_validation/rc1_baseline_seed42"
 DIR_RC2="/home/a0hirs04/PROJECT-NORTHSTAR/build/step1_validation/rc2_probe_seed42"
