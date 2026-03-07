@@ -1,1 +1,96 @@
 nohup: ignoring input
+==============================================================================
+REALITY CHECK 3 — SHH inhibition paradox
+Arms: 3 | Replicates/arm: 5 | Total runs: 15
+Timeline: barrier 0-20160 min | intervention 20160-40320 min
+SLURM: partition=cpu384g cpus=32 mem=0 time=06:00:00
+Quorum: >= 4/5
+==============================================================================
+Submitted arm A rep 1 seed=42 -> job 9339
+Submitted arm A rep 2 seed=99 -> job 9340
+Submitted arm A rep 3 seed=137 -> job 9341
+Submitted arm A rep 4 seed=256 -> job 9342
+Submitted arm A rep 5 seed=1001 -> job 9343
+Submitted arm B rep 1 seed=42 -> job 9344
+Submitted arm B rep 2 seed=99 -> job 9345
+Submitted arm B rep 3 seed=137 -> job 9346
+Submitted arm B rep 4 seed=256 -> job 9347
+Submitted arm B rep 5 seed=1001 -> job 9348
+Submitted arm C rep 1 seed=42 -> job 9349
+Submitted arm C rep 2 seed=99 -> job 9350
+Submitted arm C rep 3 seed=137 -> job 9351
+Submitted arm C rep 4 seed=256 -> job 9352
+Submitted arm C rep 5 seed=1001 -> job 9353
+
+Submitted 15 jobs. Polling ...
+
+XX arm A rep 1 seed=42: CANCELLED exit=0 [1389s]
+XX arm A rep 2 seed=99: CANCELLED exit=0 [1389s]
+XX arm A rep 3 seed=137: CANCELLED exit=0 [1389s]
+XX arm A rep 4 seed=256: CANCELLED exit=0 [1389s]
+XX arm A rep 5 seed=1001: CANCELLED exit=0 [1389s]
+XX arm B rep 1 seed=42: CANCELLED exit=0 [1389s]
+XX arm B rep 2 seed=99: CANCELLED exit=0 [1389s]
+XX arm B rep 3 seed=137: CANCELLED exit=0 [1389s]
+XX arm B rep 4 seed=256: CANCELLED exit=0 [1389s]
+XX arm B rep 5 seed=1001: CANCELLED exit=0 [1389s]
+XX arm C rep 1 seed=42: CANCELLED exit=0 [1389s]
+XX arm C rep 2 seed=99: CANCELLED exit=0 [1389s]
+XX arm C rep 3 seed=137: CANCELLED exit=0 [1389s]
+XX arm C rep 4 seed=256: CANCELLED exit=0 [1389s]
+XX arm C rep 5 seed=1001: CANCELLED exit=0 [1389s]
+
+All jobs finished in 1389.3s (23.2 min)
+Evaluating arm A rep 1 seed=42 ...
+Evaluating arm A rep 2 seed=99 ...
+Evaluating arm A rep 3 seed=137 ...
+Evaluating arm A rep 4 seed=256 ...
+Evaluating arm A rep 5 seed=1001 ...
+Evaluating arm B rep 1 seed=42 ...
+Evaluating arm B rep 2 seed=99 ...
+Evaluating arm B rep 3 seed=137 ...
+Evaluating arm B rep 4 seed=256 ...
+Evaluating arm B rep 5 seed=1001 ...
+Evaluating arm C rep 1 seed=42 ...
+Evaluating arm C rep 2 seed=99 ...
+Evaluating arm C rep 3 seed=137 ...
+Evaluating arm C rep 4 seed=256 ...
+Evaluating arm C rep 5 seed=1001 ...
+
+==============================================================================
+RC3 RESULTS
+==============================================================================
+
+Arm A (Control)
+  successful runs: 0/5
+  final tumor counts: n/a
+  median final tumor count: nan
+
+Arm B (SHH inhibition only)
+  successful runs: 0/5
+  final tumor counts: n/a
+  median final tumor count: nan
+
+Arm C (SHH inhibition + drug)
+  successful runs: 0/5
+  final tumor counts: n/a
+  median final tumor count: nan
+
+Per-seed paired final tumor counts:
+  seed=42: missing/failed run(s)
+  seed=99: missing/failed run(s)
+  seed=137: missing/failed run(s)
+  seed=256: missing/failed run(s)
+  seed=1001: missing/failed run(s)
+
+Rank checks (quorum >= 4/5):
+  C < A < B : 0/5
+  B > A     : 0/5
+  C < A     : 0/5
+
+Outcome:
+  RC3 FAIL
+  Hint: If B ≤ A, mechanical confinement may be too weak or SHH->ECM coupling is broken.
+  Hint: If C ≥ A, drug may not be benefiting from thinner stroma (check ECM->drug diffusion coupling).
+  Hint: If C ≥ B, drug may be too weak or schedule is wrong.
+  Note: only 0/5 seeds had complete paired data.
