@@ -155,8 +155,8 @@
              Baseline boundary value is 0; scenarios/EA can raise boundary dosing. -->
         <variable name="drug" units="dimensionless" ID="3">
             <physical_parameter_set>
-                <diffusion_coefficient units="micron^2/min">600.0</diffusion_coefficient>
-                <decay_rate units="1/min">0.005</decay_rate>
+                <diffusion_coefficient units="micron^2/min">5000.0</diffusion_coefficient>
+                <decay_rate units="1/min">0.002</decay_rate>
             </physical_parameter_set>
             <initial_condition units="dimensionless">0</initial_condition>
             <Dirichlet_boundary_condition units="dimensionless" enabled="true">0</Dirichlet_boundary_condition>
@@ -804,6 +804,12 @@
         <drug_concentration type="double" units="dimensionless"
             description="Drug boundary concentration when administered">1.0</drug_concentration>
 
+        <!-- SHH inhibition intervention (RC3 / vismodegib proxy) -->
+        <shh_inhibition_start_time type="double" units="min"
+            description="Simulation time at which tumor SHH secretion inhibition starts">1e18</shh_inhibition_start_time>
+        <shh_inhibition_strength type="double" units="dimensionless"
+            description="Fractional inhibition of tumor SHH secretion after start time (0-1)">0.0</shh_inhibition_strength>
+
         <!-- 13-knob calibration profile selector -->
         <calibration_profile type="string" units="none"
             description="Tumor calibration profile (AsPC-1 default, PANC-1 for Knob 2 comparator)">AsPC-1</calibration_profile>
@@ -838,7 +844,7 @@
         <contact_inhibition_threshold type="double" units="dimensionless"
             description="Mechanical pressure threshold above which tumor proliferation is arrested">0.5</contact_inhibition_threshold>
         <drug_kill_coefficient type="double" units="1/min"
-            description="Maps effective intracellular drug to apoptosis rate contribution">0.004</drug_kill_coefficient>
+            description="Maps effective intracellular drug to apoptosis rate contribution">0.0005</drug_kill_coefficient>
         <efflux_drug_reduction type="double" units="dimensionless"
             description="Fractional reduction in effective drug when abcb1_active=1">0.7</efflux_drug_reduction>
         <caf_proliferation_rate type="double" units="1/min"
@@ -858,13 +864,13 @@
         <ecm_natural_decay_rate type="double" units="1/min"
             description="Slow background ECM turnover (handled outside per-cell Module 6)">0.0001</ecm_natural_decay_rate>
         <drug_uptake_rate type="double" units="1/hour"
-            description="Intracellular drug accumulation rate per local drug concentration">0.02</drug_uptake_rate>
+            description="Intracellular drug accumulation rate per local drug concentration">0.01</drug_uptake_rate>
         <drug_stress_threshold type="double" units="dimensionless"
             description="Intracellular drug level threshold for NRF2 activation">0.03</drug_stress_threshold>
         <nrf2_decay_rate type="double" units="1/hour"
             description="Slow NRF2 decay rate when drug stress is removed">0.01</nrf2_decay_rate>
         <drug_natural_decay_rate type="double" units="1/hour"
-            description="Natural intracellular drug metabolism/decay rate">0.08</drug_natural_decay_rate>
+            description="Natural intracellular drug metabolism/decay rate">0.0</drug_natural_decay_rate>
         <hif1a_nrf2_priming_bonus type="double" units="dimensionless"
             description="Stress-signal bonus under hypoxia for earlier NRF2 activation">0.02</hif1a_nrf2_priming_bonus>
         <emt_induction_threshold type="double" units="dimensionless"
@@ -927,10 +933,6 @@
             description="Fix D: ECM density at which EMT motility drops to zero (linear ramp)">0.8</ecm_motility_block_threshold>
         <host_death_ceiling type="int" units="cells"
             description="Max live tumor cells before simulation halts (safety valve)">50000</host_death_ceiling>
-        <dt_correct_drug_impedance_only type="double" units="dimensionless"
-            description="If >0.5, apply timestep-invariant pow(ratio,dt) ECM impedance correction to drug substrate only. Legacy (raw ratio) for O2/TGFb/SHH.">1.0</dt_correct_drug_impedance_only>
-        <dt_correct_all_substrates type="double" units="dimensionless"
-            description="If >0.5, override: apply dt-aware correction to ALL substrates (breaks RC1 calibration).">0.0</dt_correct_all_substrates>
 
     </user_parameters>
 

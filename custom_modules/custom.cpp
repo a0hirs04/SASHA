@@ -1610,6 +1610,15 @@ void module2_paracrine_secretion(Cell* pCell, Phenotype& phenotype, double dt, M
             tgfb_out = tgfb_out * hif1a_tgfb_amplification_factor;
         }
 
+        const double shh_inhibition_start_time =
+            read_xml_double_or_default("shh_inhibition_start_time", 1e18);
+        const double shh_inhibition_strength =
+            clamp_unit(read_xml_double_or_default("shh_inhibition_strength", 0.0));
+        if (PhysiCell_globals.current_time >= shh_inhibition_start_time)
+        {
+            shh_out = shh_out * (1.0 - shh_inhibition_strength);
+        }
+
         if (tgfb_index >= 0 &&
             tgfb_index < static_cast<int>(phenotype.secretion.secretion_rates.size()))
         {
