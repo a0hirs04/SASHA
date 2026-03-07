@@ -916,7 +916,7 @@
         <ecm_emt_cap type="double" units="dimensionless"
             description="Maximum ECM-EMT boost added to induction_signal">0.30</ecm_emt_cap>
         <emt_death_increase type="double" units="1/min"
-            description="Fix A: additional apoptosis rate for EMT (zeb1_active=1) cells">0.0001</emt_death_increase>
+            description="Fix A: additional apoptosis rate for EMT (zeb1_active=1) cells">0.00005</emt_death_increase>
         <emt_off_threshold type="double" units="dimensionless"
             description="Fix B: induction_signal below which EMT reverts (hysteresis; must be less than emt_induction_threshold)">0.15</emt_off_threshold>
         <emt_activation_delay type="double" units="min"
