@@ -844,7 +844,7 @@
         <contact_inhibition_threshold type="double" units="dimensionless"
             description="Mechanical pressure threshold above which tumor proliferation is arrested">0.5</contact_inhibition_threshold>
         <drug_kill_coefficient type="double" units="1/min"
-            description="Maps effective intracellular drug to apoptosis rate contribution">0.0005</drug_kill_coefficient>
+            description="Maps effective intracellular drug to apoptosis rate contribution">0.00015</drug_kill_coefficient>
         <efflux_drug_reduction type="double" units="dimensionless"
             description="Fractional reduction in effective drug when abcb1_active=1">0.7</efflux_drug_reduction>
         <caf_proliferation_rate type="double" units="1/min"

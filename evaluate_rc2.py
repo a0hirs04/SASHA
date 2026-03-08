@@ -95,6 +95,15 @@ def parse_snap(parser, snap):
         if (abcb1 is not None and live_tumor.any()) else math.nan
     )
 
+    # ZEB1 fraction among live tumor cells
+    zeb1 = _row(matrix, labels, "zeb1_active")
+    if zeb1 is None:
+        zeb1 = _row(matrix, labels, "ZEB1")
+    frac_zeb1 = (
+        float(np.mean(zeb1[live_tumor] > 0.5))
+        if (zeb1 is not None and live_tumor.any()) else math.nan
+    )
+
     return {
         "time": float(snap["time"]),
         "n_tumor": int(np.sum(live_tumor)),
@@ -103,6 +112,7 @@ def parse_snap(parser, snap):
         "peri_ecm": peri_ecm,
         "ecm_at_tumor": ecm_at_tumor,
         "frac_abcb1": frac_abcb1,
+        "frac_zeb1": frac_zeb1,
         "tumor_radius": tumor_radius,
     }
 
@@ -141,6 +151,27 @@ def main():
     s_post = parse_snap(parser, get_snap(snap_idx_post))
     print(f"    tumor={s_post['n_tumor']}  stroma={s_post['n_stroma']}  "
           f"caf={s_post['n_caf']}  peri_ecm={s_post['peri_ecm']:.4f}")
+
+    # ---- Extended tumor timeline ----
+    print()
+    print("=" * 72)
+    print("  TUMOR TIMELINE")
+    print("=" * 72)
+    timeline_days = [14, 17, 21, 24, 28, 31, 35, 42]
+    print(f"  {'Day':>5}  {'Tumor':>6}  {'ABCB1%':>7}  {'ZEB1%':>6}  Phase")
+    print(f"  {'---':>5}  {'-----':>6}  {'------':>7}  {'-----':>6}  -----")
+    for day in timeline_days:
+        t_min = day * 1440.0
+        idx = int(t_min / SAVE_INTERVAL)
+        fname = OUT_DIR / f"output{idx:08d}.xml"
+        if not fname.exists():
+            print(f"  {day:5d}  {'N/A':>6}")
+            continue
+        s = parse_snap(parser, get_snap(idx))
+        phase = "barrier" if day < 14 else ("drug-ON" if day <= 28 else "regrowth")
+        abcb1_str = f"{s['frac_abcb1']:.1%}" if math.isfinite(s['frac_abcb1']) else "N/A"
+        zeb1_str = f"{s['frac_zeb1']:.1%}" if math.isfinite(s['frac_zeb1']) else "N/A"
+        print(f"  {day:5d}  {s['n_tumor']:6d}  {abcb1_str:>7}  {zeb1_str:>6}  {phase}")
 
     print()
     print("=" * 72)

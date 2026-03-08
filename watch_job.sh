@@ -240,12 +240,12 @@ while true; do
     # ── Wall time bar ──────────────────────────────────────────────
     TLIMIT_BAR=""
     if [[ "${TIMELIMIT:-}" =~ ^([0-9]+):([0-9]+):([0-9]+)$ ]]; then
-        TL_SECS=$(( ${BASH_REMATCH[1]} * 3600 + ${BASH_REMATCH[2]} * 60 + ${BASH_REMATCH[3]} ))
+        TL_SECS=$(( 10#${BASH_REMATCH[1]} * 3600 + 10#${BASH_REMATCH[2]} * 60 + 10#${BASH_REMATCH[3]} ))
         JE_SECS=0
         if [[ "${JOB_ELAPSED:-}" =~ ^([0-9]+):([0-9]+):([0-9]+)$ ]]; then
-            JE_SECS=$(( ${BASH_REMATCH[1]} * 3600 + ${BASH_REMATCH[2]} * 60 + ${BASH_REMATCH[3]} ))
+            JE_SECS=$(( 10#${BASH_REMATCH[1]} * 3600 + 10#${BASH_REMATCH[2]} * 60 + 10#${BASH_REMATCH[3]} ))
         elif [[ "${JOB_ELAPSED:-}" =~ ^([0-9]+):([0-9]+)$ ]]; then
-            JE_SECS=$(( ${BASH_REMATCH[1]} * 60 + ${BASH_REMATCH[2]} ))
+            JE_SECS=$(( 10#${BASH_REMATCH[1]} * 60 + 10#${BASH_REMATCH[2]} ))
         fi
         if (( TL_SECS > 0 )); then
             TIME_PCT=$(( JE_SECS * 100 / TL_SECS ))
