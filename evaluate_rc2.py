@@ -15,7 +15,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 from python.wrapper.output_parser import OutputParser
 
 # ---------------------------------------------------------------------------
-OUT_DIR = PROJECT_ROOT / "build" / "rc2_full_seed42" / "replicate_01_seed42" / "output"
+OUT_DIR = PROJECT_ROOT / "build" / "rc2_fixJ_seed42" / "replicate_01_seed42" / "output"
 T_PRE       = 20160.0   # day 14
 T_TREAT_END = 40320.0   # day 28
 T_POST      = 60480.0   # day 42
@@ -95,6 +95,15 @@ def parse_snap(parser, snap):
         if (abcb1 is not None and live_tumor.any()) else math.nan
     )
 
+    # ZEB1 fraction among live tumor cells
+    zeb1 = _row(matrix, labels, "zeb1_active")
+    if zeb1 is None:
+        zeb1 = _row(matrix, labels, "ZEB1")
+    frac_zeb1 = (
+        float(np.mean(zeb1[live_tumor] > 0.5))
+        if (zeb1 is not None and live_tumor.any()) else math.nan
+    )
+
     return {
         "time": float(snap["time"]),
         "n_tumor": int(np.sum(live_tumor)),
@@ -103,6 +112,7 @@ def parse_snap(parser, snap):
         "peri_ecm": peri_ecm,
         "ecm_at_tumor": ecm_at_tumor,
         "frac_abcb1": frac_abcb1,
+        "frac_zeb1": frac_zeb1,
         "tumor_radius": tumor_radius,
     }
 
@@ -112,15 +122,21 @@ def main():
     xmls = sorted(OUT_DIR.glob("output*.xml"))
     print(f"Total snapshots: {len(xmls)}")
 
-    snap_idx_pre   = int(T_PRE / SAVE_INTERVAL)        # 56
-    snap_idx_treat = int(T_TREAT_END / SAVE_INTERVAL)   # 112
-    snap_idx_post  = int(T_POST / SAVE_INTERVAL)        # 168
+    snap_idx_pre   = int(T_PRE / SAVE_INTERVAL)        # 56 (day 14)
+    snap_idx_treat = int(T_TREAT_END / SAVE_INTERVAL)  # 112 (day 28)
+    snap_idx_post  = int(T_POST / SAVE_INTERVAL)       # 168 (day 42)
 
     def get_snap(idx):
-        fname = OUT_DIR / f"output{idx:08d}.xml"
-        if fname.exists():
-            return parser._read_physicell_xml(fname)
-        raise FileNotFoundError(f"Snapshot not found: {fname}")
+        i = idx
+        while i >= 0:
+            fname = OUT_DIR / f"output{i:08d}.xml"
+            if fname.exists() and fname.stat().st_size > 0:
+                try:
+                    return parser._read_physicell_xml(fname), i
+                except Exception:
+                    pass
+            i -= 1
+        raise FileNotFoundError(f"No readable snapshot at or before index {idx}")
 
     print()
     print("=" * 72)
@@ -128,19 +144,117 @@ def main():
     print("=" * 72)
 
     print(f"\n  Parsing snap {snap_idx_pre} (day 14, pre-treatment)...")
-    s_pre = parse_snap(parser, get_snap(snap_idx_pre))
+    snap_pre, i_pre = get_snap(snap_idx_pre)
+    s_pre = parse_snap(parser, snap_pre)
+    if i_pre != snap_idx_pre:
+        print(f"    [warn] requested snapshot {snap_idx_pre} unavailable, using {i_pre}")
     print(f"    tumor={s_pre['n_tumor']}  stroma={s_pre['n_stroma']}  "
           f"caf={s_pre['n_caf']}  peri_ecm={s_pre['peri_ecm']:.4f}")
 
     print(f"  Parsing snap {snap_idx_treat} (day 28, treatment end)...")
-    s_treat = parse_snap(parser, get_snap(snap_idx_treat))
+    snap_treat, i_treat = get_snap(snap_idx_treat)
+    s_treat = parse_snap(parser, snap_treat)
+    if i_treat != snap_idx_treat:
+        print(f"    [warn] requested snapshot {snap_idx_treat} unavailable, using {i_treat}")
     print(f"    tumor={s_treat['n_tumor']}  stroma={s_treat['n_stroma']}  "
           f"caf={s_treat['n_caf']}  peri_ecm={s_treat['peri_ecm']:.4f}")
 
     print(f"  Parsing snap {snap_idx_post} (day 42, post-withdrawal)...")
-    s_post = parse_snap(parser, get_snap(snap_idx_post))
+    snap_post, i_post = get_snap(snap_idx_post)
+    s_post = parse_snap(parser, snap_post)
+    if i_post != snap_idx_post:
+        print(f"    [warn] requested snapshot {snap_idx_post} unavailable, using {i_post}")
     print(f"    tumor={s_post['n_tumor']}  stroma={s_post['n_stroma']}  "
           f"caf={s_post['n_caf']}  peri_ecm={s_post['peri_ecm']:.4f}")
+
+    # ---- Extended tumor timeline ----
+    print()
+    print("=" * 72)
+    print("  TUMOR TIMELINE")
+    print("=" * 72)
+    timeline_days = [14, 17, 21, 24, 28, 31, 35, 42]
+    print(f"  {'Day':>5}  {'Tumor':>6}  {'ABCB1%':>7}  {'ZEB1%':>6}  Phase")
+    print(f"  {'---':>5}  {'-----':>6}  {'------':>7}  {'-----':>6}  -----")
+    for day in timeline_days:
+        t_min = day * 1440.0
+        idx = int(t_min / SAVE_INTERVAL)
+        fname = OUT_DIR / f"output{idx:08d}.xml"
+        if not fname.exists():
+            print(f"  {day:5d}  {'N/A':>6}")
+            continue
+        snap_i, _ = get_snap(idx)
+        s = parse_snap(parser, snap_i)
+        phase = "barrier" if day < 14 else ("drug-ON" if day <= 28 else "regrowth")
+        abcb1_str = f"{s['frac_abcb1']:.1%}" if math.isfinite(s['frac_abcb1']) else "N/A"
+        zeb1_str = f"{s['frac_zeb1']:.1%}" if math.isfinite(s['frac_zeb1']) else "N/A"
+        print(f"  {day:5d}  {s['n_tumor']:6d}  {abcb1_str:>7}  {zeb1_str:>6}  {phase}")
+
+    # ---- Day 31 survivor diagnostic: pressure vs proliferation ----------
+    print()
+    print("=" * 72)
+    print("  DAY 31 SURVIVOR DIAGNOSTIC  (tumor CI=25.0, stromal CI=0.8)")
+    print("=" * 72)
+    day31_idx = int(31 * 1440.0 / SAVE_INTERVAL)
+    day31_fname = OUT_DIR / f"output{day31_idx:08d}.xml"
+    if day31_fname.exists():
+        snap31, _ = get_snap(day31_idx)
+        mat31 = snap31["cell_matrix"]
+        lbl31 = snap31["label_name_map"]
+
+        ct31 = _row(mat31, lbl31, "cell_type")
+        dead31 = _row(mat31, lbl31, "dead")
+        dm31 = _row(mat31, lbl31, "current_death_model")
+        n31 = mat31.shape[1]
+        live31 = np.ones(n31, dtype=bool)
+        if dead31 is not None:
+            live31 &= dead31 <= 0.5
+        if dm31 is not None:
+            live31 &= np.rint(dm31).astype(int) != 100
+        ctype31 = np.rint(ct31).astype(int) if ct31 is not None else np.full(n31, -1)
+        tumor31 = live31 & (ctype31 == 0)
+
+        mp31 = _row(mat31, lbl31, "mechanical_pressure")
+        fpr31 = _row(mat31, lbl31, "final_prolif_rate")
+
+        n_surv = int(np.sum(tumor31))
+        print(f"  Live tumor cells at day 31: {n_surv}")
+        if mp31 is not None and fpr31 is not None and n_surv > 0:
+            mp_vals = mp31[tumor31]
+            fpr_vals = fpr31[tumor31]
+            low_p = mp_vals < 0.8
+            arrested = fpr_vals == 0.0
+            n_low_p = int(np.sum(low_p))
+            n_low_p_arrested = int(np.sum(low_p & arrested))
+            n_low_p_prolif = int(np.sum(low_p & ~arrested))
+
+            print(f"  Survivors with pressure < 0.8:  {n_low_p}")
+            print(f"    ... and transition_rate > 0 (proliferating): {n_low_p_prolif}")
+            print(f"    ... and transition_rate = 0 (ARRESTED):      {n_low_p_arrested}")
+            if n_low_p_arrested > 0:
+                print(f"    >>> {n_low_p_arrested} cells have low pressure but are still arrested!")
+                print(f"        Something OTHER than contact inhibition is blocking them.")
+            print()
+            print(f"  {'ID':>6}  {'mech_pressure':>14}  {'transition_rate':>15}  {'flag':>8}")
+            print(f"  {'------':>6}  {'--------------':>14}  {'---------------':>15}  {'--------':>8}")
+            idxs = np.where(tumor31)[0]
+            for ii in idxs[:50]:  # cap at 50 rows
+                mp_v = mp31[ii]
+                fpr_v = fpr31[ii]
+                flag = ""
+                if mp_v < 0.8 and fpr_v == 0.0:
+                    flag = "<<STUCK"
+                elif mp_v < 0.8 and fpr_v > 0.0:
+                    flag = "OK"
+                print(f"  {ii:6d}  {mp_v:14.6f}  {fpr_v:15.8f}  {flag:>8}")
+            if n_surv > 50:
+                print(f"  ... ({n_surv - 50} more survivors not shown)")
+        elif mp31 is None:
+            print("  [warn] mechanical_pressure not found in output labels")
+        elif fpr31 is None:
+            print("  [warn] final_prolif_rate not found in output labels")
+            print("         (rebuild with final_prolif_rate custom data may be needed)")
+    else:
+        print(f"  [warn] Day 31 snapshot (index {day31_idx}) not found yet")
 
     print()
     print("=" * 72)

@@ -1,0 +1,2 @@
+[ThresholdConfig] Loaded from XML:  HIF1A O2=15 mmHg  Necrosis O2=5 mmHg  TGFB=0.1  SHH=0.05
+[setup_microenvironment] FATAL: failed to initialize calibration knobs: Cannot open tumor calibration profiles JSON: config/tumor_calibration_knobs.json

@@ -1,0 +1,1361 @@
+=== RC2 Fix D (seed 42) ===
+  hif1a_emt_boost=0.14, ecm_emt_cap=0.10, emt_off_threshold=0.25
+  Node: cpusm01  Threads: 32
+  Start: Thu Mar 12 17:08:38 UTC 2026
+Using config file /home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_fixD_seed42/replicate_01_seed42/config.xml ... 
+Setting up RNG with seed 42
+1
+dc? 1
+User parameters in XML config file: 
+Bool parameters:: 
+
+Int parameters:: 
+number_of_tumor_cells: 50 [none]
+number_of_stromal_cells: 500 [none]
+emt_phenotype_extent: 3 [dimensionless]
+host_death_ceiling: 50000 [cells]
+
+Double parameters:: 
+tumor_cluster_radius: 100 [micron]
+stroma_inner_radius: 100 [micron]
+stroma_outer_radius: 300 [micron]
+mechanics_voxel_size: 30 [micron]
+tgfb_activation_threshold: 0.1 [dimensionless]
+shh_activation_threshold: 0.05 [dimensionless]
+oxygen_necrosis_threshold: 5 [mmHg]
+oxygen_hypoxia_threshold: 15 [mmHg]
+drug_start_time: 20160 [min]
+drug_end_time: 40320 [min]
+drug_concentration: 1 [dimensionless]
+shh_inhibition_start_time: 1e+18 [min]
+shh_inhibition_strength: 0 [dimensionless]
+tgfb_secretion_rate: 0.8 [dimensionless]
+shh_secretion_rate: 0.7 [dimensionless]
+hif1a_tgfb_amplification_factor: 1.5 [dimensionless]
+caf_tgfb_secretion_rate: 0.3 [dimensionless]
+tgfb_brake_sensitivity: 0.05 [dimensionless]
+proliferation_rate: 0.75 [dimensionless]
+checkpoint_integrity: 0.05 [dimensionless]
+apoptosis_resistance: 0.85 [dimensionless]
+base_proliferation_rate: 0.00048 [1/min]
+go_grow_penalty: 0.95 [dimensionless]
+hypoxia_proliferation_modifier: 0.2 [dimensionless]
+hypoxia_death_resistance_bonus: 0.1 [dimensionless]
+contact_inhibition_threshold: 0.5 [dimensionless]
+drug_kill_coefficient: 0.0002 [1/min]
+efflux_drug_reduction: 0.7 [dimensionless]
+caf_proliferation_rate: 0.0001 [1/min]
+gli1_proliferation_boost: 1.3 [dimensionless]
+psc_proliferation_rate: 0 [1/min]
+ecm_production_rate_base: 0.01 [1/min]
+ecm_production_rate_boosted: 0.015 [1/min]
+ecm_ha_fraction_default: 0.6 [dimensionless]
+mmp2_degradation_rate: 0.005 [1/min]
+ecm_natural_decay_rate: 0.0001 [1/min]
+drug_uptake_rate: 0.01 [1/hour]
+drug_stress_threshold: 0.03 [dimensionless]
+nrf2_decay_rate: 0.01 [1/hour]
+drug_natural_decay_rate: 0 [1/hour]
+hif1a_nrf2_priming_bonus: 0.02 [dimensionless]
+emt_induction_threshold: 0.3 [dimensionless]
+hif1a_emt_boost: 0.14 [dimensionless]
+motility_epithelial: 0.1 [micron/min]
+motility_mesenchymal_low: 0.5 [micron/min]
+motility_mesenchymal_med: 1 [micron/min]
+motility_mesenchymal_high: 2 [micron/min]
+adhesion_epithelial: 5 [dimensionless]
+adhesion_mesenchymal_low: 3 [dimensionless]
+adhesion_mesenchymal_med: 1.5 [dimensionless]
+adhesion_mesenchymal_high: 0.5 [dimensionless]
+hypoxia_response_threshold: 0.35 [dimensionless]
+efflux_induction_delay: 0.5 [dimensionless]
+efflux_strength: 0.7 [dimensionless]
+mechanical_compaction_strength: 0.6 [dimensionless]
+compaction_ecm_increment: 0.01 [dimensionless]
+crowding_base_pressure: 0.02 [dimensionless]
+stromal_contact_emt_boost: 0 [dimensionless]
+ecm_emt_threshold: 0.3 [dimensionless]
+ecm_emt_ramp: 0.3 [dimensionless]
+ecm_emt_strength: 0.4 [dimensionless]
+ecm_emt_cap: 0.1 [dimensionless]
+emt_death_increase: 5e-05 [1/min]
+emt_off_threshold: 0.25 [dimensionless]
+emt_activation_delay: 360 [min]
+ecm_emt_require_caf_contact: 1 [dimensionless]
+ecm_motility_block_threshold: 0.8 [dimensionless]
+
+String parameters:: 
+calibration_profile: AsPC-1 [none]
+tumor_calibration_knobs_json: config/tumor_calibration_knobs.json [none]
+emt_phenotype_extent: HIGH [none]
+hypoxia_phenotype_shift: HIGH [none]
+
+
+which boundaries?
+1 1 1 1 1 1
+
+Microenvironment summary: microenvironment: 
+
+Mesh information: 
+type: uniform Cartesian
+Domain: [-1000,1000] micron x [-1000,1000] micron x [-10,10] micron
+   resolution: dx = 20 micron
+   voxels: 10000
+   voxel faces: 0
+   volume: 8e+07 cubic micron
+Densities: (5 total)
+   oxygen:
+     units: mmHg
+     diffusion coefficient: 100000 micron^2 / min
+     decay rate: 0.1 min^-1
+     diffusion length scale: 1000 micron
+     initial condition: 38 mmHg
+     boundary condition: 38 mmHg (enabled: false)
+   tgfb:
+     units: dimensionless
+     diffusion coefficient: 1000 micron^2 / min
+     decay rate: 0.01 min^-1
+     diffusion length scale: 316.228 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   shh:
+     units: dimensionless
+     diffusion coefficient: 1000 micron^2 / min
+     decay rate: 0.01 min^-1
+     diffusion length scale: 316.228 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   drug:
+     units: dimensionless
+     diffusion coefficient: 5000 micron^2 / min
+     decay rate: 0.002 min^-1
+     diffusion length scale: 1581.14 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   ecm_density:
+     units: dimensionless
+     diffusion coefficient: 0 micron^2 / min
+     decay rate: 0.0001 min^-1
+     diffusion length scale: 0 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+
+virtual_wall_at_domain_edge: enabled
+Pre-processing type 0 named tumor_cell
+Pre-processing type 1 named stromal_cell
+Processing tumor_cell ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+  --------- attachment_elastic_constant = 0.01
+Processing stromal_cell ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+copying data ... 
+tumor_cell to stromal_cell
+  --------- attachment_elastic_constant = 0.01
+Signals: 
+=======
+0 : oxygen
+1 : tgfb
+2 : shh
+3 : drug
+4 : ecm_density
+5 : intracellular oxygen
+6 : intracellular tgfb
+7 : intracellular shh
+8 : intracellular drug
+9 : intracellular ecm_density
+10 : oxygen gradient
+11 : tgfb gradient
+12 : shh gradient
+13 : drug gradient
+14 : ecm_density gradient
+15 : pressure
+16 : volume
+17 : contact with tumor_cell
+18 : contact with stromal_cell
+19 : contact with live cell
+20 : contact with dead cell
+21 : contact with apoptotic cell
+22 : contact with necrotic cell
+23 : contact with other dead cell
+24 : contact with basement membrane
+25 : damage
+26 : damage delivered
+27 : attacking
+28 : dead
+29 : total attack time
+30 : time
+31 : custom:KRAS
+32 : custom:MYC
+33 : custom:EGFR
+34 : custom:TP53
+35 : custom:CDKN2A
+36 : custom:SMAD4
+37 : custom:RB1
+38 : custom:BCL_XL
+39 : custom:BAX
+40 : custom:ZEB1
+41 : custom:CDH1
+42 : custom:MMP2
+43 : custom:TGFB1_expr
+44 : custom:SHH_expr
+45 : custom:HIF1A
+46 : custom:NRF2
+47 : custom:ABCB1
+48 : custom:is_mesenchymal
+49 : custom:stress_level
+50 : custom:drug_sensitivity
+51 : custom:apoptosis_threshold
+52 : custom:cell_id
+53 : custom:parent_id
+54 : custom:gene_state_KRAS
+55 : custom:gene_state_TP53
+56 : custom:gene_state_CDKN2A
+57 : custom:gene_state_SMAD4
+58 : custom:gene_state_BCL_XL
+59 : custom:gene_state_MYC
+60 : custom:gene_state_EGFR
+61 : custom:gene_state_RB1
+62 : custom:gene_state_BAX
+63 : custom:gene_state_ZEB1
+64 : custom:gene_state_CDH1
+65 : custom:gene_state_MMP2
+66 : custom:gene_state_TGFB1
+67 : custom:gene_state_SHH
+68 : custom:gene_state_HIF1A
+69 : custom:gene_state_NRF2
+70 : custom:gene_state_ABCB1
+71 : custom:gene_state_HAS2
+72 : custom:gene_state_COL1A1
+73 : custom:gene_state_GLI1
+74 : custom:gene_state_ACTA2
+75 : custom:hif1a_active
+76 : custom:zeb1_active
+77 : custom:cdh1_expressed
+78 : custom:nrf2_active
+79 : custom:abcb1_active
+80 : custom:mmp2_active
+81 : custom:intracellular_drug
+82 : custom:time_since_drug_exposure
+83 : custom:time_alive
+84 : custom:emt_extent
+85 : custom:mechanical_pressure
+86 : custom:emt_signal_time
+87 : apoptotic
+88 : necrotic
+
+
+Behaviors: 
+=========
+0 : oxygen secretion
+1 : tgfb secretion
+2 : shh secretion
+3 : drug secretion
+4 : ecm_density secretion
+5 : oxygen secretion target
+6 : tgfb secretion target
+7 : shh secretion target
+8 : drug secretion target
+9 : ecm_density secretion target
+10 : oxygen uptake
+11 : tgfb uptake
+12 : shh uptake
+13 : drug uptake
+14 : ecm_density uptake
+15 : oxygen export
+16 : tgfb export
+17 : shh export
+18 : drug export
+19 : ecm_density export
+20 : cycle entry
+21 : exit from cycle phase 1
+22 : exit from cycle phase 2
+23 : exit from cycle phase 3
+24 : exit from cycle phase 4
+25 : exit from cycle phase 5
+26 : apoptosis
+27 : necrosis
+28 : migration speed
+29 : migration bias
+30 : migration persistence time
+31 : chemotactic response to oxygen
+32 : chemotactic response to tgfb
+33 : chemotactic response to shh
+34 : chemotactic response to drug
+35 : chemotactic response to ecm_density
+36 : cell-cell adhesion
+37 : cell-cell adhesion elastic constant
+38 : adhesive affinity to tumor_cell
+39 : adhesive affinity to stromal_cell
+40 : relative maximum adhesion distance
+41 : cell-cell repulsion
+42 : cell-BM adhesion
+43 : cell-BM repulsion
+44 : phagocytose apoptotic cell
+45 : phagocytose necrotic cell
+46 : phagocytose other dead cell
+47 : phagocytose tumor_cell
+48 : phagocytose stromal_cell
+49 : attack tumor_cell
+50 : attack stromal_cell
+51 : fuse to tumor_cell
+52 : fuse to stromal_cell
+53 : transition to tumor_cell
+54 : transition to stromal_cell
+55 : asymmetric division to tumor_cell
+56 : asymmetric division to stromal_cell
+57 : custom:KRAS
+58 : custom:MYC
+59 : custom:EGFR
+60 : custom:TP53
+61 : custom:CDKN2A
+62 : custom:SMAD4
+63 : custom:RB1
+64 : custom:BCL_XL
+65 : custom:BAX
+66 : custom:ZEB1
+67 : custom:CDH1
+68 : custom:MMP2
+69 : custom:TGFB1_expr
+70 : custom:SHH_expr
+71 : custom:HIF1A
+72 : custom:NRF2
+73 : custom:ABCB1
+74 : custom:is_mesenchymal
+75 : custom:stress_level
+76 : custom:drug_sensitivity
+77 : custom:apoptosis_threshold
+78 : custom:cell_id
+79 : custom:parent_id
+80 : custom:gene_state_KRAS
+81 : custom:gene_state_TP53
+82 : custom:gene_state_CDKN2A
+83 : custom:gene_state_SMAD4
+84 : custom:gene_state_BCL_XL
+85 : custom:gene_state_MYC
+86 : custom:gene_state_EGFR
+87 : custom:gene_state_RB1
+88 : custom:gene_state_BAX
+89 : custom:gene_state_ZEB1
+90 : custom:gene_state_CDH1
+91 : custom:gene_state_MMP2
+92 : custom:gene_state_TGFB1
+93 : custom:gene_state_SHH
+94 : custom:gene_state_HIF1A
+95 : custom:gene_state_NRF2
+96 : custom:gene_state_ABCB1
+97 : custom:gene_state_HAS2
+98 : custom:gene_state_COL1A1
+99 : custom:gene_state_GLI1
+100 : custom:gene_state_ACTA2
+101 : custom:hif1a_active
+102 : custom:zeb1_active
+103 : custom:cdh1_expressed
+104 : custom:nrf2_active
+105 : custom:abcb1_active
+106 : custom:mmp2_active
+107 : custom:intracellular_drug
+108 : custom:time_since_drug_exposure
+109 : custom:time_alive
+110 : custom:emt_extent
+111 : custom:mechanical_pressure
+112 : custom:emt_signal_time
+113 : is_movable
+114 : immunogenicity to tumor_cell
+115 : immunogenicity to stromal_cell
+116 : cell attachment rate
+117 : cell detachment rate
+118 : maximum number of cell attachments
+119 : attack damage rate
+120 : attack duration
+121 : damage rate
+122 : damage repair rate
+
+
+ruleset
+	Ruleset disabled ... 
+Behavioral rules for cell type tumor_cell:
+===================================================
+
+Behavioral rules for cell type stromal_cell:
+===================================================
+
+Exporting rules to file /home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_fixD_seed42/replicate_01_seed42/output/cell_rules_parsed.csv (v3 format) ... 
+Done!
+
+0 :: type:0 name: tumor_cell
+	 cycle model: Live (code=5)
+		Phase 0: Live
+		Cycle transitions: 
+		-----------------
+		Live --> Live w mean duration 100 min
+	 death models: 
+		0 : Apoptosis (code=100) with rate 0.00015 1/min
+		death phase transitions: 
+		------------------------
+		Apoptotic --> Debris w mean duration 516 min
+		1 : Necrosis (code=101) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Necrotic (swelling) --> Necrotic (lysed) w mean duration 1e-16 min
+		Necrotic (lysed) --> Debris w mean duration 86400 min
+	 key functions: 
+		 migration bias rule: false
+		 custom rule: false
+		 phenotype rule: true
+		 volume update function: true
+		 mechanics function: true
+		 contact function: false
+		 cell division function: true
+	motility (enabled: true in 2D)
+		speed: 0.1 micron/min
+		bias: 0 
+		persistence time: 10 min
+		chemotaxis (enabled: false)
+			along 1 * grad(oxygen) 
+	mechanics:
+		cell_cell_adhesion_strength: 5
+		cell_cell_repulsion_strength: 10
+		rel max adhesion dist: 1.25
+		cell_BM_adhesion_strength: 4
+		cell_BM_repulsion_strength: 100
+		attachment_elastic_constant: 0.01
+		attachment_rate: 0
+		detachment_rate: 0
+	custom data: 
+		KRAS: 1 dimensionless
+		MYC: 0 dimensionless
+		EGFR: 1 dimensionless
+		TP53: 0 dimensionless
+		CDKN2A: 0 dimensionless
+		SMAD4: 0 dimensionless
+		RB1: 0 dimensionless
+		BCL_XL: 0 dimensionless
+		BAX: 0 dimensionless
+		ZEB1: 0 dimensionless
+		CDH1: 0 dimensionless
+		MMP2: 0 dimensionless
+		TGFB1_expr: 0 dimensionless
+		SHH_expr: 0 dimensionless
+		HIF1A: 0 dimensionless
+		NRF2: 0 dimensionless
+		ABCB1: 0 dimensionless
+		is_mesenchymal: 0 dimensionless
+		stress_level: 0 dimensionless
+		drug_sensitivity: 1 dimensionless
+		apoptosis_threshold: 0.5 dimensionless
+		cell_id: -1 none
+		parent_id: -1 none
+		gene_state_KRAS: 1 none
+		gene_state_TP53: 2 none
+		gene_state_CDKN2A: 2 none
+		gene_state_SMAD4: 2 none
+		gene_state_BCL_XL: 1 none
+		gene_state_MYC: 0 none
+		gene_state_EGFR: 0 none
+		gene_state_RB1: 0 none
+		gene_state_BAX: 0 none
+		gene_state_ZEB1: 0 none
+		gene_state_CDH1: 0 none
+		gene_state_MMP2: 0 none
+		gene_state_TGFB1: 0 none
+		gene_state_SHH: 0 none
+		gene_state_HIF1A: 0 none
+		gene_state_NRF2: 0 none
+		gene_state_ABCB1: 0 none
+		gene_state_HAS2: 0 none
+		gene_state_COL1A1: 0 none
+		gene_state_GLI1: 0 none
+		gene_state_ACTA2: 0 none
+		hif1a_active: 0 dimensionless
+		zeb1_active: 0 dimensionless
+		cdh1_expressed: 1 dimensionless
+		nrf2_active: 0 dimensionless
+		abcb1_active: 0 dimensionless
+		mmp2_active: 0 dimensionless
+		intracellular_drug: 0 dimensionless
+		time_since_drug_exposure: -1 hour
+		time_alive: 0 min
+		emt_extent: 0 dimensionless
+		mechanical_pressure: 0 dimensionless
+		emt_signal_time: 0 min
+	custom vector data: 
+			NOTE: custom vector data will eventually be merged with custom data
+1 :: type:1 name: stromal_cell
+	 cycle model: Live (code=5)
+		Phase 0: Live
+		Cycle transitions: 
+		-----------------
+		Live --> Live w mean duration inf min
+	 death models: 
+		0 : Apoptosis (code=100) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Apoptotic --> Debris w mean duration 516 min
+		1 : Necrosis (code=101) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Necrotic (swelling) --> Necrotic (lysed) w mean duration 1e-16 min
+		Necrotic (lysed) --> Debris w mean duration 86400 min
+	 key functions: 
+		 migration bias rule: false
+		 custom rule: false
+		 phenotype rule: true
+		 volume update function: true
+		 mechanics function: true
+		 contact function: false
+		 cell division function: true
+	motility (enabled: true in 2D)
+		speed: 0.05 micron/min
+		bias: 0 
+		persistence time: 10 min
+		chemotaxis (enabled: false)
+			along 1 * grad(oxygen) 
+	mechanics:
+		cell_cell_adhesion_strength: 0.8
+		cell_cell_repulsion_strength: 10
+		rel max adhesion dist: 1.25
+		cell_BM_adhesion_strength: 4
+		cell_BM_repulsion_strength: 100
+		attachment_elastic_constant: 0.01
+		attachment_rate: 0
+		detachment_rate: 0
+	custom data: 
+		cell_id: -1 none
+		parent_id: -1 none
+		gene_state_SMAD4: 0 none
+		gene_state_ACTA2: 0 none
+		gene_state_GLI1: 0 none
+		gene_state_HAS2: 0 none
+		gene_state_COL1A1: 0 none
+		gene_state_TGFB1: 0 none
+		gene_state_SHH: 0 none
+		acta2_active: 0 dimensionless
+		gli1_active: 0 dimensionless
+		activation_mode: 0 dimensionless
+		hif1a_active: 0 dimensionless
+		ecm_production_rate: 0 dimensionless
+		tgfb_secretion_active: 0 dimensionless
+		time_alive: 0 min
+		mechanical_pressure: 0 dimensionless
+		_stromal_reserved_0: 0 none
+		_stromal_reserved_1: 0 none
+		_stromal_reserved_2: 0 none
+		_stromal_reserved_3: 0 none
+		_stromal_reserved_4: 0 none
+		_stromal_reserved_5: 0 none
+		_stromal_reserved_6: 0 none
+		_stromal_reserved_7: 0 none
+		_stromal_reserved_8: 0 none
+		_stromal_reserved_9: 0 none
+		_stromal_reserved_10: 0 none
+		_stromal_reserved_11: 0 none
+		_stromal_reserved_12: 0 none
+		_stromal_reserved_13: 0 none
+		_stromal_reserved_14: 0 none
+		_stromal_reserved_15: 0 none
+		_stromal_reserved_16: 0 none
+		_stromal_reserved_17: 0 none
+		_stromal_reserved_18: 0 none
+		_stromal_reserved_19: 0 none
+		_stromal_reserved_20: 0 none
+		_stromal_reserved_21: 0 none
+		_stromal_reserved_22: 0 none
+		_stromal_reserved_23: 0 none
+		_stromal_reserved_24: 0 none
+		_stromal_reserved_25: 0 none
+		_stromal_reserved_26: 0 none
+		_stromal_reserved_27: 0 none
+		_stromal_reserved_28: 0 none
+		_stromal_reserved_29: 0 none
+		_stromal_reserved_30: 0 none
+		_stromal_reserved_31: 0 none
+		_stromal_reserved_32: 0 none
+		_stromal_reserved_33: 0 none
+		_stromal_reserved_34: 0 none
+		_stromal_reserved_35: 0 none
+		_stromal_reserved_36: 0 none
+		_stromal_reserved_37: 0 none
+		_stromal_reserved_38: 0 none
+	custom vector data: 
+			NOTE: custom vector data will eventually be merged with custom data
+Using PhysiCell version 1.14.2
+	Please cite DOI: 10.1371/journal.pcbi.1005991
+	Project website: http://physicell.org
+
+See ALL_CITATIONS.txt for this list.
+current simulated time: 0 min (max: 60480 min)
+total agents: 550
+interval wall time: 0 days, 0 hours, 0 minutes, and 2.489e-05 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 3.45e-05 seconds 
+
+
+Using method diffusion_decay_solver__constant_coefficients_LOD_2D (2D LOD with Thomas Algorithm) ... 
+
+current simulated time: 360 min (max: 60480 min)
+total agents: 561
+interval wall time: 0 days, 0 hours, 0 minutes, and 16.9723 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 16.9723 seconds 
+
+current simulated time: 720 min (max: 60480 min)
+total agents: 571
+interval wall time: 0 days, 0 hours, 0 minutes, and 16.972 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 33.9444 seconds 
+
+current simulated time: 1080 min (max: 60480 min)
+total agents: 590
+interval wall time: 0 days, 0 hours, 0 minutes, and 16.9727 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 50.917 seconds 
+
+current simulated time: 1440 min (max: 60480 min)
+total agents: 608
+interval wall time: 0 days, 0 hours, 0 minutes, and 17.491 seconds 
+total wall time: 0 days, 0 hours, 1 minutes, and 8.408 seconds 
+
+current simulated time: 1800 min (max: 60480 min)
+total agents: 617
+interval wall time: 0 days, 0 hours, 0 minutes, and 17.4786 seconds 
+total wall time: 0 days, 0 hours, 1 minutes, and 25.8866 seconds 
+
+current simulated time: 2160 min (max: 60480 min)
+total agents: 630
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.3364 seconds 
+total wall time: 0 days, 0 hours, 1 minutes, and 44.223 seconds 
+
+current simulated time: 2520 min (max: 60480 min)
+total agents: 641
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.5677 seconds 
+total wall time: 0 days, 0 hours, 2 minutes, and 2.79072 seconds 
+
+current simulated time: 2880 min (max: 60480 min)
+total agents: 657
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.6383 seconds 
+total wall time: 0 days, 0 hours, 2 minutes, and 21.4291 seconds 
+
+current simulated time: 3240 min (max: 60480 min)
+total agents: 672
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.7812 seconds 
+total wall time: 0 days, 0 hours, 2 minutes, and 40.2103 seconds 
+
+current simulated time: 3600 min (max: 60480 min)
+total agents: 688
+interval wall time: 0 days, 0 hours, 0 minutes, and 16.669 seconds 
+total wall time: 0 days, 0 hours, 2 minutes, and 56.8793 seconds 
+
+current simulated time: 3960 min (max: 60480 min)
+total agents: 700
+interval wall time: 0 days, 0 hours, 0 minutes, and 17.1308 seconds 
+total wall time: 0 days, 0 hours, 3 minutes, and 14.0101 seconds 
+
+current simulated time: 4320 min (max: 60480 min)
+total agents: 724
+interval wall time: 0 days, 0 hours, 0 minutes, and 17.4043 seconds 
+total wall time: 0 days, 0 hours, 3 minutes, and 31.4144 seconds 
+
+current simulated time: 4680 min (max: 60480 min)
+total agents: 737
+interval wall time: 0 days, 0 hours, 0 minutes, and 17.486 seconds 
+total wall time: 0 days, 0 hours, 3 minutes, and 48.9004 seconds 
+
+current simulated time: 5040 min (max: 60480 min)
+total agents: 735
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.0016 seconds 
+total wall time: 0 days, 0 hours, 4 minutes, and 6.9021 seconds 
+
+current simulated time: 5400 min (max: 60480 min)
+total agents: 742
+interval wall time: 0 days, 0 hours, 0 minutes, and 17.9977 seconds 
+total wall time: 0 days, 0 hours, 4 minutes, and 24.8998 seconds 
+
+current simulated time: 5760 min (max: 60480 min)
+total agents: 745
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.0733 seconds 
+total wall time: 0 days, 0 hours, 4 minutes, and 42.9731 seconds 
+
+current simulated time: 6120 min (max: 60480 min)
+total agents: 758
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.0907 seconds 
+total wall time: 0 days, 0 hours, 5 minutes, and 1.06384 seconds 
+
+current simulated time: 6480 min (max: 60480 min)
+total agents: 772
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.3538 seconds 
+total wall time: 0 days, 0 hours, 5 minutes, and 19.4176 seconds 
+
+current simulated time: 6840 min (max: 60480 min)
+total agents: 778
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.3976 seconds 
+total wall time: 0 days, 0 hours, 5 minutes, and 37.8152 seconds 
+
+current simulated time: 7200 min (max: 60480 min)
+total agents: 789
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.3954 seconds 
+total wall time: 0 days, 0 hours, 5 minutes, and 56.2106 seconds 
+
+current simulated time: 7560 min (max: 60480 min)
+total agents: 805
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.5557 seconds 
+total wall time: 0 days, 0 hours, 6 minutes, and 14.7663 seconds 
+
+current simulated time: 7920 min (max: 60480 min)
+total agents: 813
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.5734 seconds 
+total wall time: 0 days, 0 hours, 6 minutes, and 33.3398 seconds 
+
+current simulated time: 8280 min (max: 60480 min)
+total agents: 826
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.6508 seconds 
+total wall time: 0 days, 0 hours, 6 minutes, and 51.9906 seconds 
+
+current simulated time: 8640 min (max: 60480 min)
+total agents: 854
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.7356 seconds 
+total wall time: 0 days, 0 hours, 7 minutes, and 10.7262 seconds 
+
+current simulated time: 9000 min (max: 60480 min)
+total agents: 873
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.8635 seconds 
+total wall time: 0 days, 0 hours, 7 minutes, and 29.5897 seconds 
+
+current simulated time: 9360 min (max: 60480 min)
+total agents: 888
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.8602 seconds 
+total wall time: 0 days, 0 hours, 7 minutes, and 48.4499 seconds 
+
+current simulated time: 9720 min (max: 60480 min)
+total agents: 901
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.904 seconds 
+total wall time: 0 days, 0 hours, 8 minutes, and 7.35395 seconds 
+
+current simulated time: 10080 min (max: 60480 min)
+total agents: 920
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.0028 seconds 
+total wall time: 0 days, 0 hours, 8 minutes, and 27.3568 seconds 
+
+current simulated time: 10440 min (max: 60480 min)
+total agents: 937
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.8124 seconds 
+total wall time: 0 days, 0 hours, 8 minutes, and 48.1692 seconds 
+
+current simulated time: 10800 min (max: 60480 min)
+total agents: 956
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.9053 seconds 
+total wall time: 0 days, 0 hours, 9 minutes, and 9.07448 seconds 
+
+current simulated time: 11160 min (max: 60480 min)
+total agents: 972
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.0473 seconds 
+total wall time: 0 days, 0 hours, 9 minutes, and 30.1218 seconds 
+
+current simulated time: 11520 min (max: 60480 min)
+total agents: 979
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.0546 seconds 
+total wall time: 0 days, 0 hours, 9 minutes, and 51.1764 seconds 
+
+current simulated time: 11880 min (max: 60480 min)
+total agents: 998
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.083 seconds 
+total wall time: 0 days, 0 hours, 10 minutes, and 12.2595 seconds 
+
+current simulated time: 12240 min (max: 60480 min)
+total agents: 1012
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.1436 seconds 
+total wall time: 0 days, 0 hours, 10 minutes, and 33.4031 seconds 
+
+current simulated time: 12600 min (max: 60480 min)
+total agents: 1020
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.2352 seconds 
+total wall time: 0 days, 0 hours, 10 minutes, and 54.6383 seconds 
+
+current simulated time: 12960 min (max: 60480 min)
+total agents: 1030
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.0121 seconds 
+total wall time: 0 days, 0 hours, 11 minutes, and 15.6503 seconds 
+
+current simulated time: 13320 min (max: 60480 min)
+total agents: 1055
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.5516 seconds 
+total wall time: 0 days, 0 hours, 11 minutes, and 34.202 seconds 
+
+current simulated time: 13680 min (max: 60480 min)
+total agents: 1078
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.5941 seconds 
+total wall time: 0 days, 0 hours, 11 minutes, and 53.7961 seconds 
+
+current simulated time: 14040 min (max: 60480 min)
+total agents: 1095
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.2123 seconds 
+total wall time: 0 days, 0 hours, 12 minutes, and 14.0084 seconds 
+
+current simulated time: 14400 min (max: 60480 min)
+total agents: 1111
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.5386 seconds 
+total wall time: 0 days, 0 hours, 12 minutes, and 34.547 seconds 
+
+current simulated time: 14760 min (max: 60480 min)
+total agents: 1143
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.6939 seconds 
+total wall time: 0 days, 0 hours, 12 minutes, and 55.2408 seconds 
+
+current simulated time: 15120 min (max: 60480 min)
+total agents: 1171
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.8062 seconds 
+total wall time: 0 days, 0 hours, 13 minutes, and 16.0471 seconds 
+
+current simulated time: 15480 min (max: 60480 min)
+total agents: 1199
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.949 seconds 
+total wall time: 0 days, 0 hours, 13 minutes, and 36.9961 seconds 
+
+current simulated time: 15840 min (max: 60480 min)
+total agents: 1211
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.0173 seconds 
+total wall time: 0 days, 0 hours, 13 minutes, and 58.0135 seconds 
+
+current simulated time: 16200 min (max: 60480 min)
+total agents: 1231
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.0647 seconds 
+total wall time: 0 days, 0 hours, 14 minutes, and 19.0782 seconds 
+
+current simulated time: 16560 min (max: 60480 min)
+total agents: 1251
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.038 seconds 
+total wall time: 0 days, 0 hours, 14 minutes, and 38.1162 seconds 
+
+current simulated time: 16920 min (max: 60480 min)
+total agents: 1274
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.213 seconds 
+total wall time: 0 days, 0 hours, 14 minutes, and 58.3292 seconds 
+
+current simulated time: 17280 min (max: 60480 min)
+total agents: 1306
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.4093 seconds 
+total wall time: 0 days, 0 hours, 15 minutes, and 18.7385 seconds 
+
+current simulated time: 17640 min (max: 60480 min)
+total agents: 1343
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.5284 seconds 
+total wall time: 0 days, 0 hours, 15 minutes, and 39.2669 seconds 
+
+current simulated time: 18000 min (max: 60480 min)
+total agents: 1373
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.6991 seconds 
+total wall time: 0 days, 0 hours, 15 minutes, and 59.9661 seconds 
+
+current simulated time: 18360 min (max: 60480 min)
+total agents: 1416
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.8035 seconds 
+total wall time: 0 days, 0 hours, 16 minutes, and 20.7696 seconds 
+
+current simulated time: 18720 min (max: 60480 min)
+total agents: 1446
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.0263 seconds 
+total wall time: 0 days, 0 hours, 16 minutes, and 41.7959 seconds 
+
+current simulated time: 19080 min (max: 60480 min)
+total agents: 1482
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.2492 seconds 
+total wall time: 0 days, 0 hours, 17 minutes, and 3.0451 seconds 
+
+current simulated time: 19440 min (max: 60480 min)
+total agents: 1518
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.3091 seconds 
+total wall time: 0 days, 0 hours, 17 minutes, and 24.3542 seconds 
+
+current simulated time: 19800 min (max: 60480 min)
+total agents: 1556
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.5069 seconds 
+total wall time: 0 days, 0 hours, 17 minutes, and 45.8612 seconds 
+
+current simulated time: 20160 min (max: 60480 min)
+total agents: 1596
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.9901 seconds 
+total wall time: 0 days, 0 hours, 18 minutes, and 7.85133 seconds 
+
+current simulated time: 20520 min (max: 60480 min)
+total agents: 1628
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.944 seconds 
+total wall time: 0 days, 0 hours, 18 minutes, and 30.7954 seconds 
+
+current simulated time: 20880 min (max: 60480 min)
+total agents: 1661
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.1685 seconds 
+total wall time: 0 days, 0 hours, 18 minutes, and 53.9638 seconds 
+
+current simulated time: 21240 min (max: 60480 min)
+total agents: 1703
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.76 seconds 
+total wall time: 0 days, 0 hours, 19 minutes, and 17.7239 seconds 
+
+current simulated time: 21600 min (max: 60480 min)
+total agents: 1757
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.1078 seconds 
+total wall time: 0 days, 0 hours, 19 minutes, and 41.8317 seconds 
+
+current simulated time: 21960 min (max: 60480 min)
+total agents: 1813
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.3286 seconds 
+total wall time: 0 days, 0 hours, 20 minutes, and 6.16031 seconds 
+
+current simulated time: 22320 min (max: 60480 min)
+total agents: 1856
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.4888 seconds 
+total wall time: 0 days, 0 hours, 20 minutes, and 30.6491 seconds 
+
+current simulated time: 22680 min (max: 60480 min)
+total agents: 1904
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.6254 seconds 
+total wall time: 0 days, 0 hours, 20 minutes, and 55.2746 seconds 
+
+current simulated time: 23040 min (max: 60480 min)
+total agents: 1960
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.9196 seconds 
+total wall time: 0 days, 0 hours, 21 minutes, and 20.1942 seconds 
+
+current simulated time: 23400 min (max: 60480 min)
+total agents: 2019
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.1013 seconds 
+total wall time: 0 days, 0 hours, 21 minutes, and 45.2955 seconds 
+
+current simulated time: 23760 min (max: 60480 min)
+total agents: 2070
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.9284 seconds 
+total wall time: 0 days, 0 hours, 22 minutes, and 10.2239 seconds 
+
+current simulated time: 24120 min (max: 60480 min)
+total agents: 2141
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.5086 seconds 
+total wall time: 0 days, 0 hours, 22 minutes, and 35.7325 seconds 
+
+current simulated time: 24480 min (max: 60480 min)
+total agents: 2198
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.9525 seconds 
+total wall time: 0 days, 0 hours, 23 minutes, and 1.685 seconds 
+
+current simulated time: 24840 min (max: 60480 min)
+total agents: 2255
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.7439 seconds 
+total wall time: 0 days, 0 hours, 23 minutes, and 27.4289 seconds 
+
+current simulated time: 25200 min (max: 60480 min)
+total agents: 2318
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.9357 seconds 
+total wall time: 0 days, 0 hours, 23 minutes, and 53.3646 seconds 
+
+current simulated time: 25560 min (max: 60480 min)
+total agents: 2377
+interval wall time: 0 days, 0 hours, 0 minutes, and 26.1518 seconds 
+total wall time: 0 days, 0 hours, 24 minutes, and 19.5165 seconds 
+
+current simulated time: 25920 min (max: 60480 min)
+total agents: 2431
+interval wall time: 0 days, 0 hours, 0 minutes, and 26.4096 seconds 
+total wall time: 0 days, 0 hours, 24 minutes, and 45.9261 seconds 
+
+current simulated time: 26280 min (max: 60480 min)
+total agents: 2497
+interval wall time: 0 days, 0 hours, 0 minutes, and 26.6264 seconds 
+total wall time: 0 days, 0 hours, 25 minutes, and 12.5525 seconds 
+
+current simulated time: 26640 min (max: 60480 min)
+total agents: 2587
+interval wall time: 0 days, 0 hours, 0 minutes, and 26.4513 seconds 
+total wall time: 0 days, 0 hours, 25 minutes, and 39.0039 seconds 
+
+current simulated time: 27000 min (max: 60480 min)
+total agents: 2671
+interval wall time: 0 days, 0 hours, 0 minutes, and 27.71 seconds 
+total wall time: 0 days, 0 hours, 26 minutes, and 6.71385 seconds 
+
+current simulated time: 27360 min (max: 60480 min)
+total agents: 2740
+interval wall time: 0 days, 0 hours, 0 minutes, and 27.9979 seconds 
+total wall time: 0 days, 0 hours, 26 minutes, and 34.7117 seconds 
+
+current simulated time: 27720 min (max: 60480 min)
+total agents: 2818
+interval wall time: 0 days, 0 hours, 0 minutes, and 27.9012 seconds 
+total wall time: 0 days, 0 hours, 27 minutes, and 2.61289 seconds 
+
+current simulated time: 28080 min (max: 60480 min)
+total agents: 2895
+interval wall time: 0 days, 0 hours, 0 minutes, and 27.2349 seconds 
+total wall time: 0 days, 0 hours, 27 minutes, and 29.8478 seconds 
+
+current simulated time: 28440 min (max: 60480 min)
+total agents: 2977
+interval wall time: 0 days, 0 hours, 0 minutes, and 27.6243 seconds 
+total wall time: 0 days, 0 hours, 27 minutes, and 57.4721 seconds 
+
+current simulated time: 28800 min (max: 60480 min)
+total agents: 3058
+interval wall time: 0 days, 0 hours, 0 minutes, and 26.1292 seconds 
+total wall time: 0 days, 0 hours, 28 minutes, and 23.6013 seconds 
+
+current simulated time: 29160 min (max: 60480 min)
+total agents: 3152
+interval wall time: 0 days, 0 hours, 0 minutes, and 27.6802 seconds 
+total wall time: 0 days, 0 hours, 28 minutes, and 51.2815 seconds 
+
+current simulated time: 29520 min (max: 60480 min)
+total agents: 3261
+interval wall time: 0 days, 0 hours, 0 minutes, and 28.1061 seconds 
+total wall time: 0 days, 0 hours, 29 minutes, and 19.3876 seconds 
+
+current simulated time: 29880 min (max: 60480 min)
+total agents: 3354
+interval wall time: 0 days, 0 hours, 0 minutes, and 28.2496 seconds 
+total wall time: 0 days, 0 hours, 29 minutes, and 47.6372 seconds 
+
+current simulated time: 30240 min (max: 60480 min)
+total agents: 3449
+interval wall time: 0 days, 0 hours, 0 minutes, and 29.3402 seconds 
+total wall time: 0 days, 0 hours, 30 minutes, and 16.9775 seconds 
+
+current simulated time: 30600 min (max: 60480 min)
+total agents: 3538
+interval wall time: 0 days, 0 hours, 0 minutes, and 29.6238 seconds 
+total wall time: 0 days, 0 hours, 30 minutes, and 46.6013 seconds 
+
+current simulated time: 30960 min (max: 60480 min)
+total agents: 3673
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.4807 seconds 
+total wall time: 0 days, 0 hours, 31 minutes, and 10.082 seconds 
+
+current simulated time: 31320 min (max: 60480 min)
+total agents: 3794
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.2819 seconds 
+total wall time: 0 days, 0 hours, 31 minutes, and 32.3639 seconds 
+
+current simulated time: 31680 min (max: 60480 min)
+total agents: 3914
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.3997 seconds 
+total wall time: 0 days, 0 hours, 31 minutes, and 55.7636 seconds 
+
+current simulated time: 32040 min (max: 60480 min)
+total agents: 4056
+interval wall time: 0 days, 0 hours, 0 minutes, and 28.1116 seconds 
+total wall time: 0 days, 0 hours, 32 minutes, and 23.8753 seconds 
+
+current simulated time: 32400 min (max: 60480 min)
+total agents: 4189
+interval wall time: 0 days, 0 hours, 0 minutes, and 30.3059 seconds 
+total wall time: 0 days, 0 hours, 32 minutes, and 54.1812 seconds 
+
+current simulated time: 32760 min (max: 60480 min)
+total agents: 4319
+interval wall time: 0 days, 0 hours, 0 minutes, and 31.7569 seconds 
+total wall time: 0 days, 0 hours, 33 minutes, and 25.9381 seconds 
+
+current simulated time: 33120 min (max: 60480 min)
+total agents: 4454
+interval wall time: 0 days, 0 hours, 0 minutes, and 32.3875 seconds 
+total wall time: 0 days, 0 hours, 33 minutes, and 58.3256 seconds 
+
+current simulated time: 33480 min (max: 60480 min)
+total agents: 4591
+interval wall time: 0 days, 0 hours, 0 minutes, and 32.8275 seconds 
+total wall time: 0 days, 0 hours, 34 minutes, and 31.1531 seconds 
+
+current simulated time: 33840 min (max: 60480 min)
+total agents: 4731
+interval wall time: 0 days, 0 hours, 0 minutes, and 33.4161 seconds 
+total wall time: 0 days, 0 hours, 35 minutes, and 4.56922 seconds 
+
+current simulated time: 34200 min (max: 60480 min)
+total agents: 4885
+interval wall time: 0 days, 0 hours, 0 minutes, and 33.9812 seconds 
+total wall time: 0 days, 0 hours, 35 minutes, and 38.5505 seconds 
+
+current simulated time: 34560 min (max: 60480 min)
+total agents: 5046
+interval wall time: 0 days, 0 hours, 0 minutes, and 34.2606 seconds 
+total wall time: 0 days, 0 hours, 36 minutes, and 12.8111 seconds 
+
+current simulated time: 34920 min (max: 60480 min)
+total agents: 5205
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.9758 seconds 
+total wall time: 0 days, 0 hours, 36 minutes, and 38.7869 seconds 
+
+current simulated time: 35280 min (max: 60480 min)
+total agents: 5366
+interval wall time: 0 days, 0 hours, 0 minutes, and 32.7524 seconds 
+total wall time: 0 days, 0 hours, 37 minutes, and 11.5392 seconds 
+
+current simulated time: 35640 min (max: 60480 min)
+total agents: 5546
+interval wall time: 0 days, 0 hours, 0 minutes, and 36.6045 seconds 
+total wall time: 0 days, 0 hours, 37 minutes, and 48.1438 seconds 
+
+current simulated time: 36000 min (max: 60480 min)
+total agents: 5730
+interval wall time: 0 days, 0 hours, 0 minutes, and 37.2069 seconds 
+total wall time: 0 days, 0 hours, 38 minutes, and 25.3507 seconds 
+
+current simulated time: 36360 min (max: 60480 min)
+total agents: 5929
+interval wall time: 0 days, 0 hours, 0 minutes, and 37.9828 seconds 
+total wall time: 0 days, 0 hours, 39 minutes, and 3.33353 seconds 
+
+current simulated time: 36720 min (max: 60480 min)
+total agents: 6127
+interval wall time: 0 days, 0 hours, 0 minutes, and 38.6951 seconds 
+total wall time: 0 days, 0 hours, 39 minutes, and 42.0286 seconds 
+
+current simulated time: 37080 min (max: 60480 min)
+total agents: 6316
+interval wall time: 0 days, 0 hours, 0 minutes, and 39.6227 seconds 
+total wall time: 0 days, 0 hours, 40 minutes, and 21.6513 seconds 
+
+current simulated time: 37440 min (max: 60480 min)
+total agents: 6535
+interval wall time: 0 days, 0 hours, 0 minutes, and 40.5207 seconds 
+total wall time: 0 days, 0 hours, 41 minutes, and 2.172 seconds 
+
+current simulated time: 37800 min (max: 60480 min)
+total agents: 6749
+interval wall time: 0 days, 0 hours, 0 minutes, and 41.4996 seconds 
+total wall time: 0 days, 0 hours, 41 minutes, and 43.6716 seconds 
+
+current simulated time: 38160 min (max: 60480 min)
+total agents: 6991
+interval wall time: 0 days, 0 hours, 0 minutes, and 35.4571 seconds 
+total wall time: 0 days, 0 hours, 42 minutes, and 19.1288 seconds 
+
+current simulated time: 38520 min (max: 60480 min)
+total agents: 7219
+interval wall time: 0 days, 0 hours, 0 minutes, and 43.3657 seconds 
+total wall time: 0 days, 0 hours, 43 minutes, and 2.49452 seconds 
+
+current simulated time: 38880 min (max: 60480 min)
+total agents: 7463
+interval wall time: 0 days, 0 hours, 0 minutes, and 44.728 seconds 
+total wall time: 0 days, 0 hours, 43 minutes, and 47.2225 seconds 
+
+current simulated time: 39240 min (max: 60480 min)
+total agents: 7736
+interval wall time: 0 days, 0 hours, 0 minutes, and 46.5146 seconds 
+total wall time: 0 days, 0 hours, 44 minutes, and 33.7372 seconds 
+
+current simulated time: 39600 min (max: 60480 min)
+total agents: 8002
+interval wall time: 0 days, 0 hours, 0 minutes, and 47.4381 seconds 
+total wall time: 0 days, 0 hours, 45 minutes, and 21.1753 seconds 
+
+current simulated time: 39960 min (max: 60480 min)
+total agents: 8268
+interval wall time: 0 days, 0 hours, 0 minutes, and 48.5369 seconds 
+total wall time: 0 days, 0 hours, 46 minutes, and 9.71224 seconds 
+
+current simulated time: 40320 min (max: 60480 min)
+total agents: 8568
+interval wall time: 0 days, 0 hours, 0 minutes, and 49.8929 seconds 
+total wall time: 0 days, 0 hours, 46 minutes, and 59.6052 seconds 
+
+current simulated time: 40680 min (max: 60480 min)
+total agents: 8854
+interval wall time: 0 days, 0 hours, 0 minutes, and 45.2966 seconds 
+total wall time: 0 days, 0 hours, 47 minutes, and 44.9018 seconds 
+
+current simulated time: 41040 min (max: 60480 min)
+total agents: 9175
+interval wall time: 0 days, 0 hours, 0 minutes, and 48.9396 seconds 
+total wall time: 0 days, 0 hours, 48 minutes, and 33.8415 seconds 
+
+current simulated time: 41400 min (max: 60480 min)
+total agents: 9497
+interval wall time: 0 days, 0 hours, 0 minutes, and 50.0442 seconds 
+total wall time: 0 days, 0 hours, 49 minutes, and 23.8857 seconds 
+
+current simulated time: 41760 min (max: 60480 min)
+total agents: 9848
+interval wall time: 0 days, 0 hours, 0 minutes, and 38.6462 seconds 
+total wall time: 0 days, 0 hours, 50 minutes, and 2.53194 seconds 
+
+current simulated time: 42120 min (max: 60480 min)
+total agents: 10192
+interval wall time: 0 days, 0 hours, 0 minutes, and 42.1257 seconds 
+total wall time: 0 days, 0 hours, 50 minutes, and 44.6577 seconds 
+
+current simulated time: 42480 min (max: 60480 min)
+total agents: 10540
+interval wall time: 0 days, 0 hours, 0 minutes, and 54.1332 seconds 
+total wall time: 0 days, 0 hours, 51 minutes, and 38.7908 seconds 
+
+current simulated time: 42840 min (max: 60480 min)
+total agents: 10943
+interval wall time: 0 days, 0 hours, 0 minutes, and 56.4018 seconds 
+total wall time: 0 days, 0 hours, 52 minutes, and 35.1927 seconds 
+
+current simulated time: 43200 min (max: 60480 min)
+total agents: 11314
+interval wall time: 0 days, 0 hours, 0 minutes, and 59.4815 seconds 
+total wall time: 0 days, 0 hours, 53 minutes, and 34.6742 seconds 
+
+current simulated time: 43560 min (max: 60480 min)
+total agents: 11726
+interval wall time: 0 days, 0 hours, 1 minutes, and 2.00192 seconds 
+total wall time: 0 days, 0 hours, 54 minutes, and 36.6761 seconds 
+
+current simulated time: 43920 min (max: 60480 min)
+total agents: 12143
+interval wall time: 0 days, 0 hours, 1 minutes, and 6.02504 seconds 
+total wall time: 0 days, 0 hours, 55 minutes, and 42.7012 seconds 
+
+current simulated time: 44280 min (max: 60480 min)
+total agents: 12541
+interval wall time: 0 days, 0 hours, 1 minutes, and 7.74044 seconds 
+total wall time: 0 days, 0 hours, 56 minutes, and 50.4416 seconds 
+
+current simulated time: 44640 min (max: 60480 min)
+total agents: 12978
+interval wall time: 0 days, 0 hours, 1 minutes, and 6.85015 seconds 
+total wall time: 0 days, 0 hours, 57 minutes, and 57.2918 seconds 
+
+current simulated time: 45000 min (max: 60480 min)
+total agents: 13424
+interval wall time: 0 days, 0 hours, 1 minutes, and 3.59444 seconds 
+total wall time: 0 days, 0 hours, 59 minutes, and 0.886238 seconds 
+
+current simulated time: 45360 min (max: 60480 min)
+total agents: 13892
+interval wall time: 0 days, 0 hours, 0 minutes, and 54.0074 seconds 
+total wall time: 0 days, 0 hours, 59 minutes, and 54.8937 seconds 
+
+current simulated time: 45720 min (max: 60480 min)
+total agents: 14376
+interval wall time: 0 days, 0 hours, 1 minutes, and 15.6021 seconds 
+total wall time: 0 days, 1 hours, 1 minutes, and 10.4958 seconds 
+
+current simulated time: 46080 min (max: 60480 min)
+total agents: 14894
+interval wall time: 0 days, 0 hours, 0 minutes, and 55.6894 seconds 
+total wall time: 0 days, 1 hours, 2 minutes, and 6.18522 seconds 
+
+current simulated time: 46440 min (max: 60480 min)
+total agents: 15407
+interval wall time: 0 days, 0 hours, 0 minutes, and 56.8732 seconds 
+total wall time: 0 days, 1 hours, 3 minutes, and 3.05841 seconds 
+
+current simulated time: 46800 min (max: 60480 min)
+total agents: 15957
+interval wall time: 0 days, 0 hours, 1 minutes, and 1.50547 seconds 
+total wall time: 0 days, 1 hours, 4 minutes, and 4.56388 seconds 
+
+current simulated time: 47160 min (max: 60480 min)
+total agents: 16569
+interval wall time: 0 days, 0 hours, 1 minutes, and 15.1137 seconds 
+total wall time: 0 days, 1 hours, 5 minutes, and 19.6776 seconds 
+
+current simulated time: 47520 min (max: 60480 min)
+total agents: 17202
+interval wall time: 0 days, 0 hours, 1 minutes, and 26.6461 seconds 
+total wall time: 0 days, 1 hours, 6 minutes, and 46.3237 seconds 
+
+current simulated time: 47880 min (max: 60480 min)
+total agents: 17789
+interval wall time: 0 days, 0 hours, 1 minutes, and 26.8442 seconds 
+total wall time: 0 days, 1 hours, 8 minutes, and 13.1678 seconds 
+
+current simulated time: 48240 min (max: 60480 min)
+total agents: 18433
+interval wall time: 0 days, 0 hours, 1 minutes, and 35.6958 seconds 
+total wall time: 0 days, 1 hours, 9 minutes, and 48.8636 seconds 
+
+current simulated time: 48600 min (max: 60480 min)
+total agents: 19109
+interval wall time: 0 days, 0 hours, 1 minutes, and 26.1189 seconds 
+total wall time: 0 days, 1 hours, 11 minutes, and 14.9825 seconds 
+
+current simulated time: 48960 min (max: 60480 min)
+total agents: 19802
+interval wall time: 0 days, 0 hours, 1 minutes, and 32.3718 seconds 
+total wall time: 0 days, 1 hours, 12 minutes, and 47.3543 seconds 
+
+current simulated time: 49320 min (max: 60480 min)
+total agents: 20550
+interval wall time: 0 days, 0 hours, 1 minutes, and 47.6317 seconds 
+total wall time: 0 days, 1 hours, 14 minutes, and 34.986 seconds 
+
+current simulated time: 49680 min (max: 60480 min)
+total agents: 21329
+interval wall time: 0 days, 0 hours, 1 minutes, and 48.9843 seconds 
+total wall time: 0 days, 1 hours, 16 minutes, and 23.9703 seconds 
+
+current simulated time: 50040 min (max: 60480 min)
+total agents: 22143
+interval wall time: 0 days, 0 hours, 1 minutes, and 35.6764 seconds 
+total wall time: 0 days, 1 hours, 17 minutes, and 59.6467 seconds 
+
+current simulated time: 50400 min (max: 60480 min)
+total agents: 22924
+interval wall time: 0 days, 0 hours, 1 minutes, and 56.5363 seconds 
+total wall time: 0 days, 1 hours, 19 minutes, and 56.183 seconds 
+
+current simulated time: 50760 min (max: 60480 min)
+total agents: 23751
+interval wall time: 0 days, 0 hours, 1 minutes, and 55.2235 seconds 
+total wall time: 0 days, 1 hours, 21 minutes, and 51.4065 seconds 
+
+current simulated time: 51120 min (max: 60480 min)
+total agents: 24602
+interval wall time: 0 days, 0 hours, 1 minutes, and 52.2388 seconds 
+total wall time: 0 days, 1 hours, 23 minutes, and 43.6454 seconds 
+
+current simulated time: 51480 min (max: 60480 min)
+total agents: 25440
+interval wall time: 0 days, 0 hours, 1 minutes, and 43.1365 seconds 
+total wall time: 0 days, 1 hours, 25 minutes, and 26.7819 seconds 
+
+current simulated time: 51840 min (max: 60480 min)
+total agents: 26382
+interval wall time: 0 days, 0 hours, 2 minutes, and 19.6321 seconds 
+total wall time: 0 days, 1 hours, 27 minutes, and 46.4142 seconds 
+
+current simulated time: 52200 min (max: 60480 min)
+total agents: 27272
+interval wall time: 0 days, 0 hours, 2 minutes, and 48.9 seconds 
+total wall time: 0 days, 1 hours, 30 minutes, and 35.3145 seconds 
+
+current simulated time: 52560 min (max: 60480 min)
+total agents: 28216
+interval wall time: 0 days, 0 hours, 3 minutes, and 10.851 seconds 
+total wall time: 0 days, 1 hours, 33 minutes, and 46.1658 seconds 
+
+current simulated time: 52920 min (max: 60480 min)
+total agents: 29174
+interval wall time: 0 days, 0 hours, 3 minutes, and 19.4016 seconds 
+total wall time: 0 days, 1 hours, 37 minutes, and 5.5676 seconds 
+
+current simulated time: 53280 min (max: 60480 min)
+total agents: 30105
+interval wall time: 0 days, 0 hours, 2 minutes, and 53.9224 seconds 
+total wall time: 0 days, 1 hours, 39 minutes, and 59.4903 seconds 
+
+current simulated time: 53640 min (max: 60480 min)
+total agents: 31021
+interval wall time: 0 days, 0 hours, 3 minutes, and 13.7569 seconds 
+total wall time: 0 days, 1 hours, 43 minutes, and 13.2474 seconds 
+
+current simulated time: 54000 min (max: 60480 min)
+total agents: 31911
+interval wall time: 0 days, 0 hours, 2 minutes, and 46.5388 seconds 
+total wall time: 0 days, 1 hours, 45 minutes, and 59.7866 seconds 
+
+current simulated time: 54360 min (max: 60480 min)
+total agents: 32764
+interval wall time: 0 days, 0 hours, 3 minutes, and 48.0497 seconds 
+total wall time: 0 days, 1 hours, 49 minutes, and 47.8366 seconds 
+
+current simulated time: 54720 min (max: 60480 min)
+total agents: 33559
+interval wall time: 0 days, 0 hours, 3 minutes, and 39.3637 seconds 
+total wall time: 0 days, 1 hours, 53 minutes, and 27.2006 seconds 
+
+current simulated time: 55080 min (max: 60480 min)
+total agents: 34318
+interval wall time: 0 days, 0 hours, 3 minutes, and 26.0295 seconds 
+total wall time: 0 days, 1 hours, 56 minutes, and 53.2303 seconds 
+
+current simulated time: 55440 min (max: 60480 min)
+total agents: 34988
+interval wall time: 0 days, 0 hours, 3 minutes, and 50.0823 seconds 

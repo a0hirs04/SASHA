@@ -63,6 +63,12 @@ inline double clamp_nonnegative(double x)
     return (x < 0.0) ? 0.0 : x;
 }
 
+// Stromal custom_data index for mechanical_pressure as laid out by
+// rebuild_stromal_custom_schema (offset 16).  Name-based lookup via
+// find_variable_index may resolve to the wrong slot after the schema
+// rebuild, so stromal cells must use this hardcoded index.
+static constexpr int STROMAL_MECH_PRESSURE_IDX = 16;
+
 inline bool ends_with_json(const std::string& s)
 {
     if (s.size() < 5) return false;
@@ -1412,7 +1418,7 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
         read_custom_data_value_or_default(pCell, "abcb1_active", 0.0);
     const double intracellular_drug =
         read_custom_data_value_or_default(pCell, "intracellular_drug", 0.0);
-    const double mechanical_pressure =
+    double mechanical_pressure =
         read_custom_data_value_or_default(pCell, "mechanical_pressure", 0.0);
     const double smad4_state =
         read_custom_data_value_or_default(pCell, "SMAD4", 0.0);
@@ -1432,6 +1438,14 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
         (pTumorDef != NULL) && (pCell->type == pTumorDef->type);
     const bool is_stromal =
         (pStromaDef != NULL) && (pCell->type == pStromaDef->type);
+
+    // Fix: stromal schema has mechanical_pressure at hardcoded offset 16.
+    // Name lookup may resolve to the wrong index after rebuild_stromal_custom_schema.
+    if (is_stromal &&
+        STROMAL_MECH_PRESSURE_IDX < static_cast<int>(pCell->custom_data.variables.size()))
+    {
+        mechanical_pressure = pCell->custom_data[STROMAL_MECH_PRESSURE_IDX];
+    }
 
     if (is_tumor)
     {
@@ -1502,6 +1516,7 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
         }
 
         phenotype.cycle.data.transition_rate(0, 0) = proliferation;
+        set_custom_data_if_present(pCell, "final_prolif_rate", proliferation);
 
         double effective_drug = intracellular_drug;
         if (abcb1_active == 1.0)
@@ -1543,8 +1558,12 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
             read_xml_double_or_default("gli1_proliferation_boost", 1.0);
         const double psc_proliferation_rate =
             read_xml_double_or_default("psc_proliferation_rate", 0.0);
-        const double contact_inhibition_threshold =
-            read_xml_double_or_default("contact_inhibition_threshold", 0.0);
+        // Stromal cells have intact checkpoints (SMAD4=WT, no KRAS/TP53/CDKN2A
+        // mutations), so they respond to contact inhibition at a LOWER threshold
+        // than tumor cells whose checkpoint machinery is broken.
+        const double stromal_ci_threshold =
+            read_xml_double_or_default("stromal_contact_inhibition_threshold",
+                read_xml_double_or_default("contact_inhibition_threshold", 0.0));
 
         if (acta2_active == 1.0)
         {
@@ -1554,12 +1573,19 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
                 caf_rate = caf_rate * gli1_proliferation_boost;
             }
             // Rule 37: CAFs are physical cells subject to contact inhibition.
-            if (mechanical_pressure > contact_inhibition_threshold)
+            // Crowded CAFs also undergo pressure-induced apoptosis.
+            if (mechanical_pressure > stromal_ci_threshold)
             {
                 caf_rate = 0.0;
+                phenotype.death.rates[apoptosis_index] =
+                    read_xml_double_or_default("caf_crowded_death_rate", 0.0);
+            }
+            else
+            {
+                phenotype.death.rates[apoptosis_index] =
+                    read_xml_double_or_default("caf_base_death_rate", 0.0);
             }
             phenotype.cycle.data.transition_rate(0, 0) = caf_rate;
-            phenotype.death.rates[apoptosis_index] = 0.0;
         }
         else
         {
@@ -1818,7 +1844,27 @@ void module8_mechanical_compaction(Cell* pCell, Phenotype& phenotype, double dt,
     const double solid_stress =
         cell_density_proxy * (crowding_base + ecm_stiffness * mechanical_compaction_strength);
 
-    set_custom_data_if_present(pCell, "mechanical_pressure", solid_stress);
+    // Write mechanical_pressure — both cell types use the same solid_stress
+    // formula so they feel identical crowding physics.  Tumor uses
+    // contact_inhibition_threshold (5.0), stroma uses
+    // stromal_contact_inhibition_threshold (0.8).
+    {
+        Cell_Definition* pStromaDef = find_cell_definition("stromal_cell");
+        const bool cell_is_stromal =
+            (pStromaDef != NULL) && (pCell->type == pStromaDef->type);
+        if (cell_is_stromal)
+        {
+            if (STROMAL_MECH_PRESSURE_IDX <
+                static_cast<int>(pCell->custom_data.variables.size()))
+            {
+                pCell->custom_data[STROMAL_MECH_PRESSURE_IDX] = solid_stress;
+            }
+        }
+        else
+        {
+            set_custom_data_if_present(pCell, "mechanical_pressure", solid_stress);
+        }
+    }
 
     if (solid_stress > 0.0 && ecm_at_voxel > 0.0)
     {
@@ -2020,6 +2066,7 @@ void create_cell_types(void)
         ensure_custom_scalar(pTumor, "nrf2_active", "dimensionless", 0.0);
         ensure_custom_scalar(pTumor, "intracellular_drug", "dimensionless", 0.0);
         ensure_custom_scalar(pTumor, "mechanical_pressure", "dimensionless", 0.0);
+        ensure_custom_scalar(pTumor, "final_prolif_rate", "1/min", 0.0);
         ensure_custom_scalar(pTumor, "time_since_drug_exposure", "hour", -1.0);
         ensure_custom_scalar(pTumor, "time_alive", "min", 0.0);
     }
@@ -2334,7 +2381,19 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
     {
         phenotype.secretion.set_all_secretion_to_zero();
         phenotype.secretion.set_all_uptake_to_zero();
-        set_custom_data_if_present(pCell, "mechanical_pressure", 0.0);
+        // Zero mechanical_pressure — use hardcoded index for stromal cells.
+        const bool dead_is_stromal =
+            (pStromaDef != NULL) && (pCell->type == pStromaDef->type);
+        if (dead_is_stromal &&
+            STROMAL_MECH_PRESSURE_IDX <
+                static_cast<int>(pCell->custom_data.variables.size()))
+        {
+            pCell->custom_data[STROMAL_MECH_PRESSURE_IDX] = 0.0;
+        }
+        else
+        {
+            set_custom_data_if_present(pCell, "mechanical_pressure", 0.0);
+        }
         return;
     }
 
@@ -2388,6 +2447,16 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
                               << "  PSCs(acta2=0): " << pscs.size()
                               << "  CAFs(acta2=1): " << cafs.size() << "\n";
 
+                    // Helper: read mechanical_pressure from stromal hardcoded index
+                    auto read_stromal_mech_pressure = [](Cell* c) -> double {
+                        if (STROMAL_MECH_PRESSURE_IDX <
+                            static_cast<int>(c->custom_data.variables.size()))
+                        {
+                            return c->custom_data[STROMAL_MECH_PRESSURE_IDX];
+                        }
+                        return -999.0;
+                    };
+
                     // Print 5 random PSCs
                     std::mt19937 rng(42);
                     if (pscs.size() > 5)
@@ -2401,11 +2470,13 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
                         const double rate = c->phenotype.cycle.data.transition_rate(0, 0);
                         const double a2 = read_custom_data_value_or_default(c, "acta2_active", -999.0);
                         const double am = read_custom_data_value_or_default(c, "activation_mode", -999.0);
+                        const double mp = read_stromal_mech_pressure(c);
                         std::cerr << "[DIAG_T360_STROMAL] PSC #" << i
                                   << "  ID=" << c->ID
                                   << "  transition_rate(0,0)=" << rate
                                   << "  acta2_active=" << a2
-                                  << "  activation_mode=" << am << "\n";
+                                  << "  activation_mode=" << am
+                                  << "  mechanical_pressure[16]=" << mp << "\n";
                     }
 
                     // Also print 3 CAFs for comparison
@@ -2416,11 +2487,35 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
                         const double rate = c->phenotype.cycle.data.transition_rate(0, 0);
                         const double a2 = read_custom_data_value_or_default(c, "acta2_active", -999.0);
                         const double am = read_custom_data_value_or_default(c, "activation_mode", -999.0);
+                        const double mp = read_stromal_mech_pressure(c);
                         std::cerr << "[DIAG_T360_STROMAL] CAF #" << i
                                   << "  ID=" << c->ID
                                   << "  transition_rate(0,0)=" << rate
                                   << "  acta2_active=" << a2
-                                  << "  activation_mode=" << am << "\n";
+                                  << "  activation_mode=" << am
+                                  << "  mechanical_pressure[16]=" << mp << "\n";
+                    }
+
+                    // Verify: 3 random stromal cells mechanical_pressure
+                    // If nonzero, the hardcoded-index write in Module 8 is working.
+                    std::vector<Cell*> all_stromal;
+                    all_stromal.insert(all_stromal.end(), pscs.begin(), pscs.end());
+                    all_stromal.insert(all_stromal.end(), cafs.begin(), cafs.end());
+                    std::shuffle(all_stromal.begin(), all_stromal.end(), rng);
+                    const size_t n_verify = std::min(all_stromal.size(), (size_t)3);
+                    std::cerr << "[DIAG_T360_MECH_VERIFY] Checking mechanical_pressure for "
+                              << n_verify << " random stromal cells:\n";
+                    for (size_t i = 0; i < n_verify; ++i)
+                    {
+                        Cell* c = all_stromal[i];
+                        const double mp = read_stromal_mech_pressure(c);
+                        const double mp_name = read_custom_data_value_or_default(
+                            c, "mechanical_pressure", -999.0);
+                        std::cerr << "[DIAG_T360_MECH_VERIFY]   cell ID=" << c->ID
+                                  << "  idx[16]=" << mp
+                                  << "  name_lookup=" << mp_name
+                                  << "  simple_pressure=" << c->state.simple_pressure
+                                  << (mp > 0.0 ? "  OK" : "  STILL_ZERO") << "\n";
                     }
                 }
                 std::cerr << "[DIAG_T360_STROMAL] === end diagnostic ===\n\n";

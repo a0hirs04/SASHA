@@ -1,0 +1,190 @@
+[ThresholdConfig] Loaded from XML:  HIF1A O2=15 mmHg  Necrosis O2=5 mmHg  TGFB=0.1  SHH=0.05
+[setup_microenvironment] Loaded calibration profile: AsPC-1
+[setup_microenvironment] Substrate indices: oxygen=0 tgfb=1 shh=2 ecm_density=4 drug=3
+[setup_microenvironment] Completed in 38.7898 ms
+[create_cell_types] Completed in 212.262 ms
+
+================================================================
+ §8.1  Baseline Validation Suite — Tumor-Intrinsic Traits v1.0 
+================================================================
+  [PASS]  Trait 1:  Constitutive Paracrine Secretion
+  [PASS]  Trait 2:  TGF-beta Insensitivity (Arrest Arm Only)
+  [PASS]  Trait 3:  Rapid Proliferation / Broken Checkpoints
+  [PASS]  Trait 4:  Apoptotic Resistance at Baseline
+  [PASS]  Trait 5:  Inducible EMT Under Stress  (Spatial)
+  [PASS]  Trait 6:  Hypoxia-Responsive Phenotype Switching
+  [PASS]  Trait 7:  Drug-Inducible Efflux  (Not Constitutive)
+  [PASS]  Trait 8:  ECM Compaction  (Passive / Mechanical)
+  [PASS]  Trait 9:  13-Knob Partition + AsPC-1/PANC-1 Knob 2
+  [PASS]  Trait 10:  SHH Paradox Fast Invariants
+----------------------------------------------------------------
+  Result: 10/10 passed — ALL PASS.  Baseline is validated.
+================================================================
+
+[setup_tissue] No intervention JSON provided; using active calibration defaults.
+[setup_tissue] Placed tumor=50 stromal=500 cluster_radius=100um stroma_ring=[100,300]um in 7.32163 ms
+
+[DIAG_T360_STROMAL] === One-time stromal diagnostic at t=366 ===
+[DIAG_T360_STROMAL] Total live stromal: 504  PSCs(acta2=0): 371  CAFs(acta2=1): 133
+[DIAG_T360_STROMAL] PSC #0  ID=140  transition_rate(0,0)=0  acta2_active=0  activation_mode=0
+[DIAG_T360_STROMAL] PSC #1  ID=473  transition_rate(0,0)=0  acta2_active=0  activation_mode=0
+[DIAG_T360_STROMAL] PSC #2  ID=465  transition_rate(0,0)=0  acta2_active=0  activation_mode=0
+[DIAG_T360_STROMAL] PSC #3  ID=75  transition_rate(0,0)=0  acta2_active=0  activation_mode=0
+[DIAG_T360_STROMAL] PSC #4  ID=443  transition_rate(0,0)=0  acta2_active=0  activation_mode=0
+[DIAG_T360_STROMAL] CAF #0  ID=55  transition_rate(0,0)=0.0001  acta2_active=1  activation_mode=1
+[DIAG_T360_STROMAL] CAF #1  ID=62  transition_rate(0,0)=0.0001  acta2_active=1  activation_mode=1
+[DIAG_T360_STROMAL] CAF #2  ID=69  transition_rate(0,0)=0.0001  acta2_active=1  activation_mode=1
+[DIAG_T360_STROMAL] === end diagnostic ===
+
+[perf] custom_function avg = 6.60106 us over 50000 calls
+[perf] custom_function avg = 6.65631 us over 100000 calls
+[perf] custom_function avg = 6.79235 us over 150000 calls
+[perf] custom_function avg = 6.86053 us over 200000 calls
+[perf] custom_function avg = 6.88207 us over 250000 calls
+[perf] custom_function avg = 6.89669 us over 300000 calls
+[perf] custom_function avg = 6.93503 us over 350000 calls
+[perf] custom_function avg = 6.8979 us over 400000 calls
+[perf] custom_function avg = 6.93768 us over 450000 calls
+[perf] custom_function avg = 6.95756 us over 500000 calls
+[perf] custom_function avg = 7.00367 us over 550000 calls
+[perf] custom_function avg = 7.05527 us over 600000 calls
+[perf] custom_function avg = 7.0696 us over 650000 calls
+[perf] custom_function avg = 7.14253 us over 700000 calls
+[perf] custom_function avg = 7.17829 us over 750000 calls
+[perf] custom_function avg = 7.20288 us over 800000 calls
+[perf] custom_function avg = 7.25324 us over 850000 calls
+[perf] custom_function avg = 7.29478 us over 900000 calls
+[perf] custom_function avg = 7.32385 us over 950000 calls
+[perf] custom_function avg = 7.36047 us over 1000000 calls
+[perf] custom_function avg = 7.34555 us over 1050000 calls
+[perf] custom_function avg = 7.37046 us over 1100000 calls
+[perf] custom_function avg = 7.40002 us over 1150000 calls
+[perf] custom_function avg = 7.43406 us over 1200000 calls
+[perf] custom_function avg = 7.46865 us over 1250000 calls
+[perf] custom_function avg = 7.49228 us over 1300000 calls
+[perf] custom_function avg = 7.51366 us over 1350000 calls
+[perf] custom_function avg = 7.54535 us over 1400000 calls
+[perf] custom_function avg = 7.57667 us over 1450000 calls
+[perf] custom_function avg = 7.60382 us over 1500000 calls
+[perf] custom_function avg = 7.62973 us over 1550000 calls
+[perf] custom_function avg = 7.64964 us over 1600000 calls
+[perf] custom_function avg = 7.65532 us over 1650000 calls
+[perf] custom_function avg = 7.65555 us over 1700000 calls
+[perf] custom_function avg = 7.63993 us over 1750000 calls
+[perf] custom_function avg = 7.63379 us over 1800000 calls
+[perf] custom_function avg = 7.6301 us over 1850000 calls
+[perf] custom_function avg = 7.62899 us over 1900000 calls
+[perf] custom_function avg = 7.63355 us over 1950000 calls
+[perf] custom_function avg = 7.63671 us over 2000000 calls
+[perf] custom_function avg = 7.62375 us over 2050000 calls
+[perf] custom_function avg = 7.61407 us over 2100000 calls
+[perf] custom_function avg = 7.60455 us over 2150000 calls
+[perf] custom_function avg = 7.61147 us over 2200000 calls
+[perf] custom_function avg = 7.60792 us over 2250000 calls
+[perf] custom_function avg = 7.59445 us over 2300000 calls
+[perf] custom_function avg = 7.59284 us over 2350000 calls
+[perf] custom_function avg = 7.58985 us over 2400000 calls
+[perf] custom_function avg = 7.58713 us over 2450000 calls
+[perf] custom_function avg = 7.58402 us over 2500000 calls
+[perf] custom_function avg = 7.5817 us over 2550000 calls
+[perf] custom_function avg = 7.57876 us over 2600000 calls
+[perf] custom_function avg = 7.57633 us over 2650000 calls
+[perf] custom_function avg = 7.57446 us over 2700000 calls
+[perf] custom_function avg = 7.57299 us over 2750000 calls
+[perf] custom_function avg = 7.5736 us over 2800000 calls
+[perf] custom_function avg = 7.57331 us over 2850000 calls
+[perf] custom_function avg = 7.57409 us over 2900000 calls
+[perf] custom_function avg = 7.57413 us over 2950000 calls
+[perf] custom_function avg = 7.57301 us over 3000000 calls
+[perf] custom_function avg = 7.57162 us over 3050000 calls
+[perf] custom_function avg = 7.57002 us over 3100000 calls
+[perf] custom_function avg = 7.56857 us over 3150000 calls
+[perf] custom_function avg = 7.5674 us over 3200000 calls
+[perf] custom_function avg = 7.56657 us over 3250000 calls
+[perf] custom_function avg = 7.56565 us over 3300000 calls
+[perf] custom_function avg = 7.56509 us over 3350000 calls
+[perf] custom_function avg = 7.56433 us over 3400000 calls
+[perf] custom_function avg = 7.56313 us over 3450000 calls
+[perf] custom_function avg = 7.55762 us over 3500000 calls
+[DRUG_SCHEDULE] t=20166 Drug ON  concentration=1
+[perf] custom_function avg = 7.55671 us over 3550000 calls
+[perf] custom_function avg = 7.55474 us over 3600000 calls
+[perf] custom_function avg = 7.55138 us over 3650000 calls
+[perf] custom_function avg = 7.54549 us over 3700000 calls
+[perf] custom_function avg = 7.54342 us over 3750000 calls
+[perf] custom_function avg = 7.53869 us over 3800000 calls
+[perf] custom_function avg = 7.53526 us over 3850000 calls
+[perf] custom_function avg = 7.53517 us over 3900000 calls
+[perf] custom_function avg = 7.53529 us over 3950000 calls
+[perf] custom_function avg = 7.53352 us over 4000000 calls
+[perf] custom_function avg = 7.53199 us over 4050000 calls
+[perf] custom_function avg = 7.53034 us over 4100000 calls
+[perf] custom_function avg = 7.52834 us over 4150000 calls
+[perf] custom_function avg = 7.52647 us over 4200000 calls
+[perf] custom_function avg = 7.52515 us over 4250000 calls
+[perf] custom_function avg = 7.52389 us over 4300000 calls
+[perf] custom_function avg = 7.5232 us over 4350000 calls
+[perf] custom_function avg = 7.52292 us over 4400000 calls
+[perf] custom_function avg = 7.52221 us over 4450000 calls
+[perf] custom_function avg = 7.52052 us over 4500000 calls
+[perf] custom_function avg = 7.51887 us over 4550000 calls
+[perf] custom_function avg = 7.51698 us over 4600000 calls
+[perf] custom_function avg = 7.51501 us over 4650000 calls
+[perf] custom_function avg = 7.513 us over 4700000 calls
+[perf] custom_function avg = 7.51115 us over 4750000 calls
+[perf] custom_function avg = 7.50956 us over 4800000 calls
+[perf] custom_function avg = 7.50773 us over 4850000 calls
+[perf] custom_function avg = 7.50632 us over 4900000 calls
+[perf] custom_function avg = 7.50446 us over 4950000 calls
+[perf] custom_function avg = 7.50288 us over 5000000 calls
+[perf] custom_function avg = 7.50104 us over 5050000 calls
+[perf] custom_function avg = 7.49547 us over 5100000 calls
+[perf] custom_function avg = 7.49311 us over 5150000 calls
+[perf] custom_function avg = 7.49092 us over 5200000 calls
+[perf] custom_function avg = 7.48733 us over 5250000 calls
+[perf] custom_function avg = 7.48276 us over 5300000 calls
+[perf] custom_function avg = 7.47644 us over 5350000 calls
+[perf] custom_function avg = 7.47465 us over 5400000 calls
+[perf] custom_function avg = 7.47285 us over 5450000 calls
+[perf] custom_function avg = 7.4707 us over 5500000 calls
+[perf] custom_function avg = 7.46827 us over 5550000 calls
+[perf] custom_function avg = 7.46638 us over 5600000 calls
+[perf] custom_function avg = 7.46429 us over 5650000 calls
+[perf] custom_function avg = 7.46215 us over 5700000 calls
+[perf] custom_function avg = 7.4603 us over 5750000 calls
+[perf] custom_function avg = 7.45807 us over 5800000 calls
+[perf] custom_function avg = 7.45654 us over 5850000 calls
+[perf] custom_function avg = 7.45371 us over 5900000 calls
+[perf] custom_function avg = 7.45096 us over 5950000 calls
+[perf] custom_function avg = 7.4476 us over 6000000 calls
+[perf] custom_function avg = 7.44417 us over 6050000 calls
+[perf] custom_function avg = 7.44084 us over 6100000 calls
+[perf] custom_function avg = 7.43772 us over 6150000 calls
+[perf] custom_function avg = 7.43442 us over 6200000 calls
+[perf] custom_function avg = 7.43108 us over 6250000 calls
+[perf] custom_function avg = 7.42788 us over 6300000 calls
+[perf] custom_function avg = 7.42517 us over 6350000 calls
+[perf] custom_function avg = 7.42186 us over 6400000 calls
+[perf] custom_function avg = 7.41872 us over 6450000 calls
+[perf] custom_function avg = 7.41551 us over 6500000 calls
+[perf] custom_function avg = 7.41233 us over 6550000 calls
+[perf] custom_function avg = 7.40945 us over 6600000 calls
+[perf] custom_function avg = 7.40634 us over 6650000 calls
+[perf] custom_function avg = 7.40332 us over 6700000 calls
+[perf] custom_function avg = 7.40031 us over 6750000 calls
+[perf] custom_function avg = 7.39735 us over 6800000 calls
+[perf] custom_function avg = 7.39428 us over 6850000 calls
+[perf] custom_function avg = 7.3915 us over 6900000 calls
+[perf] custom_function avg = 7.38902 us over 6950000 calls
+[perf] custom_function avg = 7.38653 us over 7000000 calls
+[perf] custom_function avg = 7.3841 us over 7050000 calls
+[perf] custom_function avg = 7.38184 us over 7100000 calls
+[perf] custom_function avg = 7.37696 us over 7150000 calls
+[perf] custom_function avg = 7.37251 us over 7200000 calls
+[perf] custom_function avg = 7.36665 us over 7250000 calls
+[perf] custom_function avg = 7.36308 us over 7300000 calls
+[perf] custom_function avg = 7.35958 us over 7350000 calls
+[perf] custom_function avg = 7.34709 us over 7400000 calls
+[perf] custom_function avg = 7.33465 us over 7450000 calls
+[perf] custom_function avg = 7.32263 us over 7500000 calls
+[perf] custom_function avg = 7.31616 us over 7550000 calls

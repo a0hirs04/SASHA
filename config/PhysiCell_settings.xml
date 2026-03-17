@@ -27,12 +27,12 @@
     </domain>
 
     <!-- ==================== OVERALL TIME SETTINGS ====================
-         max_time : 14400 min = 10 days
+         max_time : 60480 min = 42 days
          dt_diffusion : 0.01 min (stability for fastest diffuser: oxygen D=100000)
          dt_mechanics : 0.1 min  (standard PhysiCell default)
          dt_phenotype : 6 min    (standard PhysiCell default) -->
     <overall>
-        <max_time units="min">14400</max_time>
+        <max_time units="min">60480</max_time>
         <time_units>min</time_units>
         <space_units>micron</space_units>
         <dt_diffusion units="min">0.01</dt_diffusion>
@@ -52,15 +52,15 @@
     <save>
         <folder>output</folder>
 
-        <!-- Full MultiCellDS output: complete cell state data every 60 min -->
+        <!-- Full MultiCellDS output: complete cell state data every 360 min -->
         <full_data>
-            <interval units="min">60</interval>
+            <interval units="min">360</interval>
             <enable>true</enable>
         </full_data>
 
-        <!-- SVG snapshot: visual output every 60 min, overlaid on oxygen field -->
+        <!-- SVG snapshot: visual output every 360 min, overlaid on oxygen field -->
         <SVG>
-            <interval units="min">60</interval>
+            <interval units="min">360</interval>
             <enable>true</enable>
             <plot_substrate enabled="true" limits="true">
                 <substrate>oxygen</substrate>
@@ -798,9 +798,9 @@
 
         <!-- Drug administration -->
         <drug_start_time type="double" units="min"
-            description="Simulation time at which drug Dirichlet BCs are enabled (t=7200 = day 5)">7200</drug_start_time>
+            description="Simulation time at which drug Dirichlet BCs are enabled (t=7200 = day 5)">20160</drug_start_time>
         <drug_end_time type="double" units="min"
-            description="Simulation time at which drug is withdrawn (Dirichlet BC zeroed, interior cleared)">1e18</drug_end_time>
+            description="Simulation time at which drug is withdrawn (Dirichlet BC zeroed, interior cleared)">40320</drug_end_time>
         <drug_concentration type="double" units="dimensionless"
             description="Drug boundary concentration when administered">1.0</drug_concentration>
 
@@ -842,13 +842,19 @@
         <hypoxia_death_resistance_bonus type="double" units="dimensionless"
             description="Additive death-resistance modifier when hif1a_active=1">0.1</hypoxia_death_resistance_bonus>
         <contact_inhibition_threshold type="double" units="dimensionless"
-            description="Mechanical pressure threshold above which tumor proliferation is arrested">0.5</contact_inhibition_threshold>
+            description="Mechanical pressure threshold above which tumor proliferation is arrested">25.0</contact_inhibition_threshold>
+        <stromal_contact_inhibition_threshold type="double" units="dimensionless"
+            description="Mechanical pressure threshold above which stromal (CAF) proliferation is arrested — lower than tumor because stromal cells have intact checkpoints">0.8</stromal_contact_inhibition_threshold>
         <drug_kill_coefficient type="double" units="1/min"
-            description="Maps effective intracellular drug to apoptosis rate contribution">0.0005</drug_kill_coefficient>
+            description="Maps effective intracellular drug to apoptosis rate contribution">0.0004</drug_kill_coefficient>
         <efflux_drug_reduction type="double" units="dimensionless"
             description="Fractional reduction in effective drug when abcb1_active=1">0.7</efflux_drug_reduction>
         <caf_proliferation_rate type="double" units="1/min"
             description="Baseline CAF proliferation transition rate">0.0001</caf_proliferation_rate>
+        <caf_base_death_rate type="double" units="1/min"
+            description="Baseline apoptosis rate for uncrowded activated CAFs">0.0</caf_base_death_rate>
+        <caf_crowded_death_rate type="double" units="1/min"
+            description="Apoptosis rate for contact-inhibited CAFs under mechanical compression">0.00005</caf_crowded_death_rate>
         <gli1_proliferation_boost type="double" units="dimensionless"
             description="CAF proliferation multiplier when gli1_active=1">1.3</gli1_proliferation_boost>
         <psc_proliferation_rate type="double" units="1/min"
@@ -878,7 +884,7 @@
         <emt_phenotype_extent type="int" units="dimensionless"
             description="Knob 5b for EMT engine (1=LOW, 2=MEDIUM, 3=HIGH)">3</emt_phenotype_extent>
         <hif1a_emt_boost type="double" units="dimensionless"
-            description="Additive EMT induction boost when hif1a_active=1">0.2</hif1a_emt_boost>
+            description="Additive EMT induction boost when hif1a_active=1">0.14</hif1a_emt_boost>
         <motility_epithelial type="double" units="micron/min"
             description="Tumor epithelial baseline motility">0.1</motility_epithelial>
         <motility_mesenchymal_low type="double" units="micron/min"
@@ -910,7 +916,7 @@
         <compaction_ecm_increment type="double" units="dimensionless"
             description="Passive ECM density increment per solid-stress unit per step">0.01</compaction_ecm_increment>
         <crowding_base_pressure type="double" units="dimensionless"
-            description="Additive crowding baseline so contact inhibition fires even without ECM">0.02</crowding_base_pressure>
+            description="Additive crowding baseline so contact inhibition fires even without ECM">0.3</crowding_base_pressure>
         <stromal_contact_emt_boost type="double" units="dimensionless"
             description="LEGACY (unused)">0.00</stromal_contact_emt_boost>
         <ecm_emt_threshold type="double" units="dimensionless"
@@ -920,11 +926,11 @@
         <ecm_emt_strength type="double" units="dimensionless"
             description="Scaling factor for ECM-EMT boost (multiplied by gate)">0.4</ecm_emt_strength>
         <ecm_emt_cap type="double" units="dimensionless"
-            description="Maximum ECM-EMT boost added to induction_signal">0.30</ecm_emt_cap>
+            description="Maximum ECM-EMT boost added to induction_signal">0.20</ecm_emt_cap>
         <emt_death_increase type="double" units="1/min"
             description="Fix A: additional apoptosis rate for EMT (zeb1_active=1) cells">0.00005</emt_death_increase>
         <emt_off_threshold type="double" units="dimensionless"
-            description="Fix B: induction_signal below which EMT reverts (hysteresis; must be less than emt_induction_threshold)">0.15</emt_off_threshold>
+            description="Fix B: induction_signal below which EMT reverts (hysteresis; must be less than emt_induction_threshold)">0.25</emt_off_threshold>
         <emt_activation_delay type="double" units="min"
             description="Fix B: minutes signal must exceed emt_induction_threshold before EMT activates">360.0</emt_activation_delay>
         <ecm_emt_require_caf_contact type="double" units="dimensionless"

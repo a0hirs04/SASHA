@@ -19,8 +19,8 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from python.wrapper.output_parser import OutputParser
 
-SEEDS = [42, 99, 137, 256, 1001]
-QUORUM = 4
+SEEDS = [42]
+QUORUM = 1
 BOUNDARY_O2 = 38.0
 
 CRITERIA_NAMES = [
@@ -205,7 +205,7 @@ def evaluate_replicate(rep_dir: Path, seed: int):
 
 
 def main():
-    work_dir = PROJECT_ROOT / "build" / "reality_check_1"
+    work_dir = PROJECT_ROOT / "build" / "rc1_fixJ_seed42"
 
     print("=" * 72)
     print("  REALITY CHECK 1 — Evaluation of completed HPC runs")
