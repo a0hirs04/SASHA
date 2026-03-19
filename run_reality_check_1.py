@@ -28,6 +28,7 @@ Criteria (must pass in ≥4 of 5 replicates)
 """
 from __future__ import annotations
 
+import argparse
 import json
 import math
 import os
@@ -52,6 +53,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from python.wrapper.output_parser import OutputParser, SimulationMetrics
+from python.wrapper.workdir_utils import default_reality_check_dir
 
 # ---------------------------------------------------------------------------
 # Stromal custom-data column mapping
@@ -125,10 +127,10 @@ BOUNDARY_O2 = 38.0                    # mmHg
 TARGET_TIMES = [1440, 4320, 10080, 20160, 30240]
 
 # HPC SLURM settings
-SLURM_PARTITION = "compute"
-SLURM_CPUS = 128                      # full node
-SLURM_MEM = "128G"
-SLURM_TIME = "04:00:00"               # 4h wall time limit per replicate
+SLURM_PARTITION = os.environ.get("RC1_SLURM_PARTITION", os.environ.get("SLURM_PARTITION", "cpu384g"))
+SLURM_CPUS = int(os.environ.get("RC1_SLURM_CPUS", os.environ.get("SLURM_CPUS", "32")))
+SLURM_MEM = os.environ.get("RC1_SLURM_MEM", os.environ.get("SLURM_MEM", "0"))
+SLURM_TIME = os.environ.get("RC1_SLURM_TIME", "04:00:00")
 SLURM_POLL_INTERVAL = 15              # seconds between sacct polls
 
 
@@ -799,114 +801,179 @@ CRITERIA_NAMES = [
 
 
 def main() -> int:
-    if not BINARY.exists():
-        print(f"ERROR: binary not found at {BINARY}")
-        return 1
-    if not BASE_CONFIG.exists():
-        print(f"ERROR: config not found at {BASE_CONFIG}")
+    default_work_dir = default_reality_check_dir(PROJECT_ROOT, "reality_check_1")
+    parser = argparse.ArgumentParser(description="Run Reality Check 1")
+    parser.add_argument(
+        "--seeds",
+        nargs="+",
+        type=int,
+        default=SEEDS,
+        help="Seed list to run/evaluate (default: full 5-seed gate)",
+    )
+    parser.add_argument(
+        "--work-dir",
+        type=Path,
+        default=default_work_dir,
+        help="Root directory for RC1 outputs",
+    )
+    parser.add_argument(
+        "--quorum",
+        type=int,
+        default=None,
+        help="Pass threshold; defaults to min(default quorum, number of seeds)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Print planned replicate directories without submitting jobs",
+    )
+    parser.add_argument(
+        "--evaluate-only",
+        action="store_true",
+        help="Evaluate existing outputs only; do not delete or submit jobs",
+    )
+    args = parser.parse_args()
+
+    if args.dry_run and args.evaluate_only:
+        print("ERROR: --dry-run and --evaluate-only are mutually exclusive")
         return 1
 
-    work_dir = PROJECT_ROOT / "build" / "reality_check_1"
-    if work_dir.exists():
-        shutil.rmtree(work_dir)
-    work_dir.mkdir(parents=True)
+    seeds = list(dict.fromkeys(args.seeds))
+    if not seeds:
+        print("ERROR: at least one seed is required")
+        return 1
+
+    num_replicates = len(seeds)
+    quorum = args.quorum if args.quorum is not None else min(QUORUM, num_replicates)
+    if quorum < 1 or quorum > num_replicates:
+        print(f"ERROR: quorum must be in [1, {num_replicates}], got {quorum}")
+        return 1
+
+    work_dir = args.work_dir.resolve()
+    rep_dirs = [
+        work_dir / f"replicate_{i + 1:02d}_seed{seed}"
+        for i, seed in enumerate(seeds)
+    ]
 
     print("=" * 72)
     print("  REALITY CHECK 1 -- Emergent Stroma Barrier Self-Assembly (HPC)")
-    print(f"  Replicates: {NUM_REPLICATES}   Seeds: {SEEDS}")
+    print(f"  Replicates: {num_replicates}   Seeds: {seeds}")
     print(f"  Sim time: {SIM_MAX_TIME_MIN:.0f} min "
           f"({SIM_MAX_TIME_MIN/60/24:.1f} days)")
     print(f"  HPC: {SLURM_PARTITION} partition, {SLURM_CPUS} CPUs/node")
-    print(f"  Quorum: >={QUORUM}/{NUM_REPLICATES}")
+    print(f"  Quorum: >={quorum}/{num_replicates}")
+    print(f"  Work dir: {work_dir}")
     print("=" * 72)
+
+    if args.dry_run:
+        print("  Dry run only; no jobs submitted.")
+        for i, seed in enumerate(seeds):
+            print(f"    rep {i+1} seed={seed} -> {rep_dirs[i]}")
+        return 0
+
+    if not args.evaluate_only:
+        if not BINARY.exists():
+            print(f"ERROR: binary not found at {BINARY}")
+            return 1
+        if not BASE_CONFIG.exists():
+            print(f"ERROR: config not found at {BASE_CONFIG}")
+            return 1
+        if work_dir.exists():
+            shutil.rmtree(work_dir)
+        work_dir.mkdir(parents=True)
+    elif not work_dir.exists():
+        print(f"ERROR: work dir does not exist for evaluate-only mode: {work_dir}")
+        return 1
 
     # ---- Prepare and submit all replicates in parallel via SLURM ----
     job_ids: Dict[str, int] = {}   # job_id -> rep_idx
-    rep_dirs: List[Path] = []
+    completed: Dict[int, Tuple[str, int]] = {}
+    total_wall = 0.0
 
-    for i, seed in enumerate(SEEDS[:NUM_REPLICATES]):
-        rep_dir = work_dir / f"replicate_{i + 1:02d}_seed{seed}"
-        rep_dir.mkdir(parents=True, exist_ok=True)
-        output_dir = rep_dir / "output"
-        output_dir.mkdir(parents=True, exist_ok=True)
-        rep_dirs.append(rep_dir)
+    if args.evaluate_only:
+        print("\n  Evaluate-only mode — skipping submission and reading existing output.\n")
+        completed = {i: ("COMPLETED", 0) for i in range(num_replicates)}
+    else:
+        for i, seed in enumerate(seeds):
+            rep_dir = rep_dirs[i]
+            rep_dir.mkdir(parents=True, exist_ok=True)
+            output_dir = rep_dir / "output"
+            output_dir.mkdir(parents=True, exist_ok=True)
 
-        config_path = rep_dir / "config.xml"
-        _patch_config(
-            BASE_CONFIG, config_path, output_dir, seed,
-            SIM_MAX_TIME_MIN, SLURM_CPUS,
-        )
+            config_path = rep_dir / "config.xml"
+            _patch_config(
+                BASE_CONFIG, config_path, output_dir, seed,
+                SIM_MAX_TIME_MIN, SLURM_CPUS,
+            )
 
-        intervention = rep_dir / "intervention.json"
-        intervention.write_text(json.dumps({
-            "knob_interventions": [],
-            "drug_delivery": {"enabled": False},
-        }, indent=2), encoding="utf-8")
+            intervention = rep_dir / "intervention.json"
+            intervention.write_text(json.dumps({
+                "knob_interventions": [],
+                "drug_delivery": {"enabled": False},
+            }, indent=2), encoding="utf-8")
 
-        script = _write_slurm_script(
-            rep_dir, config_path, intervention, i, seed,
-        )
+            script = _write_slurm_script(
+                rep_dir, config_path, intervention, i, seed,
+            )
 
-        # Submit via sbatch
-        result = subprocess.run(
-            ["sbatch", "--parsable", str(script)],
-            capture_output=True, text=True, check=False,
-        )
-        if result.returncode != 0:
-            print(f"  ERROR: sbatch failed for rep {i+1}: "
-                  f"{result.stderr.strip()}")
-            return 1
+            # Submit via sbatch
+            result = subprocess.run(
+                ["sbatch", "--parsable", str(script)],
+                capture_output=True, text=True, check=False,
+            )
+            if result.returncode != 0:
+                print(f"  ERROR: sbatch failed for rep {i+1}: "
+                      f"{result.stderr.strip()}")
+                return 1
 
-        job_id = result.stdout.strip().split(";")[0]
-        job_ids[job_id] = i
-        print(f"  Submitted rep {i+1} (seed={seed}) -> SLURM job {job_id}")
+            job_id = result.stdout.strip().split(";")[0]
+            job_ids[job_id] = i
+            print(f"  Submitted rep {i+1} (seed={seed}) -> SLURM job {job_id}")
 
-    print(f"\n  All {NUM_REPLICATES} jobs submitted.  "
-          f"Polling for completion ...\n")
+        print(f"\n  All {num_replicates} jobs submitted.  "
+              f"Polling for completion ...\n")
 
-    # ---- Poll until all jobs finish ----
-    t0 = time.perf_counter()
-    completed: Dict[int, Tuple[str, int]] = {}  # rep_idx -> (state, exit_code)
+        # ---- Poll until all jobs finish ----
+        t0 = time.perf_counter()
+        while len(completed) < len(job_ids):
+            time.sleep(SLURM_POLL_INTERVAL)
+            elapsed = time.perf_counter() - t0
 
-    while len(completed) < len(job_ids):
-        time.sleep(SLURM_POLL_INTERVAL)
-        elapsed = time.perf_counter() - t0
-
-        for job_id, rep_idx in list(job_ids.items()):
-            if rep_idx in completed:
-                continue
-            state, exit_code, terminal = _query_job(job_id)
-            if terminal:
-                completed[rep_idx] = (state, exit_code)
-                seed = SEEDS[rep_idx]
-                status = "OK" if (
-                    state == "COMPLETED" and exit_code == 0
-                ) else "XX"
-                print(f"  {status} Rep {rep_idx+1} (seed={seed}): "
-                      f"{state} exit={exit_code}  [{elapsed:.0f}s]")
-
-        # Progress indicator for still-running jobs
-        n_done = len(completed)
-        still_running = NUM_REPLICATES - n_done
-        if still_running > 0:
-            for job_id, rep_idx in job_ids.items():
+            for job_id, rep_idx in list(job_ids.items()):
                 if rep_idx in completed:
                     continue
-                snap_count = len(
-                    list(rep_dirs[rep_idx].glob("output/output*.xml"))
-                )
-                if snap_count > 0:
-                    print(f"    rep {rep_idx+1}: {snap_count} snapshots "
-                          f"so far ...  [{elapsed:.0f}s elapsed]")
+                state, exit_code, terminal = _query_job(job_id)
+                if terminal:
+                    completed[rep_idx] = (state, exit_code)
+                    seed = seeds[rep_idx]
+                    status = "OK" if (
+                        state == "COMPLETED" and exit_code == 0
+                    ) else "XX"
+                    print(f"  {status} Rep {rep_idx+1} (seed={seed}): "
+                          f"{state} exit={exit_code}  [{elapsed:.0f}s]")
 
-    total_wall = time.perf_counter() - t0
-    print(f"\n  All jobs completed in {total_wall:.1f}s "
-          f"({total_wall/60:.1f} min)\n")
+            # Progress indicator for still-running jobs
+            n_done = len(completed)
+            still_running = num_replicates - n_done
+            if still_running > 0:
+                for job_id, rep_idx in job_ids.items():
+                    if rep_idx in completed:
+                        continue
+                    snap_count = len(
+                        list(rep_dirs[rep_idx].glob("output/output*.xml"))
+                    )
+                    if snap_count > 0:
+                        print(f"    rep {rep_idx+1}: {snap_count} snapshots "
+                              f"so far ...  [{elapsed:.0f}s elapsed]")
+
+        total_wall = time.perf_counter() - t0
+        print(f"\n  All jobs completed in {total_wall:.1f}s "
+              f"({total_wall/60:.1f} min)\n")
 
     # ---- Evaluate criteria ----
     results: List[ReplicateResult] = []
     t360_diag_printed = False
-    for i, seed in enumerate(SEEDS[:NUM_REPLICATES]):
+    for i, seed in enumerate(seeds):
         rep_dir = rep_dirs[i]
         state, exit_code = completed.get(i, ("UNKNOWN", -1))
         success = state == "COMPLETED" and exit_code == 0
@@ -921,7 +988,7 @@ def main() -> int:
             seed=seed,
             run_dir=rep_dir,
             success=success,
-            wall_time_s=total_wall / NUM_REPLICATES,
+            wall_time_s=total_wall / max(num_replicates, 1),
         )
         if success:
             try:
@@ -970,7 +1037,7 @@ def main() -> int:
 
     # ---- Aggregate ----
     print("=" * 72)
-    print(f"  AGGREGATE  (>={QUORUM}/{NUM_REPLICATES} replicates "
+    print(f"  AGGREGATE  (>={quorum}/{num_replicates} replicates "
           f"must pass each criterion)")
     print("=" * 72)
 
@@ -980,11 +1047,11 @@ def main() -> int:
             1 for r in results
             if r.success and r.criteria.get(key, False)
         )
-        ok = passing >= QUORUM
+        ok = passing >= quorum
         mark = "PASS" if ok else "FAIL"
         if not ok:
             any_failure = True
-        print(f"  [{mark}] {label}  ({passing}/{NUM_REPLICATES} replicates)")
+        print(f"  [{mark}] {label}  ({passing}/{num_replicates} replicates)")
 
     print()
     print(f"  Total wall time: {total_wall:.1f}s  ({total_wall/60:.1f} min)")

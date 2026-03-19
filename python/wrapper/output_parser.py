@@ -253,7 +253,7 @@ class OutputParser:
         else:
             mean_tumor_drug_sensitivity = math.nan
 
-        hif1a = self._get_row(cell_matrix, label_name_map, "HIF1A")
+        hif1a = self._get_first_row(cell_matrix, label_name_map, ("HIF1A", "hif1a_active"))
         if hif1a is not None and np.any(tumor_mask):
             hypoxic_fraction = float(np.mean(hif1a[tumor_mask] > 0.5))
         else:
@@ -361,6 +361,18 @@ class OutputParser:
         if idx < 0 or idx >= cell_matrix.shape[0]:
             return None
         return cell_matrix[idx, :]
+
+    def _get_first_row(
+        self,
+        cell_matrix: np.ndarray,
+        label_name_map: Dict[str, Dict[str, Any]],
+        label_names: Sequence[str],
+    ) -> Optional[np.ndarray]:
+        for label_name in label_names:
+            row = self._get_row(cell_matrix, label_name_map, label_name)
+            if row is not None:
+                return row
+        return None
 
     def _build_variable_row_map(self, variables: Sequence[Tuple[int, str]], micro_rows: int) -> Dict[str, int]:
         if not variables:

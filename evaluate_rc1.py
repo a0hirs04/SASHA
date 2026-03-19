@@ -7,7 +7,9 @@ in OutputParser.parse_final_state) and evaluates all 8 biological criteria.
 """
 from __future__ import annotations
 
+import argparse
 import math
+import re
 import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
@@ -18,9 +20,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from python.wrapper.output_parser import OutputParser
+from python.wrapper.workdir_utils import default_reality_check_dir
 
-SEEDS = [42]
-QUORUM = 1
+DEFAULT_FULL_QUORUM = 4
 BOUNDARY_O2 = 38.0
 
 CRITERIA_NAMES = [
@@ -204,15 +206,60 @@ def evaluate_replicate(rep_dir: Path, seed: int):
     return criteria, details
 
 
+def _discover_replicate_seeds(work_dir: Path) -> List[int]:
+    found: List[Tuple[int, int]] = []
+    for rep_dir in sorted(work_dir.glob("replicate_*_seed*")):
+        match = re.fullmatch(r"replicate_(\d+)_seed(\d+)", rep_dir.name)
+        if match:
+            found.append((int(match.group(1)), int(match.group(2))))
+    return [seed for _, seed in sorted(found)]
+
+
 def main():
-    work_dir = PROJECT_ROOT / "build" / "rc1_fixJ_seed42"
+    default_work_dir = default_reality_check_dir(PROJECT_ROOT, "reality_check_1")
+    parser = argparse.ArgumentParser(description="Evaluate completed RC1 output")
+    parser.add_argument(
+        "--work-dir",
+        type=Path,
+        default=default_work_dir,
+        help="Root directory containing RC1 replicate folders",
+    )
+    parser.add_argument(
+        "--seeds",
+        nargs="+",
+        type=int,
+        default=None,
+        help="Seed list to evaluate; defaults to replicate folders discovered in work dir",
+    )
+    parser.add_argument(
+        "--quorum",
+        type=int,
+        default=None,
+        help="Pass threshold; defaults to min(4, number of evaluated seeds)",
+    )
+    args = parser.parse_args()
+
+    work_dir = args.work_dir.resolve()
+    seeds = list(dict.fromkeys(args.seeds)) if args.seeds else _discover_replicate_seeds(work_dir)
+    if not seeds:
+        print(f"ERROR: no replicate directories found in {work_dir}")
+        return 1
+
+    num_replicates = len(seeds)
+    quorum = args.quorum if args.quorum is not None else min(DEFAULT_FULL_QUORUM, num_replicates)
+    if quorum < 1 or quorum > num_replicates:
+        print(f"ERROR: quorum must be in [1, {num_replicates}], got {quorum}")
+        return 1
 
     print("=" * 72)
     print("  REALITY CHECK 1 — Evaluation of completed HPC runs")
+    print(f"  Work dir: {work_dir}")
+    print(f"  Seeds: {seeds}")
+    print(f"  Quorum: >={quorum}/{num_replicates}")
     print("=" * 72)
 
     results = []
-    for i, seed in enumerate(SEEDS):
+    for i, seed in enumerate(seeds):
         rep_dir = work_dir / f"replicate_{i+1:02d}_seed{seed}"
         output_dir = rep_dir / "output"
         xmls = sorted(output_dir.glob("output*.xml"))
@@ -232,7 +279,7 @@ def main():
     print("\n" + "=" * 72)
     print("  PER-REPLICATE RESULTS")
     print("=" * 72)
-    for i, seed in enumerate(SEEDS):
+    for i, seed in enumerate(seeds):
         hdr = f"Replicate {i+1}  (seed={seed})"
         if results[i] is None:
             print(f"\n  {hdr}  — FAILED")
@@ -249,7 +296,7 @@ def main():
 
     # Aggregate
     print("\n" + "=" * 72)
-    print(f"  AGGREGATE  (>={QUORUM}/5 replicates must pass each criterion)")
+    print(f"  AGGREGATE  (>={quorum}/{num_replicates} replicates must pass each criterion)")
     print("=" * 72)
 
     any_failure = False
@@ -258,11 +305,11 @@ def main():
             1 for r in results
             if r is not None and r[0].get(key, False)
         )
-        ok = passing >= QUORUM
+        ok = passing >= quorum
         mark = "PASS" if ok else "FAIL"
         if not ok:
             any_failure = True
-        print(f"  [{mark}] {label}  ({passing}/5 replicates)")
+        print(f"  [{mark}] {label}  ({passing}/{num_replicates} replicates)")
 
     print()
     if any_failure:

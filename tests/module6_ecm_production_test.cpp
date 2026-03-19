@@ -78,7 +78,7 @@ int main()
     const int voxel_a = voxel_index_for_cell(caf_a);
     set_ecm_at_voxel(voxel_a, 0.0, 0.5);
     module6_ecm_production(caf_a, caf_a->phenotype, dt, ModulePhase::WRITE);
-    assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.06));
+    assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.0012));
     assert(nearly_equal(get_ecm_ha_fraction(voxel_a), 0.6));
     std::cout << "PASS Test A" << std::endl;
     std::cout << "PASS Rule25_caf_produces_HA_and_collagen" << std::endl;
@@ -88,7 +88,7 @@ int main()
     set_ecm_at_voxel(voxel_a, 0.0, 0.5);
     module6_ecm_production(caf_a, caf_a->phenotype, dt, ModulePhase::WRITE);
     assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.09));
-    assert(get_ecm_density_at_voxel(voxel_a) > 0.06);
+    assert(get_ecm_density_at_voxel(voxel_a) > 0.0012);
     std::cout << "PASS Test B" << std::endl;
     std::cout << "PASS Rule26_gli1_boosts_ecm_production" << std::endl;
 

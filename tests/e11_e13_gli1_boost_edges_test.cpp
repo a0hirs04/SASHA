@@ -17,6 +17,15 @@ bool nearly_equal(double a, double b, double eps = 1e-6)
     return std::fabs(a - b) <= eps;
 }
 
+void set_local_signal(Cell* pCell, int substrate_index, double value)
+{
+    std::vector<double>& rho = pCell->nearest_density_vector();
+    if (substrate_index >= 0 && substrate_index < static_cast<int>(rho.size()))
+    {
+        rho[substrate_index] = value;
+    }
+}
+
 int count_live_stromal_in_x_window(int stromal_type, double x_min, double x_max)
 {
     int n = 0;
@@ -70,6 +79,10 @@ int main()
     caf_off->custom_data[custom_index(caf_off, "gli1_active")] = 0.0;
     caf_on->custom_data[custom_index(caf_on, "acta2_active")] = 1.0;
     caf_on->custom_data[custom_index(caf_on, "gli1_active")] = 1.0;
+    set_local_signal(caf_off, tgfb_index, 0.0);
+    set_local_signal(caf_off, shh_index, 0.0);
+    set_local_signal(caf_on, tgfb_index, 0.0);
+    set_local_signal(caf_on, shh_index, 0.5);
 
     const int voxel_off = voxel_index_for_cell(caf_off);
     const int voxel_on = voxel_index_for_cell(caf_on);
@@ -78,7 +91,14 @@ int main()
 
     double t = 0.0;
     const double dt = 1.0;
-    advance_steps(50, dt, t);
+    for (int step = 0; step < 50; ++step)
+    {
+        set_local_signal(caf_off, tgfb_index, 0.0);
+        set_local_signal(caf_off, shh_index, 0.0);
+        set_local_signal(caf_on, tgfb_index, 0.0);
+        set_local_signal(caf_on, shh_index, 0.5);
+        advance_steps(1, dt, t);
+    }
 
     const double ecm_off = microenvironment.density_vector(voxel_off)[ecm_index];
     const double ecm_on = microenvironment.density_vector(voxel_on)[ecm_index];
@@ -101,6 +121,8 @@ int main()
         c0->phenotype.motility.is_motile = false;
         c0->custom_data[custom_index(c0, "acta2_active")] = 1.0;
         c0->custom_data[custom_index(c0, "gli1_active")] = 0.0;
+        set_local_signal(c0, tgfb_index, 0.0);
+        set_local_signal(c0, shh_index, 0.0);
         if (rep_off == NULL) rep_off = c0;
 
         Cell* c1 = create_cell(*pStroma);
@@ -108,6 +130,8 @@ int main()
         c1->phenotype.motility.is_motile = false;
         c1->custom_data[custom_index(c1, "acta2_active")] = 1.0;
         c1->custom_data[custom_index(c1, "gli1_active")] = 1.0;
+        set_local_signal(c1, tgfb_index, 0.0);
+        set_local_signal(c1, shh_index, 0.5);
         if (rep_on == NULL) rep_on = c1;
     }
 
@@ -120,7 +144,25 @@ int main()
     const int init_off = count_live_stromal_in_x_window(pStroma->type, off_x_min, off_x_max);
     const int init_on = count_live_stromal_in_x_window(pStroma->type, on_x_min, on_x_max);
 
-    advance_steps(1, dt, t);
+    for (int step = 0; step < 1; ++step)
+    {
+        for (Cell* pCell : *all_cells)
+        {
+            if (pCell == NULL || pCell->phenotype.death.dead) continue;
+            if (pCell->type != pStroma->type) continue;
+            if (pCell->position[0] >= on_x_min && pCell->position[0] <= on_x_max)
+            {
+                set_local_signal(pCell, tgfb_index, 0.0);
+                set_local_signal(pCell, shh_index, 0.5);
+            }
+            else if (pCell->position[0] >= off_x_min && pCell->position[0] <= off_x_max)
+            {
+                set_local_signal(pCell, tgfb_index, 0.0);
+                set_local_signal(pCell, shh_index, 0.0);
+            }
+        }
+        advance_steps(1, dt, t);
+    }
 
     assert(rep_off != NULL);
     assert(rep_on != NULL);
@@ -154,7 +196,25 @@ int main()
             rep_on->phenotype.cycle.data.transition_rate(runtime_start_index, runtime_end_index);
     }
 
-    advance_steps(199, dt, t);
+    for (int step = 0; step < 199; ++step)
+    {
+        for (Cell* pCell : *all_cells)
+        {
+            if (pCell == NULL || pCell->phenotype.death.dead) continue;
+            if (pCell->type != pStroma->type) continue;
+            if (pCell->position[0] >= on_x_min && pCell->position[0] <= on_x_max)
+            {
+                set_local_signal(pCell, tgfb_index, 0.0);
+                set_local_signal(pCell, shh_index, 0.5);
+            }
+            else if (pCell->position[0] >= off_x_min && pCell->position[0] <= off_x_max)
+            {
+                set_local_signal(pCell, tgfb_index, 0.0);
+                set_local_signal(pCell, shh_index, 0.0);
+            }
+        }
+        advance_steps(1, dt, t);
+    }
 
     const int final_off = count_live_stromal_in_x_window(pStroma->type, off_x_min, off_x_max);
     const int final_on = count_live_stromal_in_x_window(pStroma->type, on_x_min, on_x_max);

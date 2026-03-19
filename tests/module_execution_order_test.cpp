@@ -98,6 +98,7 @@ int main()
     parameters.doubles("hif1a_nrf2_priming_bonus") = 0.0;
 
     parameters.doubles("emt_induction_threshold") = 0.4;
+    parameters.doubles("emt_activation_delay") = 0.0;
     parameters.ints("emt_phenotype_extent") = 2;
     parameters.doubles("hif1a_emt_boost") = 0.2;
     parameters.doubles("motility_epithelial") = 0.1;
@@ -164,7 +165,11 @@ int main()
     assert(tumor_texp >= 0);
 
     const int psc_acta2 = psc->custom_data.find_variable_index("acta2_active");
+    const int psc_gli1 = psc->custom_data.find_variable_index("gli1_active");
+    const int psc_ecm_rate = psc->custom_data.find_variable_index("ecm_production_rate");
     assert(psc_acta2 >= 0);
+    assert(psc_gli1 >= 0);
+    assert(psc_ecm_rate >= 0);
 
     const int tumor_voxel = voxel_index_for_cell(tumor);
     const int psc_voxel = voxel_index_for_cell(psc);
@@ -207,11 +212,15 @@ int main()
     assert(nearly_equal(tumor->phenotype.cycle.data.transition_rate(0, 0), 0.007));
 
     // (c) Module7 -> Module4 dependency (ABCB1 reduces effective drug in same step).
-    assert(nearly_equal(tumor->custom_data[tumor_abcb1], 1.0));
+    assert(tumor->custom_data[tumor_abcb1] > 0.0);
     const int tumor_apop_index =
         tumor->phenotype.death.find_death_model_index(PhysiCell_constants::apoptosis_death_model);
     assert(tumor_apop_index >= 0);
-    const double expected_apoptosis = (1.0 - 0.85) * 0.001 + (0.5 * (1.0 - 0.7)) * 0.01;
+    const double emt_death_increase = parameters.doubles("emt_death_increase");
+    const double expected_apoptosis =
+        (1.0 - 0.85) * 0.001 +
+        (0.5 * (1.0 - 0.7 * tumor->custom_data[tumor_abcb1])) * 0.01 +
+        emt_death_increase;
     assert(nearly_equal(tumor->phenotype.death.rates[tumor_apop_index], expected_apoptosis));
 
     // (e) Module5 -> Module6 dependency (MMP2 flag drives same-step ECM degradation).
@@ -220,7 +229,11 @@ int main()
 
     // (b) Module3 -> Module6 dependency (ACTA2 activation drives same-step ECM production).
     assert(nearly_equal(psc->custom_data[psc_acta2], 1.0));
-    assert(nearly_equal(get_density_at_voxel(psc_voxel, ecm_index), 0.03));
+    assert(psc->custom_data[psc_gli1] > 0.0);
+    assert(psc->custom_data[psc_ecm_rate] > parameters.doubles("ecm_production_rate_base"));
+    assert(nearly_equal(
+        get_density_at_voxel(psc_voxel, ecm_index),
+        psc->custom_data[psc_ecm_rate] * dt));
     std::cout << "PASS Test 1" << std::endl;
 
     // Test 2 — Phase violation and order trace check.

@@ -51,6 +51,11 @@ int main()
     parameters.doubles("gli1_proliferation_boost") = 2.0;
     parameters.doubles("psc_proliferation_rate") = 0.0;
     parameters.doubles("contact_inhibition_threshold") = 1e9;
+    parameters.doubles("stromal_contact_inhibition_threshold") = 1e9;
+    parameters.doubles("caf_base_death_rate") = 0.0;
+    parameters.doubles("caf_crowded_death_rate") = 0.0;
+    parameters.doubles("ecm_production_rate_base") = 0.0;
+    parameters.doubles("ecm_production_rate_boosted") = 0.0;
 
     // Keep fields simple.
     reset_all_fields(38.0, 0.0, 0.0, 0.0, 0.0, 0.5);

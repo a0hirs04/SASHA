@@ -50,6 +50,7 @@ int main()
 
     parameters.doubles("mechanical_compaction_strength") = 0.5;
     parameters.doubles("compaction_ecm_increment") = 0.01;
+    parameters.doubles("crowding_base_pressure") = 0.0;
 
     const double dt = 6.0;
 
@@ -72,7 +73,7 @@ int main()
     std::cout << "PASS Test A" << std::endl;
 
     // Test B — Compaction increases ECM density.
-    assert(nearly_equal(get_ecm_density_at_voxel(voxel), 0.6216));
+    assert(nearly_equal(get_ecm_density_at_voxel(voxel), 0.605184));
     std::cout << "PASS Test B" << std::endl;
 
     // Test C — Compaction does not change HA/collagen ratio.

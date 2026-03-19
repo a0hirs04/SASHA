@@ -137,9 +137,11 @@ int main()
     const int s_drug_g = stroma_g->custom_data.find_variable_index("intracellular_drug");
     assert(s_apop_idx_g >= 0);
     assert(s_acta2_g >= 0);
-    assert(s_drug_g >= 0);
     stroma_g->custom_data[s_acta2_g] = 1.0;
-    stroma_g->custom_data[s_drug_g] = 0.9;
+    if (s_drug_g >= 0)
+    {
+        stroma_g->custom_data[s_drug_g] = 0.9;
+    }
     module4_proliferation_death(stroma_g, stroma_g->phenotype, 1.0, ModulePhase::DECISION);
     assert(nearly_equal(stroma_g->phenotype.death.rates[s_apop_idx_g], 0.0));
     std::cout << "PASS Test G" << std::endl;

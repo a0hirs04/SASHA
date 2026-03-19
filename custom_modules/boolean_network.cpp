@@ -582,16 +582,20 @@ void BooleanNetwork::compute_tumor_targets(double* target,
     // Biological basis:
     //   The MDR1 gene promoter contains NRF2-binding antioxidant response
     //   elements (AREs) and HIF1A hypoxia response elements (HREs). Both
-    //   stress signals transcriptionally upregulate ABCB1. The pump actively
-    //   exports cytotoxic drugs, reducing intracellular drug concentration.
+    //   stress signals transcriptionally upregulate ABCB1, but only when a
+    //   cytotoxic substrate is present. This keeps the resistance program
+    //   inducible rather than constitutive.
     //
     // DRUG-CONDITIONAL NOTE (Critical Caveat #4):
     //   ABCB1 confers NO constitutive survival benefit — it only reduces
-    //   drug efficacy when cytotoxic substrate is present. The downstream
-    //   drug_sensitivity variable in tumor_cell.cpp is stored as 1.0 when
-    //   drug is absent, preventing the EA from treating ABCB1 as a basal
-    //   survival gene and wasting generations targeting it pre-treatment.
-    target[ABCB1] = clamp(0.5 * NRF2_ + 0.3 * HIF1A_ * hypoxia_shift_mult, 0.0, 1.0);
+    //   drug efficacy when cytotoxic substrate is present. The same
+    //   conditioning is enforced here so the network stays aligned with the
+    //   active phenotype code and Veto 5 semantics.
+    const double drug_conditioning = threshold_ramp(drug_local, 0.01);
+    target[ABCB1] = clamp(
+        (0.5 * NRF2_ + 0.3 * HIF1A_ * hypoxia_shift_mult) * drug_conditioning,
+        0.0,
+        1.0);
 
     // =========================================================================
     // GENES WITH NO TUMOR RULE (states persist / decay from previous step)

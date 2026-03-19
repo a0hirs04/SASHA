@@ -4,7 +4,9 @@ Evaluate RC2 criteria on the completed rc2_full_seed42 run.
 """
 from __future__ import annotations
 
+import argparse
 import math
+import re
 import sys
 from pathlib import Path
 
@@ -13,9 +15,10 @@ import numpy as np
 PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 from python.wrapper.output_parser import OutputParser
+from python.wrapper.workdir_utils import default_reality_check_dir
 
 # ---------------------------------------------------------------------------
-OUT_DIR = PROJECT_ROOT / "build" / "rc2_fixJ_seed42" / "replicate_01_seed42" / "output"
+DEFAULT_OUT_DIR = default_reality_check_dir(PROJECT_ROOT, "reality_check_2") / "replicate_01_seed42" / "output"
 T_PRE       = 20160.0   # day 14
 T_TREAT_END = 40320.0   # day 28
 T_POST      = 60480.0   # day 42
@@ -117,9 +120,36 @@ def parse_snap(parser, snap):
     }
 
 
+def _infer_seed_label(out_dir: Path) -> str:
+    match = re.search(r"seed(\d+)", out_dir.as_posix())
+    return match.group(1) if match else "?"
+
+
 def main():
-    parser = OutputParser(OUT_DIR)
-    xmls = sorted(OUT_DIR.glob("output*.xml"))
+    parser_cli = argparse.ArgumentParser(description="Evaluate completed RC2 output")
+    parser_cli.add_argument(
+        "--out-dir",
+        type=Path,
+        default=DEFAULT_OUT_DIR,
+        help="RC2 output directory containing output*.xml files",
+    )
+    parser_cli.add_argument(
+        "--seed",
+        type=int,
+        default=None,
+        help="Optional seed label override for reporting",
+    )
+    args = parser_cli.parse_args()
+
+    out_dir = args.out_dir.resolve()
+    if not out_dir.exists():
+        print(f"ERROR: output directory not found: {out_dir}")
+        return 1
+
+    seed_label = str(args.seed) if args.seed is not None else _infer_seed_label(out_dir)
+
+    parser = OutputParser(out_dir)
+    xmls = sorted(out_dir.glob("output*.xml"))
     print(f"Total snapshots: {len(xmls)}")
 
     snap_idx_pre   = int(T_PRE / SAVE_INTERVAL)        # 56 (day 14)
@@ -129,7 +159,7 @@ def main():
     def get_snap(idx):
         i = idx
         while i >= 0:
-            fname = OUT_DIR / f"output{i:08d}.xml"
+            fname = out_dir / f"output{i:08d}.xml"
             if fname.exists() and fname.stat().st_size > 0:
                 try:
                     return parser._read_physicell_xml(fname), i
@@ -140,7 +170,8 @@ def main():
 
     print()
     print("=" * 72)
-    print("  RC2 EVALUATION — seed 42 (single replicate)")
+    print(f"  RC2 EVALUATION — seed {seed_label} (single replicate)")
+    print(f"  Output dir: {out_dir}")
     print("=" * 72)
 
     print(f"\n  Parsing snap {snap_idx_pre} (day 14, pre-treatment)...")
@@ -178,7 +209,7 @@ def main():
     for day in timeline_days:
         t_min = day * 1440.0
         idx = int(t_min / SAVE_INTERVAL)
-        fname = OUT_DIR / f"output{idx:08d}.xml"
+        fname = out_dir / f"output{idx:08d}.xml"
         if not fname.exists():
             print(f"  {day:5d}  {'N/A':>6}")
             continue
@@ -195,7 +226,7 @@ def main():
     print("  DAY 31 SURVIVOR DIAGNOSTIC  (tumor CI=25.0, stromal CI=0.8)")
     print("=" * 72)
     day31_idx = int(31 * 1440.0 / SAVE_INTERVAL)
-    day31_fname = OUT_DIR / f"output{day31_idx:08d}.xml"
+    day31_fname = out_dir / f"output{day31_idx:08d}.xml"
     if day31_fname.exists():
         snap31, _ = get_snap(day31_idx)
         mat31 = snap31["cell_matrix"]
@@ -315,9 +346,9 @@ def main():
     n_pass = sum(hard)
     overall = all(hard)
     if overall:
-        print("  *** RC2 (seed 42): ALL HARD CRITERIA PASS ✓ ***")
+        print(f"  *** RC2 (seed {seed_label}): ALL HARD CRITERIA PASS ✓ ***")
     else:
-        print(f"  *** RC2 (seed 42): {n_pass}/5 HARD CRITERIA PASS ***")
+        print(f"  *** RC2 (seed {seed_label}): {n_pass}/5 HARD CRITERIA PASS ***")
         if not c1:
             print("    ✗ Drug is not effective enough (or too effective)")
         if not c2:

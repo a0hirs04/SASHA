@@ -42,6 +42,7 @@ std::vector<double> g_effective_drug_diffusion_by_voxel;
 std::vector<double> g_effective_tgfb_diffusion_by_voxel;
 std::vector<double> g_effective_shh_diffusion_by_voxel;
 std::vector<double> g_local_mechanical_stiffness_by_voxel;
+std::vector<double> g_pre_diffusion_drug_by_voxel;
 bool g_module_trace_enabled = false;
 std::vector<ModuleTraceEntry> g_module_trace_log;
 
@@ -61,6 +62,44 @@ inline double clamp_unit(double x)
 inline double clamp_nonnegative(double x)
 {
     return (x < 0.0) ? 0.0 : x;
+}
+
+inline double relax_toward(double current, double target, double dt, double tau)
+{
+    const double safe_tau = std::max(1e-12, tau);
+    const double fraction = clamp_unit(dt / safe_tau);
+    return clamp_unit(current + (target - current) * fraction);
+}
+
+inline double smooth_threshold_response(double signal, double threshold)
+{
+    const double safe_signal = clamp_nonnegative(signal);
+    const double safe_threshold = std::max(1e-12, clamp_nonnegative(threshold));
+    if (safe_signal <= safe_threshold)
+    {
+        return 0.0;
+    }
+
+    const double excess = safe_signal - safe_threshold;
+    return clamp_unit(excess / (excess + safe_threshold));
+}
+
+inline double stromal_gli1_support(double gli1_active)
+{
+    // ACTA2-positive CAFs persist after activation, but the strength of the
+    // matrix-rich / TGF-beta-rich myCAF program should track the current GLI1
+    // state continuously. This keeps SHH-loss cells alive while still letting
+    // SHH inhibition meaningfully collapse the matrix-support program.
+    return clamp_unit(gli1_active);
+}
+
+inline double stromal_ecm_rate(double base_rate, double boosted_rate, double gli1_active)
+{
+    const double gli1_support = stromal_gli1_support(gli1_active);
+    const double basal_fraction = 0.02;
+    const double floor_rate = clamp_nonnegative(base_rate) * basal_fraction;
+    const double ceiling_rate = std::max(floor_rate, clamp_nonnegative(boosted_rate));
+    return floor_rate + (ceiling_rate - floor_rate) * gli1_support;
 }
 
 // Stromal custom_data index for mechanical_pressure as laid out by
@@ -609,8 +648,19 @@ void apply_ecm_dependent_modifiers(Microenvironment& M, double dt)
         if (base_drug > 0.0 && n < g_effective_drug_diffusion_by_voxel.size())
         {
             const double ratio = clamp_unit(g_effective_drug_diffusion_by_voxel[n] / base_drug);
-            rho[drug_index] = clamp_nonnegative(
-                rho[drug_index] * (dt_correct_drug ? std::pow(ratio, dt) : ratio));
+            if (dt_correct_drug &&
+                n < g_pre_diffusion_drug_by_voxel.size())
+            {
+                const double transport_factor = clamp_unit(std::pow(ratio, 2.5));
+                const double pre_drug = g_pre_diffusion_drug_by_voxel[n];
+                rho[drug_index] = clamp_nonnegative(
+                    pre_drug + (rho[drug_index] - pre_drug) * transport_factor);
+            }
+            else
+            {
+                rho[drug_index] = clamp_nonnegative(
+                    rho[drug_index] * (dt_correct_drug ? std::pow(ratio, dt) : ratio));
+            }
         }
     }
 }
@@ -981,33 +1031,31 @@ void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, Mo
     double updated_gli1 =
         read_custom_data_value_or_default(pCell, "gli1_active", 0.0);
     double updated_acta2 = previous_acta2;
+    double effective_local_shh = local_shh;
+    const double shh_inhibition_start_time =
+        read_xml_double_or_default("shh_inhibition_start_time", 1e18);
+    const double shh_inhibition_strength =
+        clamp_unit(read_xml_double_or_default("shh_inhibition_strength", 0.0));
+    if (PhysiCell_globals.current_time >= shh_inhibition_start_time)
+    {
+        effective_local_shh = effective_local_shh * (1.0 - shh_inhibition_strength);
+    }
+    const double gli1_signal = smooth_threshold_response(effective_local_shh, shh_threshold);
 
     if (is_stromal && previous_acta2 == 0.0)
     {
-        const double combined_signal = local_tgfb + local_shh;
+        const double combined_signal = local_tgfb + effective_local_shh;
         if (combined_signal > activation_threshold)
         {
             updated_acta2 = 1.0; // IRREVERSIBLE
-
-            if (local_shh > 0.0)
-            {
-                updated_gli1 = 1.0;
-            }
+            updated_gli1 = gli1_signal;
         }
     }
 
     if (updated_acta2 == 1.0)
     {
         updated_acta2 = 1.0; // acta2 stays ON permanently
-
-        if (local_shh > shh_threshold)
-        {
-            updated_gli1 = 1.0;
-        }
-        else
-        {
-            updated_gli1 = 0.0; // GLI1 is reversible
-        }
+        updated_gli1 = gli1_signal; // GLI1 is reversible and graded
     }
 
     if (previous_acta2 == 1.0 && updated_acta2 == 0.0)
@@ -1018,19 +1066,18 @@ void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, Mo
 
     set_custom_data_if_present(pCell, "acta2_active", updated_acta2);
     set_custom_data_if_present(pCell, "gli1_active", updated_gli1);
+    set_custom_data_if_present(pCell, "gene_state_ACTA2", updated_acta2);
+    set_custom_data_if_present(pCell, "gene_state_GLI1", updated_gli1);
 
     if (updated_acta2 == 1.0)
     {
+        const double gli1_support = stromal_gli1_support(updated_gli1);
         set_custom_data_if_present(pCell, "activation_mode", 1.0);
-        set_custom_data_if_present(pCell, "tgfb_secretion_active", 1.0);
-        if (updated_gli1 == 1.0)
-        {
-            set_custom_data_if_present(pCell, "ecm_production_rate", ecm_production_rate_boosted);
-        }
-        else
-        {
-            set_custom_data_if_present(pCell, "ecm_production_rate", ecm_production_rate_base);
-        }
+        set_custom_data_if_present(pCell, "tgfb_secretion_active", gli1_support);
+        set_custom_data_if_present(
+            pCell,
+            "ecm_production_rate",
+            stromal_ecm_rate(ecm_production_rate_base, ecm_production_rate_boosted, updated_gli1));
         phenotype.motility.migration_speed = caf_migration_speed;
     }
     else
@@ -1102,8 +1149,11 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     }
 
     // Step 2: Intracellular drug decay.
-    intracellular_drug = intracellular_drug * (1.0 - drug_natural_decay_rate * dt);
-    intracellular_drug = std::max(0.0, intracellular_drug);
+    if (local_drug <= 0.0 && time_since_drug_exposure >= 0.0)
+    {
+        intracellular_drug = intracellular_drug * (1.0 - drug_natural_decay_rate * dt);
+        intracellular_drug = std::max(0.0, intracellular_drug);
+    }
 
     // Step 3: Stress sensing (NRF2 activation).
     double stress_signal = intracellular_drug;
@@ -1112,36 +1162,44 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         stress_signal = stress_signal + hif1a_nrf2_priming_bonus;
     }
 
-    if (stress_signal > drug_stress_threshold)
+    const double target_nrf2 = smooth_threshold_response(stress_signal, drug_stress_threshold);
+    if (local_drug > 0.0 || intracellular_drug > drug_stress_threshold)
     {
-        nrf2_active = 1.0;
+        nrf2_active = relax_toward(nrf2_active, target_nrf2, dt, 60.0);
     }
-    else
+    else if (nrf2_active > 0.0)
     {
-        if (nrf2_active > 0.0)
-        {
-            nrf2_active = nrf2_active - nrf2_decay_rate * dt;
-            nrf2_active = std::max(0.0, nrf2_active);
-            if (nrf2_active < 0.5)
-            {
-                nrf2_active = 0.0;
-            }
-        }
+        const double decay_tau =
+            (nrf2_decay_rate > 0.0) ? (60.0 / nrf2_decay_rate) : 1e18;
+        nrf2_active = relax_toward(nrf2_active, 0.0, dt, decay_tau);
     }
 
     // Step 4: Efflux activation (ABCB1).
-    if (nrf2_active >= 1.0 && time_since_drug_exposure >= 0.0)
+    if (time_since_drug_exposure >= 0.0)
     {
-        if (time_since_drug_exposure >= efflux_induction_delay)
+        double delay_gate = 0.0;
+        if (efflux_induction_delay <= 0.0)
         {
-            abcb1_active = 1.0;
+            delay_gate = 1.0;
         }
+        else
+        {
+            delay_gate = clamp_unit(
+                time_since_drug_exposure / std::max(1e-12, efflux_induction_delay));
+        }
+        const double target_abcb1 = clamp_unit(1.25 * nrf2_active * delay_gate);
+        abcb1_active = relax_toward(abcb1_active, target_abcb1, dt, 120.0);
+    }
+    else
+    {
+        abcb1_active = relax_toward(abcb1_active, 0.0, dt, 240.0);
     }
 
     // Step 5: Efflux pump action.
-    if (abcb1_active == 1.0)
+    if (local_drug > 0.0 && abcb1_active > 0.0)
     {
-        const double efflux_amount = efflux_strength * intracellular_drug * dt;
+        const double efflux_amount =
+            efflux_strength * clamp_unit(abcb1_active) * intracellular_drug * dt;
         intracellular_drug = intracellular_drug - efflux_amount;
         intracellular_drug = std::max(0.0, intracellular_drug);
     }
@@ -1171,6 +1229,8 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     set_custom_data_if_present(pCell, "intracellular_drug", intracellular_drug);
     set_custom_data_if_present(pCell, "nrf2_active", nrf2_active);
     set_custom_data_if_present(pCell, "abcb1_active", abcb1_active);
+    set_custom_data_if_present(pCell, "NRF2", nrf2_active);
+    set_custom_data_if_present(pCell, "ABCB1", abcb1_active);
     set_custom_data_if_present(pCell, "time_since_drug_exposure", time_since_drug_exposure);
 }
 
@@ -1338,6 +1398,8 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
     {
         set_custom_data_if_present(pCell, "zeb1_active", 1.0);
         set_custom_data_if_present(pCell, "cdh1_expressed", 0.0);
+        set_custom_data_if_present(pCell, "ZEB1", 1.0);
+        set_custom_data_if_present(pCell, "CDH1", 0.0);
 
         double emt_motility = motility_epithelial;
         double emt_adhesion = adhesion_epithelial;
@@ -1347,6 +1409,7 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
             emt_motility = motility_mesenchymal_low;
             emt_adhesion = adhesion_mesenchymal_low;
             set_custom_data_if_present(pCell, "mmp2_active", 0.0);
+            set_custom_data_if_present(pCell, "MMP2", 0.0);
             set_custom_data_if_present(pCell, "emt_extent", 1.0);
         }
 
@@ -1355,6 +1418,7 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
             emt_motility = motility_mesenchymal_med;
             emt_adhesion = adhesion_mesenchymal_med;
             set_custom_data_if_present(pCell, "mmp2_active", 1.0);
+            set_custom_data_if_present(pCell, "MMP2", 1.0);
             set_custom_data_if_present(pCell, "emt_extent", 2.0);
         }
 
@@ -1363,6 +1427,7 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
             emt_motility = motility_mesenchymal_high;
             emt_adhesion = adhesion_mesenchymal_high;
             set_custom_data_if_present(pCell, "mmp2_active", 1.0);
+            set_custom_data_if_present(pCell, "MMP2", 1.0);
             set_custom_data_if_present(pCell, "emt_extent", 3.0);
         }
 
@@ -1386,6 +1451,9 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
         set_custom_data_if_present(pCell, "zeb1_active", 0.0);
         set_custom_data_if_present(pCell, "cdh1_expressed", 1.0);
         set_custom_data_if_present(pCell, "mmp2_active", 0.0);
+        set_custom_data_if_present(pCell, "ZEB1", 0.0);
+        set_custom_data_if_present(pCell, "CDH1", 1.0);
+        set_custom_data_if_present(pCell, "MMP2", 0.0);
         set_custom_data_if_present(pCell, "emt_extent", 0.0);
         phenotype.motility.migration_speed = motility_epithelial;
         phenotype.mechanics.cell_cell_adhesion_strength = adhesion_epithelial;
@@ -1518,11 +1586,9 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
         phenotype.cycle.data.transition_rate(0, 0) = proliferation;
         set_custom_data_if_present(pCell, "final_prolif_rate", proliferation);
 
-        double effective_drug = intracellular_drug;
-        if (abcb1_active == 1.0)
-        {
-            effective_drug = effective_drug * (1.0 - efflux_drug_reduction);
-        }
+        const double efflux_level = clamp_unit(abcb1_active);
+        const double effective_drug =
+            intracellular_drug * (1.0 - efflux_drug_reduction * efflux_level);
 
         const double base_death_rate = (1.0 - apoptosis_resistance) * 0.001;
 
@@ -1568,10 +1634,8 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
         if (acta2_active == 1.0)
         {
             double caf_rate = caf_proliferation_rate;
-            if (gli1_active == 1.0)
-            {
-                caf_rate = caf_rate * gli1_proliferation_boost;
-            }
+            const double gli1_fraction = clamp_unit(gli1_active);
+            caf_rate = caf_rate * (1.0 + (gli1_proliferation_boost - 1.0) * gli1_fraction);
             // Rule 37: CAFs are physical cells subject to contact inhibition.
             // Crowded CAFs also undergo pressure-induced apoptosis.
             if (mechanical_pressure > stromal_ci_threshold)
@@ -1636,15 +1700,6 @@ void module2_paracrine_secretion(Cell* pCell, Phenotype& phenotype, double dt, M
             tgfb_out = tgfb_out * hif1a_tgfb_amplification_factor;
         }
 
-        const double shh_inhibition_start_time =
-            read_xml_double_or_default("shh_inhibition_start_time", 1e18);
-        const double shh_inhibition_strength =
-            clamp_unit(read_xml_double_or_default("shh_inhibition_strength", 0.0));
-        if (PhysiCell_globals.current_time >= shh_inhibition_start_time)
-        {
-            shh_out = shh_out * (1.0 - shh_inhibition_strength);
-        }
-
         if (tgfb_index >= 0 &&
             tgfb_index < static_cast<int>(phenotype.secretion.secretion_rates.size()))
         {
@@ -1655,14 +1710,19 @@ void module2_paracrine_secretion(Cell* pCell, Phenotype& phenotype, double dt, M
         {
             phenotype.secretion.secretion_rates[shh_index] = shh_out;
         }
+        set_custom_data_if_present(pCell, "TGFB1_expr", clamp_unit(tgfb_out));
+        set_custom_data_if_present(pCell, "SHH_expr", clamp_unit(shh_out));
     }
 
     if (is_stromal && acta2_active == 1.0)
     {
+        const double tgfb_support =
+            clamp_unit(read_custom_data_value_or_default(pCell, "tgfb_secretion_active", 0.0));
         if (tgfb_index >= 0 &&
             tgfb_index < static_cast<int>(phenotype.secretion.secretion_rates.size()))
         {
-            phenotype.secretion.secretion_rates[tgfb_index] = caf_tgfb_secretion_rate;
+            phenotype.secretion.secretion_rates[tgfb_index] =
+                caf_tgfb_secretion_rate * tgfb_support;
         }
         if (shh_index >= 0 &&
             shh_index < static_cast<int>(phenotype.secretion.secretion_rates.size()))
@@ -1731,6 +1791,8 @@ void module6_ecm_production(Cell* pCell, Phenotype& phenotype, double dt, Module
         read_xml_double_or_default("ecm_production_rate_base", 0.0);
     const double ecm_production_rate_boosted =
         read_xml_double_or_default("ecm_production_rate_boosted", 0.0);
+    const double stored_ecm_production_rate =
+        read_custom_data_value_or_default(pCell, "ecm_production_rate", 0.0);
     const double mmp2_degradation_rate =
         read_xml_double_or_default("mmp2_degradation_rate", 0.0);
     const double ecm_natural_decay_rate =
@@ -1740,10 +1802,13 @@ void module6_ecm_production(Cell* pCell, Phenotype& phenotype, double dt, Module
     // PRODUCTION (stromal cells only)
     if (is_stromal && acta2_active == 1.0)
     {
-        double production = ecm_production_rate_base;
-        if (gli1_active == 1.0)
+        double production = stored_ecm_production_rate;
+        if (production <= 0.0)
         {
-            production = ecm_production_rate_boosted;
+            production = stromal_ecm_rate(
+                ecm_production_rate_base,
+                ecm_production_rate_boosted,
+                gli1_active);
         }
 
         const double new_ecm = production * dt;
@@ -1870,7 +1935,9 @@ void module8_mechanical_compaction(Cell* pCell, Phenotype& phenotype, double dt,
     {
         const double compaction_ecm_increment =
             read_xml_double_or_default("compaction_ecm_increment", 0.0);
-        const double compaction = solid_stress * compaction_ecm_increment * dt;
+        const double packing_headroom = clamp_unit(1.0 - ecm_at_voxel);
+        const double compaction = solid_stress * compaction_ecm_increment * dt
+            * collagen_fraction * packing_headroom;
         rho[ecm_index] = std::min(1.0, ecm_at_voxel + compaction);
     }
 }
@@ -1886,6 +1953,20 @@ void ecm_dependent_diffusion_solver(Microenvironment& M, double dt)
     // Recompute voxel-wise effective diffusion coefficients after cell modules
     // have updated ECM, then run the PDE solver and apply local barrier scaling.
     update_ecm_effective_diffusion_coefficients(M);
+
+    g_pre_diffusion_drug_by_voxel.clear();
+    if (drug_index >= 0)
+    {
+        g_pre_diffusion_drug_by_voxel.resize(M.number_of_voxels(), 0.0);
+        for (unsigned int n = 0; n < M.number_of_voxels(); ++n)
+        {
+            const std::vector<double>& rho = M.density_vector(static_cast<int>(n));
+            if (drug_index < static_cast<int>(rho.size()))
+            {
+                g_pre_diffusion_drug_by_voxel[n] = rho[drug_index];
+            }
+        }
+    }
 
     if (g_base_diffusion_decay_solver != NULL &&
         g_base_diffusion_decay_solver != ecm_dependent_diffusion_solver)
@@ -1906,6 +1987,7 @@ void ecm_dependent_diffusion_solver(Microenvironment& M, double dt)
 
     // Apply ECM-driven barrier modifiers voxel-wise.
     apply_ecm_dependent_modifiers(M, dt);
+    g_pre_diffusion_drug_by_voxel.clear();
 }
 
 void register_ecm_dependent_diffusion_solver(void)

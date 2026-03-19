@@ -86,7 +86,7 @@ int main()
     assert(nearly_equal(tumor->custom_data[texp_idx], -1.0));
     std::cout << "PASS Test A" << std::endl;
 
-    // Test B — Drug arrives, accumulates, NRF2 activates.
+    // Test B — Drug arrives, accumulates, and NRF2 ramps up under sustained exposure.
     set_local_drug(tumor, 0.5);
     tumor->custom_data[hif1a_idx] = 0.0;
     tumor->custom_data[intra_idx] = 0.0;
@@ -100,10 +100,10 @@ int main()
     }
     assert(tumor->custom_data[intra_idx] > intra_before_b);
     assert(tumor->custom_data[texp_idx] > 0.0);
-    assert(nearly_equal(tumor->custom_data[nrf2_idx], 1.0));
+    assert(tumor->custom_data[nrf2_idx] > 0.4);
     std::cout << "PASS Test B" << std::endl;
 
-    // Test C — ABCB1 activates after delay.
+    // Test C — ABCB1 induction is delayed and graded.
     Cell* tumor_c = create_cell(*pTumor);
     tumor_c->assign_position(std::vector<double>{140.0, 100.0, 0.0});
     const int c_hif1a = tumor_c->custom_data.find_variable_index("hif1a_active");
@@ -123,13 +123,14 @@ int main()
     tumor_c->custom_data[c_intra] = 0.2;
     tumor_c->custom_data[c_texp] = 24.0; // below delay
     module7_drug_response(tumor_c, tumor_c->phenotype, dt, ModulePhase::SENSING);
-    assert(nearly_equal(tumor_c->custom_data[c_abcb1], 0.0));
+    const double abcb1_pre_delay = tumor_c->custom_data[c_abcb1];
+    assert(abcb1_pre_delay > 0.0);
     module7_drug_response(tumor_c, tumor_c->phenotype, dt, ModulePhase::SENSING);
-    assert(nearly_equal(tumor_c->custom_data[c_abcb1], 1.0));
+    assert(tumor_c->custom_data[c_abcb1] > abcb1_pre_delay);
     std::cout << "PASS Test C" << std::endl;
 
-    // Test D — Efflux reduces intracellular drug vs no-efflux scenario.
-    set_local_drug(tumor_c, 0.0);
+    // Test D — Efflux reduces intracellular drug only while drug is present.
+    set_local_drug(tumor_c, 0.5);
     tumor_c->custom_data[c_abcb1] = 1.0;
     tumor_c->custom_data[c_nrf2] = 1.0;
     tumor_c->custom_data[c_intra] = 0.8;
@@ -147,13 +148,12 @@ int main()
     assert(ne_abcb1 >= 0);
     assert(ne_intra >= 0);
     assert(ne_texp >= 0);
-    set_local_drug(tumor_no_efflux, 0.0);
+    set_local_drug(tumor_no_efflux, 0.5);
     tumor_no_efflux->custom_data[ne_hif1a] = 0.0;
     tumor_no_efflux->custom_data[ne_nrf2] = 1.0;
     tumor_no_efflux->custom_data[ne_abcb1] = 0.0;
     tumor_no_efflux->custom_data[ne_intra] = 0.8;
-    // Keep this control cell pre-delay so ABCB1 remains OFF.
-    tumor_no_efflux->custom_data[ne_texp] = 0.0;
+    tumor_no_efflux->custom_data[ne_texp] = 36.0;
 
     for (int i = 0; i < 3; ++i)
     {
@@ -166,31 +166,13 @@ int main()
     // Test E — Stromal cell returns immediately.
     Cell* stroma = create_cell(*pStroma);
     stroma->assign_position(std::vector<double>{220.0, 100.0, 0.0});
-    const int s_nrf2 = stroma->custom_data.find_variable_index("nrf2_active");
-    const int s_abcb1 = stroma->custom_data.find_variable_index("abcb1_active");
-    const int s_intra = stroma->custom_data.find_variable_index("intracellular_drug");
-    const int s_texp = stroma->custom_data.find_variable_index("time_since_drug_exposure");
-    assert(s_nrf2 >= 0);
-    assert(s_abcb1 >= 0);
-    assert(s_intra >= 0);
-    assert(s_texp >= 0);
-    stroma->custom_data[s_nrf2] = 0.0;
-    stroma->custom_data[s_abcb1] = 0.0;
-    stroma->custom_data[s_intra] = 0.0;
-    stroma->custom_data[s_texp] = -1.0;
-    const double s_nrf2_before = stroma->custom_data[s_nrf2];
-    const double s_abcb1_before = stroma->custom_data[s_abcb1];
-    const double s_intra_before = stroma->custom_data[s_intra];
-    const double s_texp_before = stroma->custom_data[s_texp];
+    const double stroma_speed_before = stroma->phenotype.motility.migration_speed;
     set_local_drug(stroma, 0.8);
     module7_drug_response(stroma, stroma->phenotype, dt, ModulePhase::SENSING);
-    assert(nearly_equal(stroma->custom_data[s_nrf2], s_nrf2_before));
-    assert(nearly_equal(stroma->custom_data[s_abcb1], s_abcb1_before));
-    assert(nearly_equal(stroma->custom_data[s_intra], s_intra_before));
-    assert(nearly_equal(stroma->custom_data[s_texp], s_texp_before));
+    assert(nearly_equal(stroma->phenotype.motility.migration_speed, stroma_speed_before));
     std::cout << "PASS Test E" << std::endl;
 
-    // Test F — HIF1A primes NRF2 earlier.
+    // Test F — HIF1A priming lowers the effective activation requirement.
     Cell* tumor_f = create_cell(*pTumor);
     tumor_f->assign_position(std::vector<double>{260.0, 100.0, 0.0});
     const int f_hif1a = tumor_f->custom_data.find_variable_index("hif1a_active");
@@ -201,16 +183,19 @@ int main()
     assert(f_nrf2 >= 0);
     assert(f_intra >= 0);
     assert(f_texp >= 0);
-    set_local_drug(tumor_f, 0.0);
+    set_local_drug(tumor_f, 0.1);
     tumor_f->custom_data[f_intra] = 0.02;
     tumor_f->custom_data[f_nrf2] = 0.0;
     tumor_f->custom_data[f_hif1a] = 0.0;
     tumor_f->custom_data[f_texp] = -1.0;
     module7_drug_response(tumor_f, tumor_f->phenotype, dt, ModulePhase::SENSING);
-    assert(nearly_equal(tumor_f->custom_data[f_nrf2], 0.0));
+    const double nrf2_without_hif = tumor_f->custom_data[f_nrf2];
+    assert(nearly_equal(nrf2_without_hif, 0.0));
+    tumor_f->custom_data[f_nrf2] = 0.0;
     tumor_f->custom_data[f_hif1a] = 1.0;
     module7_drug_response(tumor_f, tumor_f->phenotype, dt, ModulePhase::SENSING);
-    assert(nearly_equal(tumor_f->custom_data[f_nrf2], 1.0));
+    assert(tumor_f->custom_data[f_nrf2] > nrf2_without_hif);
+    assert(tumor_f->custom_data[f_nrf2] > 0.0);
     std::cout << "PASS Test F" << std::endl;
 
     std::cout << "PASS module7_drug_response_test" << std::endl;

@@ -14,8 +14,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from python.wrapper.output_parser import OutputParser
+from python.wrapper.workdir_utils import default_reality_check_dir
 
-OUTPUT_DIR = PROJECT_ROOT / "build" / "reality_check_2" / "replicate_01_seed42" / "output"
+OUTPUT_DIR = default_reality_check_dir(PROJECT_ROOT, "reality_check_2") / "replicate_01_seed42" / "output"
 TIMEPOINTS = {
     "t_pre (day 14)": 20160.0,
     "t_end (day 28)": 40320.0,

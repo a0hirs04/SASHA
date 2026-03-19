@@ -56,7 +56,13 @@ int main()
     rho_shh_only[shh_index] = 0.7;
     module3_stromal_activation(cell_shh_only, cell_shh_only->phenotype, 1.0, ModulePhase::SENSING);
     assert(cell_shh_only->custom_data[shh_only_acta2] == 1.0);
-    assert(cell_shh_only->custom_data[shh_only_gli1] == 1.0);
+    assert(cell_shh_only->custom_data[shh_only_gli1] > 0.9);
+    const int shh_only_tgfb = cell_shh_only->custom_data.find_variable_index("tgfb_secretion_active");
+    const int shh_only_ecm = cell_shh_only->custom_data.find_variable_index("ecm_production_rate");
+    assert(shh_only_tgfb >= 0);
+    assert(shh_only_ecm >= 0);
+    assert(cell_shh_only->custom_data[shh_only_tgfb] > 0.9);
+    assert(cell_shh_only->custom_data[shh_only_ecm] > 0.01);
     std::cout << "PASS Rule22_B_SHH_alone" << std::endl;
 
     // Rule 22-C: both together below individual level but above combined threshold.
@@ -89,8 +95,12 @@ int main()
 
     const int acta2_idx_a = cell_a->custom_data.find_variable_index("acta2_active");
     const int gli1_idx_a = cell_a->custom_data.find_variable_index("gli1_active");
+    const int tgfb_sec_idx_a = cell_a->custom_data.find_variable_index("tgfb_secretion_active");
+    const int ecm_prod_idx_a = cell_a->custom_data.find_variable_index("ecm_production_rate");
     assert(acta2_idx_a >= 0);
     assert(gli1_idx_a >= 0);
+    assert(tgfb_sec_idx_a >= 0);
+    assert(ecm_prod_idx_a >= 0);
 
     std::vector<double>& densities_a = cell_a->nearest_density_vector();
     densities_a[tgfb_index] = 0.5;
@@ -98,7 +108,10 @@ int main()
     module3_stromal_activation(cell_a, cell_a->phenotype, 1.0, ModulePhase::SENSING);
 
     assert(cell_a->custom_data[acta2_idx_a] == 1.0);
-    assert(cell_a->custom_data[gli1_idx_a] == 1.0);
+    assert(cell_a->custom_data[gli1_idx_a] > 0.8);
+    assert(cell_a->custom_data[tgfb_sec_idx_a] > 0.0);
+    const double ecm_prod_with_shh = cell_a->custom_data[ecm_prod_idx_a];
+    assert(ecm_prod_with_shh > 0.0);
 
     // Case 2: activated CAF with SHH gone => ACTA2 stays on, GLI1 reverts off.
     densities_a[shh_index] = 0.0;
@@ -106,6 +119,8 @@ int main()
 
     assert(cell_a->custom_data[acta2_idx_a] == 1.0);
     assert(cell_a->custom_data[gli1_idx_a] == 0.0);
+    assert(cell_a->custom_data[tgfb_sec_idx_a] == 0.0);
+    assert(cell_a->custom_data[ecm_prod_idx_a] < ecm_prod_with_shh);
 
     // Case 3: below activation threshold => ACTA2 remains off.
     Cell* cell_b = create_cell(*pStroma);
@@ -130,6 +145,7 @@ int main()
     }
     assert(cell_a->custom_data[acta2_idx_a] == 1.0);
     assert(cell_a->custom_data[gli1_idx_a] == 0.0);
+    assert(cell_a->custom_data[tgfb_sec_idx_a] == 0.0);
     std::cout << "PASS Rule23_irreversible_ACTA2" << std::endl;
 
     std::cout << "PASS module3_stromal_activation_test" << std::endl;

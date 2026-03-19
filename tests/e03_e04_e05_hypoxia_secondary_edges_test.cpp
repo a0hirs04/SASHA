@@ -131,7 +131,7 @@ int main()
 
     const bool pass_e05_positive =
         nearly_equal(e05_a->custom_data[nrf2_a], 0.0) &&
-        nearly_equal(e05_b->custom_data[nrf2_b], 1.0);
+        (e05_b->custom_data[nrf2_b] > e05_a->custom_data[nrf2_a]);
 
     // Mandatory negative: with no intracellular drug, HIF1A alone must not activate NRF2.
     Cell* e05_neg = create_cell(*pTumor);

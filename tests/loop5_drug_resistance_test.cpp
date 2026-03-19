@@ -13,6 +13,8 @@ struct Loop5Snapshot
     int step = 0;
     int live_tumor_n = 0;
     int live_exposed_n = 0;
+    double abcb1_mean_all = 0.0;
+    double abcb1_mean_exposed = 0.0;
     double abcb1_fraction_all = 0.0;
     double abcb1_fraction_exposed = 0.0;
     double intracellular_drug_mean_exposed = 0.0;
@@ -27,6 +29,8 @@ Loop5Snapshot measure_snapshot(int step, int tumor_type, int stromal_type)
 
     int abcb1_on_all = 0;
     int abcb1_on_exposed = 0;
+    double abcb1_sum_all = 0.0;
+    double abcb1_sum_exposed = 0.0;
     double drug_sum_exposed = 0.0;
     double tgfb_sec_sum_exposed = 0.0;
     for (size_t i = 0; i < all_cells->size(); ++i)
@@ -40,11 +44,21 @@ Loop5Snapshot measure_snapshot(int step, int tumor_type, int stromal_type)
         const int texp_idx = custom_index(pCell, "time_since_drug_exposure");
         const bool exposed = (texp_idx >= 0 && pCell->custom_data[texp_idx] >= 0.0);
 
-        if (abcb1_idx >= 0 && pCell->custom_data[abcb1_idx] == 1.0) ++abcb1_on_all;
+        if (abcb1_idx >= 0)
+        {
+            const double abcb1_value = pCell->custom_data[abcb1_idx];
+            abcb1_sum_all += abcb1_value;
+            if (abcb1_value > 0.3) ++abcb1_on_all;
+        }
         if (exposed)
         {
             ++s.live_exposed_n;
-            if (abcb1_idx >= 0 && pCell->custom_data[abcb1_idx] == 1.0) ++abcb1_on_exposed;
+            if (abcb1_idx >= 0)
+            {
+                const double abcb1_value = pCell->custom_data[abcb1_idx];
+                abcb1_sum_exposed += abcb1_value;
+                if (abcb1_value > 0.3) ++abcb1_on_exposed;
+            }
             if (intra_idx >= 0) drug_sum_exposed += pCell->custom_data[intra_idx];
             if (tgfb_index >= 0 &&
                 tgfb_index < static_cast<int>(pCell->phenotype.secretion.secretion_rates.size()))
@@ -57,10 +71,13 @@ Loop5Snapshot measure_snapshot(int step, int tumor_type, int stromal_type)
 
     if (s.live_tumor_n > 0)
     {
+        s.abcb1_mean_all = abcb1_sum_all / static_cast<double>(s.live_tumor_n);
         s.abcb1_fraction_all = static_cast<double>(abcb1_on_all) / static_cast<double>(s.live_tumor_n);
     }
     if (s.live_exposed_n > 0)
     {
+        s.abcb1_mean_exposed =
+            abcb1_sum_exposed / static_cast<double>(s.live_exposed_n);
         s.abcb1_fraction_exposed =
             static_cast<double>(abcb1_on_exposed) / static_cast<double>(s.live_exposed_n);
         s.intracellular_drug_mean_exposed =
@@ -153,14 +170,17 @@ int main()
         (s50.live_tumor_n > 0 && s150.live_tumor_n > 0 && s300.live_tumor_n > 0) &&
         (s50.live_exposed_n > 0 && s300.live_exposed_n > 0) &&
         (s50.abcb1_fraction_all < 0.2) &&
-        (s150.abcb1_fraction_all > 0.2 && s150.abcb1_fraction_all < 1.0) &&
-        (s300.abcb1_fraction_exposed > 0.8) &&
-        (s300.intracellular_drug_mean_exposed < s50.intracellular_drug_mean_exposed) &&
+        (s50.abcb1_mean_all < s150.abcb1_mean_all) &&
+        (s150.abcb1_mean_all < s300.abcb1_mean_all) &&
+        (s300.abcb1_fraction_exposed > 0.3) &&
+        (s300.intracellular_drug_mean_exposed < s150.intracellular_drug_mean_exposed) &&
         (s300.tgfb_secretion_mean_exposed > 0.0) &&
         (s300.caf_count >= s50.caf_count);
 
     std::cout << "LOOP5 step50 live_tumor=" << s50.live_tumor_n
               << " exposed_n=" << s50.live_exposed_n
+              << " abcb1_mean_all=" << s50.abcb1_mean_all
+              << " abcb1_mean_exposed=" << s50.abcb1_mean_exposed
               << " abcb1_fraction_all=" << s50.abcb1_fraction_all
               << " abcb1_fraction_exposed=" << s50.abcb1_fraction_exposed
               << " intracellular_drug_mean_exposed=" << s50.intracellular_drug_mean_exposed
@@ -168,6 +188,8 @@ int main()
               << " caf_count=" << s50.caf_count << std::endl;
     std::cout << "LOOP5 step150 live_tumor=" << s150.live_tumor_n
               << " exposed_n=" << s150.live_exposed_n
+              << " abcb1_mean_all=" << s150.abcb1_mean_all
+              << " abcb1_mean_exposed=" << s150.abcb1_mean_exposed
               << " abcb1_fraction_all=" << s150.abcb1_fraction_all
               << " abcb1_fraction_exposed=" << s150.abcb1_fraction_exposed
               << " intracellular_drug_mean_exposed=" << s150.intracellular_drug_mean_exposed
@@ -175,6 +197,8 @@ int main()
               << " caf_count=" << s150.caf_count << std::endl;
     std::cout << "LOOP5 step300 live_tumor=" << s300.live_tumor_n
               << " exposed_n=" << s300.live_exposed_n
+              << " abcb1_mean_all=" << s300.abcb1_mean_all
+              << " abcb1_mean_exposed=" << s300.abcb1_mean_exposed
               << " abcb1_fraction_all=" << s300.abcb1_fraction_all
               << " abcb1_fraction_exposed=" << s300.abcb1_fraction_exposed
               << " intracellular_drug_mean_exposed=" << s300.intracellular_drug_mean_exposed

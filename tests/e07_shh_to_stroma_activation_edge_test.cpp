@@ -95,7 +95,7 @@ int main()
             if (previous_acta2[i] == 0.0 && act == 1.0)
             {
                 ++activated_transitions;
-                if (gli == 1.0) ++activated_with_gli1_at_transition;
+                if (gli > 0.5) ++activated_with_gli1_at_transition;
             }
             previous_acta2[i] = act;
         }

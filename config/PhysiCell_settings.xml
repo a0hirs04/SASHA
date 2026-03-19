@@ -790,7 +790,7 @@
         <tgfb_activation_threshold type="double" units="dimensionless"
             description="Minimum tgfb concentration to trigger stromal CAF activation">0.1</tgfb_activation_threshold>
         <shh_activation_threshold type="double" units="dimensionless"
-            description="Minimum shh concentration to activate GLI1 in stromal cells">0.05</shh_activation_threshold>
+            description="Minimum stromal SHH signal needed to sustain GLI1 activation on the live diffusive field scale">1e-5</shh_activation_threshold>
         <oxygen_necrosis_threshold type="double" units="mmHg"
             description="Oxygen level below which necrosis rate is upregulated">5.0</oxygen_necrosis_threshold>
         <oxygen_hypoxia_threshold type="double" units="mmHg"
@@ -806,9 +806,9 @@
 
         <!-- SHH inhibition intervention (RC3 / vismodegib proxy) -->
         <shh_inhibition_start_time type="double" units="min"
-            description="Simulation time at which tumor SHH secretion inhibition starts">1e18</shh_inhibition_start_time>
+            description="Simulation time at which stromal SHH-pathway inhibition starts">1e18</shh_inhibition_start_time>
         <shh_inhibition_strength type="double" units="dimensionless"
-            description="Fractional inhibition of tumor SHH secretion after start time (0-1)">0.0</shh_inhibition_strength>
+            description="Fractional blockade of stromal SHH sensing after start time (0-1)">0.0</shh_inhibition_strength>
 
         <!-- 13-knob calibration profile selector -->
         <calibration_profile type="string" units="none"
@@ -846,7 +846,7 @@
         <stromal_contact_inhibition_threshold type="double" units="dimensionless"
             description="Mechanical pressure threshold above which stromal (CAF) proliferation is arrested — lower than tumor because stromal cells have intact checkpoints">0.8</stromal_contact_inhibition_threshold>
         <drug_kill_coefficient type="double" units="1/min"
-            description="Maps effective intracellular drug to apoptosis rate contribution">0.0008</drug_kill_coefficient>
+            description="Maps effective intracellular drug to apoptosis rate contribution">0.01</drug_kill_coefficient>
         <efflux_drug_reduction type="double" units="dimensionless"
             description="Fractional reduction in effective drug when abcb1_active=1">0.7</efflux_drug_reduction>
         <caf_proliferation_rate type="double" units="1/min"
@@ -854,7 +854,7 @@
         <caf_base_death_rate type="double" units="1/min"
             description="Baseline apoptosis rate for uncrowded activated CAFs">0.0</caf_base_death_rate>
         <caf_crowded_death_rate type="double" units="1/min"
-            description="Apoptosis rate for contact-inhibited CAFs under mechanical compression">0.0001</caf_crowded_death_rate>
+            description="Apoptosis rate for contact-inhibited CAFs under mechanical compression">0.0</caf_crowded_death_rate>
         <gli1_proliferation_boost type="double" units="dimensionless"
             description="CAF proliferation multiplier when gli1_active=1">1.3</gli1_proliferation_boost>
         <psc_proliferation_rate type="double" units="1/min"

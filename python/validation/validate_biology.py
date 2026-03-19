@@ -425,6 +425,7 @@ class BiologyValidator:
 
     def _compute_extras(self, parser: OutputParser, metrics: SimulationMetrics) -> Dict[str, Any]:
         extras: Dict[str, Any] = {}
+        nadir_source_file = None
 
         try:
             df = parser.parse_timeseries()
@@ -439,10 +440,18 @@ class BiologyValidator:
                     extras["tumor_count_end"] > extras["tumor_count_min"]
                 )
                 nadir_idx = int(df["tumor_count"].idxmin())
+                if "source_file" in df.columns:
+                    nadir_source_file = df["source_file"].iloc[nadir_idx]
                 extras["mean_ecm_at_nadir"] = float(df["mean_ecm"].iloc[nadir_idx]) if "mean_ecm" in df.columns else math.nan
                 extras["activated_cafs_at_nadir"] = (
                     float(df["activated_cafs"].iloc[nadir_idx]) if "activated_cafs" in df.columns else math.nan
                 )
+                extras["treatment_nadir_tumor_count"] = float(extras["tumor_count_min"])
+                extras["post_nadir_regrowth_cells"] = float(
+                    extras["tumor_count_end"] - extras["tumor_count_min"]
+                )
+                if "time" in df.columns:
+                    extras["treatment_nadir_time"] = float(df["time"].iloc[nadir_idx])
                 extras.update(self._timeseries_snapshots(df))
                 if "activated_cafs" in df.columns and "time" in df.columns:
                     first_on = df[df["activated_cafs"] > 0]
@@ -459,6 +468,9 @@ class BiologyValidator:
                 extras["tumor_count_min"] = math.nan
                 extras["tumor_count_end"] = math.nan
                 extras["tumor_regrowth_after_nadir"] = False
+                extras["treatment_nadir_tumor_count"] = math.nan
+                extras["post_nadir_regrowth_cells"] = math.nan
+                extras["treatment_nadir_time"] = math.nan
                 extras["time_to_first_caf_activation"] = math.nan
                 extras["total_sim_time"] = math.nan
         except Exception as exc:  # pragma: no cover
@@ -466,16 +478,46 @@ class BiologyValidator:
             extras["timeseries_rows"] = 0
 
         # Gene-level summary for resistance scenario (NRF2 / ABCB1 in surviving tumor cells).
-        extras["mean_nrf2_surviving_tumor"] = self._mean_gene_in_surviving_tumor(parser, "NRF2")
-        extras["mean_abcb1_surviving_tumor"] = self._mean_gene_in_surviving_tumor(parser, "ABCB1")
+        extras["mean_nrf2_surviving_tumor"] = self._mean_gene_in_surviving_tumor(
+            parser, ("nrf2_active", "NRF2")
+        )
+        extras["mean_abcb1_surviving_tumor"] = self._mean_gene_in_surviving_tumor(
+            parser, ("abcb1_active", "ABCB1")
+        )
+        extras["mean_intracellular_drug_surviving_tumor"] = self._mean_gene_in_surviving_tumor(
+            parser, ("intracellular_drug",)
+        )
         extras["activated_caf_fraction"] = (
             float(metrics.activated_cafs) / float(metrics.total_stromal_cells)
             if metrics.total_stromal_cells > 0
             else math.nan
         )
         extras.update(self._compute_spatial_emt_metrics(parser))
-        extras.update(self._compute_sanctuary_metrics(parser))
-        extras.update(self._compute_snapshot_profiles(parser))
+        sanctuary_metrics = self._compute_sanctuary_metrics(parser)
+        extras.update(sanctuary_metrics)
+        extras["tumor_local_extracellular_drug_surviving_tumor"] = float(
+            sanctuary_metrics.get("live_mean_local_drug", math.nan)
+        )
+        extras["tumor_local_extracellular_drug_all_tumor"] = float(
+            sanctuary_metrics.get("all_mean_local_drug", math.nan)
+        )
+        snapshot_profiles = self._compute_snapshot_profiles(parser)
+        extras.update(snapshot_profiles)
+        if nadir_source_file:
+            try:
+                nadir_snapshot = parser._read_physicell_xml(nadir_source_file)  # noqa: SLF001
+                nadir_metrics = self._snapshot_metrics(nadir_snapshot)
+                for key, value in nadir_metrics.items():
+                    extras[f"{key}_nadir"] = value
+            except Exception:  # pragma: no cover
+                pass
+        extras["late_vs_nadir_ecm_recovery"] = (
+            float(extras.get("mean_ecm_late", math.nan)) - float(extras.get("mean_ecm_at_nadir", math.nan))
+        )
+        extras["late_vs_nadir_barrier_recovery"] = (
+            float(extras.get("barrier_maturity_index_late", math.nan))
+            - float(extras.get("barrier_maturity_index_nadir", math.nan))
+        )
         return extras
 
     @staticmethod
@@ -524,8 +566,8 @@ class BiologyValidator:
         cell_type = self._row_by_label(matrix, label_name_map, "cell_type")
         dead = self._row_by_label(matrix, label_name_map, "dead")
         death_model = self._row_by_label(matrix, label_name_map, "current_death_model")
-        is_mesenchymal = self._row_by_label(matrix, label_name_map, "is_mesenchymal")
-        cdh1 = self._row_by_label(matrix, label_name_map, "CDH1")
+        is_mesenchymal = self._row_by_any_label(matrix, label_name_map, ("is_mesenchymal", "zeb1_active", "ZEB1"))
+        cdh1 = self._row_by_any_label(matrix, label_name_map, ("CDH1", "cdh1_expressed"))
         positions = self._positions_by_label(matrix, label_name_map, "position")
 
         if cell_type is None or is_mesenchymal is None or positions.size == 0:
@@ -676,9 +718,9 @@ class BiologyValidator:
         cell_type = self._row_by_label(matrix, labels, "cell_type")
         dead = self._row_by_label(matrix, labels, "dead")
         death_model = self._row_by_label(matrix, labels, "current_death_model")
-        hif1a = self._row_by_label(matrix, labels, "HIF1A")
-        cdh1 = self._row_by_label(matrix, labels, "CDH1")
-        is_mes = self._row_by_label(matrix, labels, "is_mesenchymal")
+        hif1a = self._row_by_any_label(matrix, labels, ("HIF1A", "hif1a_active"))
+        cdh1 = self._row_by_any_label(matrix, labels, ("CDH1", "cdh1_expressed"))
+        is_mes = self._row_by_any_label(matrix, labels, ("is_mesenchymal", "zeb1_active", "ZEB1"))
         pos = self._positions_by_label(matrix, labels, "position")
         oxygen = micro_vals.get("oxygen")
         ecm = micro_vals.get("ecm_density")
@@ -823,7 +865,7 @@ class BiologyValidator:
         nearest_idx = np.argmin(d2, axis=1)
         return np.asarray(values[nearest_idx], dtype=float)
 
-    def _mean_gene_in_surviving_tumor(self, parser: OutputParser, gene_name: str) -> float:
+    def _mean_gene_in_surviving_tumor(self, parser: OutputParser, gene_names) -> float:
         try:
             final_xml = parser._find_final_snapshot_xml()  # noqa: SLF001
             snapshot = parser._read_physicell_xml(final_xml)  # noqa: SLF001
@@ -832,7 +874,7 @@ class BiologyValidator:
         except Exception:  # pragma: no cover
             return math.nan
 
-        gene_row = self._row_by_label(matrix, label_name_map, gene_name)
+        gene_row = self._row_by_any_label(matrix, label_name_map, gene_names)
         cell_type = self._row_by_label(matrix, label_name_map, "cell_type")
         dead = self._row_by_label(matrix, label_name_map, "dead")
         death_model = self._row_by_label(matrix, label_name_map, "current_death_model")
@@ -849,6 +891,16 @@ class BiologyValidator:
         if not tumor_mask.any():
             return math.nan
         return float(gene_row[tumor_mask].mean())
+
+    @classmethod
+    def _row_by_any_label(cls, matrix, label_name_map: Dict[str, Dict[str, Any]], labels):
+        if isinstance(labels, str):
+            labels = (labels,)
+        for label in labels:
+            row = cls._row_by_label(matrix, label_name_map, label)
+            if row is not None:
+                return row
+        return None
 
     @staticmethod
     def _row_by_label(matrix, label_name_map: Dict[str, Dict[str, Any]], label: str):

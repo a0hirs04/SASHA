@@ -119,7 +119,7 @@ int main()
         caf->phenotype.death.find_death_model_index(PhysiCell_constants::apoptosis_death_model);
     assert(caf_apoptosis_idx >= 0);
     assert(nearly_equal(caf->phenotype.death.rates[caf_apoptosis_idx], 0.0));
-    assert(nearly_equal(custom_value(caf, "tgfb_secretion_active"), 1.0));
+    assert(custom_value(caf, "tgfb_secretion_active") > 0.0);
     assert(caf->phenotype.secretion.secretion_rates[tgfb_index] > 0.0);
     assert(nearly_equal(caf->phenotype.secretion.secretion_rates[shh_index], 0.0));
 

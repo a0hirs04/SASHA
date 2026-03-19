@@ -37,6 +37,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from python.wrapper.output_parser import OutputParser
+from python.wrapper.workdir_utils import default_reality_check_dir
 
 BINARY = PROJECT_ROOT / "stroma_world"
 BASE_CONFIG = PROJECT_ROOT / "config" / "PhysiCell_settings.xml"
@@ -328,22 +329,22 @@ def _parse_snapshot(output_dir: Path, target_time: float) -> Optional[Snapshot]:
     )
 
 
-def _make_run_specs(work_dir: Path) -> List[RunSpec]:
+def _make_run_specs(work_dir: Path, seeds: List[int]) -> List[RunSpec]:
     specs: List[RunSpec] = []
     for arm in ARMS:
-        for i, seed in enumerate(SEEDS):
+        for i, seed in enumerate(seeds):
             run_dir = work_dir / f"arm_{arm.key}" / f"replicate_{i+1:02d}_seed{seed}"
             cfg = run_dir / "config.xml"
             specs.append(RunSpec(arm=arm, replicate_index=i, seed=seed, run_dir=run_dir, config_path=cfg))
     return specs
 
 
-def _prepare_runs(work_dir: Path) -> List[RunSpec]:
+def _prepare_runs(work_dir: Path, seeds: List[int]) -> List[RunSpec]:
     if work_dir.exists():
         shutil.rmtree(work_dir)
     work_dir.mkdir(parents=True)
 
-    specs = _make_run_specs(work_dir)
+    specs = _make_run_specs(work_dir, seeds)
     for spec in specs:
         spec.run_dir.mkdir(parents=True, exist_ok=True)
         out_dir = spec.run_dir / "output"
@@ -362,12 +363,12 @@ def _prepare_runs(work_dir: Path) -> List[RunSpec]:
     return specs
 
 
-def _dry_run_report(specs: List[RunSpec]) -> None:
+def _dry_run_report(specs: List[RunSpec], seeds: List[int]) -> None:
     print("=" * 78)
     print("RC3 DRY RUN PLAN (no jobs submitted)")
     print("=" * 78)
-    print(f"Total runs: {len(specs)}  ({len(ARMS)} arms x {NUM_REPLICATES} replicates)")
-    print(f"Seeds: {SEEDS}")
+    print(f"Total runs: {len(specs)}  ({len(ARMS)} arms x {len(seeds)} replicates)")
+    print(f"Seeds: {seeds}")
     print(f"Timeline: barrier 0-{T_PRE:.0f} min, intervention {T_PRE:.0f}-{T_END:.0f} min")
     print()
     for arm in ARMS:
@@ -402,7 +403,7 @@ def _median(xs: List[float]) -> float:
     return float(np.median(np.array(xs, dtype=float))) if xs else float("nan")
 
 
-def _report(results: List[RunResult]) -> int:
+def _report(results: List[RunResult], seeds: List[int], quorum: int) -> int:
     print("\n" + "=" * 78)
     print("RC3 RESULTS")
     print("=" * 78)
@@ -418,7 +419,7 @@ def _report(results: List[RunResult]) -> int:
         finals = [float(r.snap_final.n_tumor) for r in arm_results]
         peris = [float(r.snap_final.peri_ecm) for r in arm_results if math.isfinite(r.snap_final.peri_ecm)]
         print(f"\nArm {arm.key} ({arm.name})")
-        print(f"  successful runs: {len(arm_results)}/{NUM_REPLICATES}")
+        print(f"  successful runs: {len(arm_results)}/{len(seeds)}")
         print(f"  final tumor counts: {finals if finals else 'n/a'}")
         print(f"  median final tumor count: {_median(finals):.2f}")
         if peris:
@@ -435,7 +436,7 @@ def _report(results: List[RunResult]) -> int:
     compared = 0
 
     print("\nPer-seed paired final tumor counts:")
-    for seed in SEEDS:
+    for seed in seeds:
         ra = by_seed_arm.get((seed, "A"))
         rb = by_seed_arm.get((seed, "B"))
         rc = by_seed_arm.get((seed, "C"))
@@ -461,14 +462,14 @@ def _report(results: List[RunResult]) -> int:
         print(f"  seed={seed}: A={a}, B={b}, C={c} | "
               f"B>A={'Y' if b_gt_a else 'N'}  C<A={'Y' if c_lt_a else 'N'}  C<A<B={'Y' if full_rank else 'N'}")
 
-    print("\nRank checks (quorum >= 4/5):")
-    print(f"  C < A < B : {rank_count}/{NUM_REPLICATES}")
-    print(f"  B > A     : {b_gt_a_count}/{NUM_REPLICATES}")
-    print(f"  C < A     : {c_lt_a_count}/{NUM_REPLICATES}")
+    print(f"\nRank checks (quorum >= {quorum}/{len(seeds)}):")
+    print(f"  C < A < B : {rank_count}/{len(seeds)}")
+    print(f"  B > A     : {b_gt_a_count}/{len(seeds)}")
+    print(f"  C < A     : {c_lt_a_count}/{len(seeds)}")
 
-    pass_full = rank_count >= QUORUM
-    pass_ba = b_gt_a_count >= QUORUM
-    pass_ca = c_lt_a_count >= QUORUM
+    pass_full = rank_count >= quorum
+    pass_ba = b_gt_a_count >= quorum
+    pass_ca = c_lt_a_count >= quorum
     overall_pass = pass_full and pass_ba and pass_ca
 
     print("\nOutcome:")
@@ -478,55 +479,73 @@ def _report(results: List[RunResult]) -> int:
         print("  Hint: If B ≤ A, mechanical confinement may be too weak or SHH->ECM coupling is broken.")
     if not pass_ca:
         print("  Hint: If C ≥ A, drug may not be benefiting from thinner stroma (check ECM->drug diffusion coupling).")
-    if c_lt_b_count < QUORUM:
+    if c_lt_b_count < quorum:
         print("  Hint: If C ≥ B, drug may be too weak or schedule is wrong.")
 
-    if compared < NUM_REPLICATES:
-        print(f"  Note: only {compared}/{NUM_REPLICATES} seeds had complete paired data.")
+    if compared < len(seeds):
+        print(f"  Note: only {compared}/{len(seeds)} seeds had complete paired data.")
 
     return 0 if overall_pass else 1
 
 
 def main() -> int:
+    default_work_dir = default_reality_check_dir(PROJECT_ROOT, "reality_check_3")
     parser = argparse.ArgumentParser(description="Run Reality Check 3")
+    parser.add_argument("--seeds", nargs="+", type=int, default=SEEDS,
+                        help="Seed list to run/evaluate (default: full 5-seed gate)")
+    parser.add_argument("--work-dir", type=Path, default=default_work_dir,
+                        help="Root directory for RC3 outputs")
+    parser.add_argument("--quorum", type=int, default=None,
+                        help="Pass threshold; defaults to min(default quorum, number of seeds)")
     parser.add_argument("--dry-run", action="store_true", help="Plan all runs and print paths without submitting")
     parser.add_argument("--evaluate-only", action="store_true",
                         help="Evaluate existing output (no submission, no cleanup)")
     args = parser.parse_args()
 
-    if not BINARY.exists():
-        print(f"ERROR: binary not found at {BINARY}")
+    seeds = list(dict.fromkeys(args.seeds))
+    if not seeds:
+        print("ERROR: at least one seed is required")
         return 1
-    if not BASE_CONFIG.exists():
-        print(f"ERROR: config not found at {BASE_CONFIG}")
+    quorum = args.quorum if args.quorum is not None else min(QUORUM, len(seeds))
+    if quorum < 1 or quorum > len(seeds):
+        print(f"ERROR: quorum must be in [1, {len(seeds)}], got {quorum}")
         return 1
 
-    work_dir = PROJECT_ROOT / "build" / "reality_check_3"
+    if not args.evaluate_only and not args.dry_run:
+        if not BINARY.exists():
+            print(f"ERROR: binary not found at {BINARY}")
+            return 1
+        if not BASE_CONFIG.exists():
+            print(f"ERROR: config not found at {BASE_CONFIG}")
+            return 1
+
+    work_dir = args.work_dir.resolve()
 
     print("=" * 78)
     print("REALITY CHECK 3 — SHH inhibition paradox")
-    print(f"Arms: {len(ARMS)} | Replicates/arm: {NUM_REPLICATES} | Total runs: {len(ARMS) * NUM_REPLICATES}")
+    print(f"Arms: {len(ARMS)} | Replicates/arm: {len(seeds)} | Total runs: {len(ARMS) * len(seeds)}")
     print(f"Timeline: barrier 0-{T_PRE:.0f} min | intervention {T_PRE:.0f}-{T_END:.0f} min")
     print(f"SLURM: partition={SLURM_PARTITION} cpus={SLURM_CPUS} mem={SLURM_MEM} time={SLURM_TIME}")
-    print(f"Quorum: >= {QUORUM}/{NUM_REPLICATES}")
+    print(f"Quorum: >= {quorum}/{len(seeds)}")
+    print(f"Work dir: {work_dir}")
     print("=" * 78)
 
     if args.evaluate_only:
         if not work_dir.exists():
             print(f"ERROR: work_dir {work_dir} does not exist — nothing to evaluate")
             return 1
-        specs = _make_run_specs(work_dir)
+        specs = _make_run_specs(work_dir, seeds)
         print("Evaluate-only mode — skipping submission, reading existing output ...")
         results: List[RunResult] = []
         for spec in specs:
             print(f"Evaluating arm {spec.arm.key} rep {spec.replicate_index+1} seed={spec.seed} ...")
             results.append(_evaluate_run(spec, "COMPLETED", 0))
-        return _report(results)
+        return _report(results, seeds, quorum)
 
-    specs = _prepare_runs(work_dir)
+    specs = _prepare_runs(work_dir, seeds)
 
     if args.dry_run:
-        _dry_run_report(specs)
+        _dry_run_report(specs, seeds)
         return 0
 
     job_to_spec: Dict[str, RunSpec] = {}
@@ -565,7 +584,7 @@ def main() -> int:
         print(f"Evaluating arm {spec.arm.key} rep {spec.replicate_index+1} seed={spec.seed} ...")
         results.append(_evaluate_run(spec, state, exit_code))
 
-    return _report(results)
+    return _report(results, seeds, quorum)
 
 
 if __name__ == "__main__":
