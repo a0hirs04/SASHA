@@ -78,7 +78,7 @@ int main()
     const int voxel_a = voxel_index_for_cell(caf_a);
     set_ecm_at_voxel(voxel_a, 0.0, 0.5);
     module6_ecm_production(caf_a, caf_a->phenotype, dt, ModulePhase::WRITE);
-    assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.0012));
+    assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.012));
     assert(nearly_equal(get_ecm_ha_fraction(voxel_a), 0.6));
     std::cout << "PASS Test A" << std::endl;
     std::cout << "PASS Rule25_caf_produces_HA_and_collagen" << std::endl;
@@ -87,8 +87,14 @@ int main()
     caf_a->custom_data[a_gli1] = 1.0;
     set_ecm_at_voxel(voxel_a, 0.0, 0.5);
     module6_ecm_production(caf_a, caf_a->phenotype, dt, ModulePhase::WRITE);
-    assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), 0.09));
-    assert(get_ecm_density_at_voxel(voxel_a) > 0.0012);
+    const double expected_gli1_support = 0.99;
+    const double expected_rate_floor = 0.01 * 0.2;
+    const double expected_rate_ceiling = 0.015;
+    const double expected_boosted_density =
+        dt * (expected_rate_floor +
+              (expected_rate_ceiling - expected_rate_floor) * expected_gli1_support);
+    assert(nearly_equal(get_ecm_density_at_voxel(voxel_a), expected_boosted_density));
+    assert(get_ecm_density_at_voxel(voxel_a) > 0.012);
     std::cout << "PASS Test B" << std::endl;
     std::cout << "PASS Rule26_gli1_boosts_ecm_production" << std::endl;
 
@@ -185,6 +191,29 @@ int main()
     intervention_state.col_degrade_active = false;
     intervention_state.ha_degrade_strength = 0.0;
     intervention_state.col_degrade_strength = 0.0;
+
+    // Test I - SHH inhibition removes matrix maintenance in GLI1-off CAFs.
+    parameters.doubles("ecm_production_rate_base") = 0.01;
+    parameters.doubles("ecm_production_rate_boosted") = 0.015;
+    parameters.doubles("ecm_natural_decay_rate") = 0.01;
+    parameters.doubles("shh_inhibition_start_time") = 0.0;
+    parameters.doubles("shh_inhibition_strength") = 1.0;
+    PhysiCell_globals.current_time = 60.0;
+
+    Cell* caf_i = create_cell(*pStroma);
+    caf_i->assign_position(std::vector<double>{340.0, 100.0, 0.0});
+    const int i_acta2 = caf_i->custom_data.find_variable_index("acta2_active");
+    const int i_gli1 = caf_i->custom_data.find_variable_index("gli1_active");
+    assert(i_acta2 >= 0);
+    assert(i_gli1 >= 0);
+    caf_i->custom_data[i_acta2] = 1.0;
+    caf_i->custom_data[i_gli1] = 0.0;
+    const int voxel_i = voxel_index_for_cell(caf_i);
+    set_ecm_at_voxel(voxel_i, 0.5, 0.6);
+    module6_ecm_production(caf_i, caf_i->phenotype, dt, ModulePhase::WRITE);
+    assert(nearly_equal(get_ecm_density_at_voxel(voxel_i), 0.44));
+    assert(nearly_equal(get_ecm_ha_fraction(voxel_i), 0.6));
+    std::cout << "PASS Test I" << std::endl;
 
     std::cout << "PASS module6_ecm_production_test" << std::endl;
     return 0;

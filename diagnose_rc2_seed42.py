@@ -4,6 +4,7 @@ Diagnostic script for RC2 seed 42 — reads existing output, prints drug/apoptos
 """
 from __future__ import annotations
 
+import argparse
 import math
 import sys
 from pathlib import Path
@@ -149,13 +150,31 @@ def diagnose_snapshot(parser, xml_path):
     return n_live
 
 
+def resolve_output_dir(args: argparse.Namespace) -> Path:
+    if args.output_dir is not None:
+        return args.output_dir.resolve()
+    if args.work_dir is not None:
+        return (args.work_dir.resolve() / "replicate_01_seed42" / "output")
+    return OUTPUT_DIR
+
+
 def main():
-    if not OUTPUT_DIR.exists():
-        print(f"ERROR: Output directory not found: {OUTPUT_DIR}")
+    argp = argparse.ArgumentParser(description="Diagnose RC2 seed 42 output")
+    argp.add_argument("--work-dir", type=Path, default=None,
+                      help="RC2 work dir root containing replicate_01_seed42")
+    argp.add_argument("--output-dir", type=Path, default=None,
+                      help="Direct path to replicate_01_seed42/output")
+    argp.add_argument("--latest-only", action="store_true",
+                      help="Report only the latest available snapshot")
+    args = argp.parse_args()
+
+    output_dir = resolve_output_dir(args)
+    if not output_dir.exists():
+        print(f"ERROR: Output directory not found: {output_dir}")
         return 1
 
-    parser = OutputParser(OUTPUT_DIR)
-    xmls = sorted(OUTPUT_DIR.glob("output*.xml"))
+    parser = OutputParser(output_dir)
+    xmls = sorted(output_dir.glob("output*.xml"))
     if not xmls:
         print("ERROR: No snapshot XMLs found")
         return 1
@@ -165,6 +184,14 @@ def main():
     for xml in xmls:
         snap = parser._read_physicell_xml(xml)
         snap_times.append((float(snap["time"]), xml))
+
+    if args.latest_only:
+        latest_time, latest_xml = max(snap_times, key=lambda s: s[0])
+        print("=" * 60)
+        print(f"  latest available  (actual t={latest_time:.0f}, file={latest_xml.name})")
+        print("=" * 60)
+        diagnose_snapshot(parser, latest_xml)
+        return 0
 
     results = {}
     for label, target_time in TIMEPOINTS.items():

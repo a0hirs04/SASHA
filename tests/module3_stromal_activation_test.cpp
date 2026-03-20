@@ -122,6 +122,23 @@ int main()
     assert(cell_a->custom_data[tgfb_sec_idx_a] == 0.0);
     assert(cell_a->custom_data[ecm_prod_idx_a] < ecm_prod_with_shh);
 
+    // Case 2b: during active SHH inhibition, ACTA2+ CAFs keep partial
+    // TGF-beta support even when GLI1 falls, while ECM production remains
+    // below the SHH-on state.
+    parameters.doubles("shh_inhibition_start_time") = 0.0;
+    parameters.doubles("shh_inhibition_strength") = 1.0;
+    PhysiCell_globals.current_time = 10.0;
+    densities_a[tgfb_index] = 0.0;
+    densities_a[shh_index] = 0.0;
+    module3_stromal_activation(cell_a, cell_a->phenotype, 1.0, ModulePhase::SENSING);
+    assert(cell_a->custom_data[acta2_idx_a] == 1.0);
+    assert(cell_a->custom_data[gli1_idx_a] == 0.0);
+    assert(cell_a->custom_data[tgfb_sec_idx_a] >= 0.59);
+    assert(cell_a->custom_data[ecm_prod_idx_a] < ecm_prod_with_shh);
+    parameters.doubles("shh_inhibition_start_time") = 1e18;
+    parameters.doubles("shh_inhibition_strength") = 0.0;
+    PhysiCell_globals.current_time = 0.0;
+
     // Case 3: below activation threshold => ACTA2 remains off.
     Cell* cell_b = create_cell(*pStroma);
     cell_b->assign_position(std::vector<double>{140.0, 100.0, 0.0});

@@ -88,18 +88,38 @@ inline double stromal_gli1_support(double gli1_active)
 {
     // ACTA2-positive CAFs persist after activation, but the strength of the
     // matrix-rich / TGF-beta-rich myCAF program should track the current GLI1
-    // state continuously. This keeps SHH-loss cells alive while still letting
-    // SHH inhibition meaningfully collapse the matrix-support program.
-    return clamp_unit(gli1_active);
+    // state. Keep untreated baseline support close to the earlier RC1-safe
+    // envelope by letting even modest SHH sensing saturate the myCAF program;
+    // intervention-specific matrix collapse is handled separately.
+    return smooth_threshold_response(clamp_unit(gli1_active), 0.01);
 }
 
 inline double stromal_ecm_rate(double base_rate, double boosted_rate, double gli1_active)
 {
     const double gli1_support = stromal_gli1_support(gli1_active);
-    const double basal_fraction = 0.02;
+    const double basal_fraction = 0.2;
     const double floor_rate = clamp_nonnegative(base_rate) * basal_fraction;
     const double ceiling_rate = std::max(floor_rate, clamp_nonnegative(boosted_rate));
     return floor_rate + (ceiling_rate - floor_rate) * gli1_support;
+}
+
+inline double stromal_tgfb_support(double gli1_active,
+                                   bool shh_inhibition_active,
+                                   double shh_inhibition_strength)
+{
+    double support = stromal_gli1_support(gli1_active);
+
+    // SHH blockade should collapse matrix maintenance more than it collapses
+    // all activated-CAF trophic signaling. Keep a partial TGF-beta program in
+    // ACTA2+ CAFs during active RC3 intervention so barrier loss can dominate
+    // without erasing the stromal niche completely.
+    if (shh_inhibition_active && shh_inhibition_strength > 0.0)
+    {
+        const double support_floor = 0.6 * clamp_unit(shh_inhibition_strength);
+        support = std::max(support, support_floor);
+    }
+
+    return clamp_unit(support);
 }
 
 // Stromal custom_data index for mechanical_pressure as laid out by
@@ -1036,7 +1056,10 @@ void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, Mo
         read_xml_double_or_default("shh_inhibition_start_time", 1e18);
     const double shh_inhibition_strength =
         clamp_unit(read_xml_double_or_default("shh_inhibition_strength", 0.0));
-    if (PhysiCell_globals.current_time >= shh_inhibition_start_time)
+    const bool shh_inhibition_active =
+        (PhysiCell_globals.current_time >= shh_inhibition_start_time) &&
+        (shh_inhibition_strength > 0.0);
+    if (shh_inhibition_active)
     {
         effective_local_shh = effective_local_shh * (1.0 - shh_inhibition_strength);
     }
@@ -1071,9 +1094,10 @@ void module3_stromal_activation(Cell* pCell, Phenotype& phenotype, double dt, Mo
 
     if (updated_acta2 == 1.0)
     {
-        const double gli1_support = stromal_gli1_support(updated_gli1);
+        const double tgfb_support =
+            stromal_tgfb_support(updated_gli1, shh_inhibition_active, shh_inhibition_strength);
         set_custom_data_if_present(pCell, "activation_mode", 1.0);
-        set_custom_data_if_present(pCell, "tgfb_secretion_active", gli1_support);
+        set_custom_data_if_present(pCell, "tgfb_secretion_active", tgfb_support);
         set_custom_data_if_present(
             pCell,
             "ecm_production_rate",
@@ -1811,6 +1835,19 @@ void module6_ecm_production(Cell* pCell, Phenotype& phenotype, double dt, Module
                 gli1_active);
         }
 
+        const double shh_inhibition_start_time =
+            read_xml_double_or_default("shh_inhibition_start_time", 1e18);
+        const double shh_inhibition_strength =
+            clamp_unit(read_xml_double_or_default("shh_inhibition_strength", 0.0));
+        if (PhysiCell_globals.current_time >= shh_inhibition_start_time &&
+            shh_inhibition_strength > 0.0)
+        {
+            const double gli1_support = stromal_gli1_support(gli1_active);
+            const double matrix_maintenance =
+                clamp_unit(1.0 - shh_inhibition_strength * (1.0 - gli1_support));
+            production *= matrix_maintenance;
+        }
+
         const double new_ecm = production * dt;
         const double new_ha  = new_ecm * ecm_ha_fraction_default;
         const double new_col = new_ecm * (1.0 - ecm_ha_fraction_default);
@@ -1839,8 +1876,21 @@ void module6_ecm_production(Cell* pCell, Phenotype& phenotype, double dt, Module
         ecm_density = ecm_density - degradation;
     }
 
-    // TODO: Natural ECM decay should be applied once per voxel per step.
-    // For now, we skip per-cell natural decay and handle turnover in ECM PDE decay.
+    if (is_stromal && acta2_active == 1.0)
+    {
+        const double shh_inhibition_start_time =
+            read_xml_double_or_default("shh_inhibition_start_time", 1e18);
+        const double shh_inhibition_strength =
+            clamp_unit(read_xml_double_or_default("shh_inhibition_strength", 0.0));
+        if (PhysiCell_globals.current_time >= shh_inhibition_start_time &&
+            shh_inhibition_strength > 0.0)
+        {
+            const double gli1_support = stromal_gli1_support(gli1_active);
+            const double maintenance_loss =
+                ecm_natural_decay_rate * shh_inhibition_strength * (1.0 - gli1_support) * dt;
+            ecm_density = ecm_density - maintenance_loss;
+        }
+    }
 
     // EXTERNAL INTERVENTIONS
     if (intervention_state.ha_degrade_active)
