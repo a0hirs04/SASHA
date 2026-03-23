@@ -846,7 +846,7 @@
         <stromal_contact_inhibition_threshold type="double" units="dimensionless"
             description="Mechanical pressure threshold above which stromal (CAF) proliferation is arrested — lower than tumor because stromal cells have intact checkpoints">0.8</stromal_contact_inhibition_threshold>
         <drug_kill_coefficient type="double" units="1/min"
-            description="Maps effective intracellular drug to apoptosis rate contribution">0.02</drug_kill_coefficient>
+            description="Maps effective intracellular drug to apoptosis rate contribution">0.05</drug_kill_coefficient>
         <efflux_drug_reduction type="double" units="dimensionless"
             description="Fractional reduction in effective drug when abcb1_active=1">0.7</efflux_drug_reduction>
         <caf_proliferation_rate type="double" units="1/min"
@@ -870,7 +870,7 @@
         <ecm_natural_decay_rate type="double" units="1/min"
             description="Slow background ECM turnover (handled outside per-cell Module 6)">0.0001</ecm_natural_decay_rate>
         <drug_uptake_rate type="double" units="1/hour"
-            description="Intracellular drug accumulation rate per local drug concentration">0.01</drug_uptake_rate>
+            description="Intracellular drug accumulation rate per local drug concentration">0.10</drug_uptake_rate>
         <drug_stress_threshold type="double" units="dimensionless"
             description="Intracellular drug level threshold for NRF2 activation">0.03</drug_stress_threshold>
         <nrf2_decay_rate type="double" units="1/hour"
@@ -884,7 +884,7 @@
         <emt_phenotype_extent type="int" units="dimensionless"
             description="Knob 5b for EMT engine (1=LOW, 2=MEDIUM, 3=HIGH)">3</emt_phenotype_extent>
         <hif1a_emt_boost type="double" units="dimensionless"
-            description="Additive EMT induction boost when hif1a_active=1">0.14</hif1a_emt_boost>
+            description="Additive EMT induction boost when hif1a_active=1">0.02</hif1a_emt_boost>
         <motility_epithelial type="double" units="micron/min"
             description="Tumor epithelial baseline motility">0.1</motility_epithelial>
         <motility_mesenchymal_low type="double" units="micron/min"
@@ -926,11 +926,13 @@
         <ecm_emt_strength type="double" units="dimensionless"
             description="Scaling factor for ECM-EMT boost (multiplied by gate)">0.4</ecm_emt_strength>
         <ecm_emt_cap type="double" units="dimensionless"
-            description="Maximum ECM-EMT boost added to induction_signal">0.20</ecm_emt_cap>
+            description="Maximum ECM-EMT boost added to induction_signal">0.30</ecm_emt_cap>
+        <ecm_reversion_weight type="double" units="dimensionless"
+            description="Fraction of ECM boost included in reversion signal (0=ignore ECM, 1=full ECM)">0.3</ecm_reversion_weight>
         <emt_death_increase type="double" units="1/min"
             description="Fix A: additional apoptosis rate for EMT (zeb1_active=1) cells">0.00005</emt_death_increase>
         <emt_off_threshold type="double" units="dimensionless"
-            description="Fix B: induction_signal below which EMT reverts (hysteresis; must be less than emt_induction_threshold)">0.25</emt_off_threshold>
+            description="Fix B: reversion_signal below which EMT reverts (hysteresis; must be less than emt_induction_threshold)">0.10</emt_off_threshold>
         <emt_activation_delay type="double" units="min"
             description="Fix B: minutes signal must exceed emt_induction_threshold before EMT activates">360.0</emt_activation_delay>
         <ecm_emt_require_caf_contact type="double" units="dimensionless"

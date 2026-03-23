@@ -1323,6 +1323,7 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
     // Fix C addition: require an activated CAF neighbor within interaction
     // distance. This prevents self-amplifying EMT cascades in ECM zones
     // where the stroma has already been consumed or is absent.
+    double ecm_boost = 0.0;
     const double ecm_emt_strength =
         read_xml_double_or_default("ecm_emt_strength", 0.0);
     if (ecm_emt_strength > 0.0)
@@ -1364,10 +1365,19 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
         {
             const double ecm_excess = std::max(0.0, local_ecm - ecm_emt_threshold);
             const double ecm_gate   = std::min(1.0, ecm_excess / ecm_emt_ramp);
-            const double ecm_boost  = std::min(ecm_emt_strength * ecm_gate, ecm_emt_cap);
+            ecm_boost = std::min(ecm_emt_strength * ecm_gate, ecm_emt_cap);
             induction_signal += ecm_boost;
         }
     }
+
+    // Reversion signal: paracrine signals + fractional ECM contribution.
+    // ecm_reversion_weight < 1.0 means ECM partially sustains EMT but
+    // drug-induced CAF death / TGF-β drop can still trigger reversion.
+    // weight=0 (old structural fix): reversion too easy, kills C1.4.
+    // weight=1 (original code): reversion too hard, kills RC2-6.
+    const double ecm_reversion_weight =
+        read_xml_double_or_default("ecm_reversion_weight", 0.3);
+    const double reversion_signal = induction_signal - (1.0 - ecm_reversion_weight) * ecm_boost;
 
     // ── Fix B: Hysteresis + time delay for EMT activation ───────────
     // EMT ON  requires signal > emt_induction_threshold sustained for
@@ -1403,9 +1413,9 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
     }
     else
     {
-        // Currently mesenchymal: hysteresis keeps EMT on unless signal
-        // drops well below the on-threshold
-        if (induction_signal < emt_off_threshold)
+        // Currently mesenchymal: revert only when paracrine signals drop
+        // (ECM alone cannot sustain EMT — need active TGF-β/HIF1α)
+        if (reversion_signal < emt_off_threshold)
         {
             emt_on = false;
             emt_signal_time = 0.0;
