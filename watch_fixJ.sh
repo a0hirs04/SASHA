@@ -1,141 +1,51 @@
 #!/bin/bash
-# watch_fixJ.sh — Monitor RC1 + RC2 Fix-J jobs
-# Usage:
-#   bash watch_fixJ.sh [poll_seconds] [rc2_jobid] [rc1_jobid]
-set -u
+# Watch fixJ: 20-variant combined sweep (persistence timer + structural fix)
+WORK="/work/a0hirs04/PROJECT-NORTHSTAR/build/fixJ"
 
-POLL=${1:-30}
-RC2_JOB=${2:-9860}
-RC1_JOB=${3:-9859}
-
-RC2_DIR="/home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_fixJ_seed42/replicate_01_seed42/output"
-RC1_DIR="/home/a0hirs04/PROJECT-NORTHSTAR/build/rc1_fixJ_seed42/replicate_01_seed42/output"
-RC2_EXPECTED=169
-RC1_EXPECTED=85
-
-RED='\033[0;31m'
-GRN='\033[0;32m'
-YLW='\033[0;33m'
-CYN='\033[0;36m'
-RST='\033[0m'
-
-bar() {
-    local cur=$1 total=$2 width=30
-    local denom=$(( total > 0 ? total : 1 ))
-    local pct=$(( cur * 100 / denom ))
-    local filled=$(( cur * width / denom ))
-    [[ $filled -gt $width ]] && filled=$width
-    local empty=$(( width - filled ))
-    printf "[${GRN}%s${RST}%s] %3d%%" \
-        "$(printf '#%.0s' $(seq 1 $filled 2>/dev/null))" \
-        "$(printf '.%.0s' $(seq 1 $empty 2>/dev/null))" \
-        "$pct"
-}
-
-get_state() {
-    local jid=${1:-}
-    [[ -z "$jid" ]] && { echo "UNKNOWN"; return; }
-    sacct -j "$jid" --format=State --noheader -P 2>/dev/null | head -1 | tr -d ' '
-}
-
-get_node() {
-    local jid=${1:-}
-    [[ -z "$jid" ]] && { echo "N/A"; return; }
-    sacct -j "$jid" --format=NodeList --noheader -P 2>/dev/null | head -1 | tr -d ' '
-}
-
-get_elapsed() {
-    local jid=${1:-}
-    [[ -z "$jid" ]] && { echo "N/A"; return; }
-    sacct -j "$jid" --format=Elapsed --noheader -P 2>/dev/null | head -1 | tr -d ' '
-}
-
-snap_count() {
-    local dir=$1
-    ls "$dir"/output*.xml 2>/dev/null | wc -l
-}
-
-latest_day() {
-    local dir=$1
-    local last
-    last=$(ls "$dir"/output*.xml 2>/dev/null | sort | tail -1)
-    if [[ -z "$last" ]]; then
-        echo "N/A"
-        return
-    fi
-    local idx
-    idx=$(basename "$last" .xml | sed 's/output//' | sed 's/^0*//')
-    [[ -z "$idx" ]] && idx=0
-    local minutes=$(( 10#$idx * 360 ))
-    local day=$(( minutes / 1440 ))
-    echo "d${day}"
-}
-
-echo -e "\n${CYN}═══════════════════════════════════════════════════════════${RST}"
-echo -e "${CYN}  Fix-J Job Monitor — RC1 (${RC1_JOB}) + RC2 (${RC2_JOB})${RST}"
-echo -e "${CYN}  caf_base_death=0.0  caf_crowded_death=0.00005${RST}"
-echo -e "${CYN}  CI=25  MCS=0.6  stromal_CI=0.8${RST}"
-echo -e "${CYN}═══════════════════════════════════════════════════════════${RST}"
-
-rc1_done=0
-rc2_done=0
-
-while [[ $rc1_done -eq 0 || $rc2_done -eq 0 ]]; do
-    clear 2>/dev/null || true
-    echo -e "${CYN}═══════════════════════════════════════════════════════════${RST}"
-    echo -e "${CYN}  Fix-J Job Monitor          $(date '+%H:%M:%S')${RST}"
-    echo -e "${CYN}  crowded CAF death=0.00005 | frontier CAF death=0.0${RST}"
-    echo -e "${CYN}═══════════════════════════════════════════════════════════${RST}"
-
-    rc1_state=$(get_state "$RC1_JOB")
-    rc1_elapsed=$(get_elapsed "$RC1_JOB")
-    rc1_node=$(get_node "$RC1_JOB")
-    rc1_snaps=$(snap_count "$RC1_DIR")
-    rc1_day=$(latest_day "$RC1_DIR")
-
-    echo -e "\n  ${YLW}RC1${RST} (job ${RC1_JOB}) — 21-day untreated"
-    echo -e "  State: ${GRN}${rc1_state}${RST}  Node: ${rc1_node}  Elapsed: ${rc1_elapsed}"
-    printf "  Snapshots: %d / %d  (%s)  " "$rc1_snaps" "$RC1_EXPECTED" "$rc1_day"
-    bar "$rc1_snaps" "$RC1_EXPECTED"
+while true; do
+    clear
+    echo "=== fixJ Monitor (20 variants)  $(date) ==="
     echo ""
 
-    if [[ "$rc1_state" == "COMPLETED" || "$rc1_state" == "FAILED" || "$rc1_state" == "CANCELLED" || "$rc1_state" == "TIMEOUT" ]]; then
-        rc1_done=1
-    fi
-
-    rc2_state=$(get_state "$RC2_JOB")
-    rc2_elapsed=$(get_elapsed "$RC2_JOB")
-    rc2_node=$(get_node "$RC2_JOB")
-    rc2_snaps=$(snap_count "$RC2_DIR")
-    rc2_day=$(latest_day "$RC2_DIR")
-
-    echo -e "\n  ${YLW}RC2${RST} (job ${RC2_JOB}) — 42-day drug+withdrawal"
-    echo -e "  State: ${GRN}${rc2_state}${RST}  Node: ${rc2_node}  Elapsed: ${rc2_elapsed}"
-    printf "  Snapshots: %d / %d  (%s)  " "$rc2_snaps" "$RC2_EXPECTED" "$rc2_day"
-    bar "$rc2_snaps" "$RC2_EXPECTED"
+    echo "── SLURM Queue ──"
+    squeue -u "$USER" -o "%.10i %.22j %.2t %.10M" 2>/dev/null | grep -E "JOBID|fJ_" || echo "  (no fJ jobs)"
     echo ""
 
-    if [[ "$rc2_state" == "COMPLETED" || "$rc2_state" == "FAILED" || "$rc2_state" == "CANCELLED" || "$rc2_state" == "TIMEOUT" ]]; then
-        rc2_done=1
-    fi
+    echo "══ RC1 Progress (85 snapshots = DONE) ══"
+    printf "%-5s  %7s %8s %7s  %7s %s\n" "Var" "persist" "ecm_rev" "drug_k" "RC1" "RC2"
+    echo "------------------------------------------------"
 
-    if [[ -z "$RC2_JOB" && $rc2_snaps -ge $RC2_EXPECTED ]]; then rc2_done=1; fi
-    if [[ -z "$RC1_JOB" && $rc1_snaps -ge $RC1_EXPECTED ]]; then rc1_done=1; fi
+    all_done=true
+    for v in v01 v02 v03 v04 v05 v06 v07 v08 v09 v10 v11 v12 v13 v14 v15 v16 v17 v18 v19 v20; do
+        rc1_snaps=$(ls "$WORK/$v/rc1/replicate_01_seed42/output"/output*.xml 2>/dev/null | wc -l)
+        rc2_snaps=$(ls "$WORK/$v/rc2/output"/output*.xml 2>/dev/null | wc -l)
 
-    if [[ $rc1_done -eq 1 && $rc2_done -eq 1 ]]; then
+        [[ $rc1_snaps -ge 85 ]] && rc1_st="DONE" || { rc1_st="${rc1_snaps}/85"; all_done=false; }
+
+        # Read params from config if available
+        cfg="$WORK/$v/rc1/replicate_01_seed42/PhysiCell_settings.xml"
+        if [[ -f "$cfg" ]]; then
+            pt=$(grep "emt_persistence_time" "$cfg" 2>/dev/null | sed 's/.*>//' | sed 's/<.*//')
+            rv=$(grep "ecm_reversion_weight" "$cfg" 2>/dev/null | sed 's/.*>//' | sed 's/<.*//')
+            dk=$(grep "drug_kill_coefficient" "$cfg" 2>/dev/null | sed 's/.*>//' | sed 's/<.*//')
+        else
+            pt="-"; rv="-"; dk="-"
+        fi
+
+        # Show RC2 if it exists
+        rc2_info="-"
+        if [[ $rc2_snaps -gt 0 ]]; then
+            [[ $rc2_snaps -ge 169 ]] && rc2_info="DONE" || { rc2_info="${rc2_snaps}/169"; all_done=false; }
+        fi
+
+        printf "%-5s  %7s %8s %7s  %7s %s\n" "$v" "$pt" "$rv" "$dk" "$rc1_st" "$rc2_info"
+    done
+
+    echo ""
+    if $all_done; then
+        echo "══ ALL VARIANTS COMPLETE ══"
         break
     fi
 
-    echo -e "\n  Polling every ${POLL}s... (Ctrl+C to stop)"
-    sleep "$POLL"
+    sleep 60
 done
-
-echo -e "\n${CYN}═══════════════════════════════════════════════════════════${RST}"
-echo -e "${CYN}  BOTH JOBS FINISHED${RST}"
-echo -e "${CYN}═══════════════════════════════════════════════════════════${RST}"
-echo -e "  RC1 (${RC1_JOB}): $(get_state "$RC1_JOB")  —  $rc1_snaps snapshots"
-echo -e "  RC2 (${RC2_JOB}): $(get_state "$RC2_JOB")  —  $rc2_snaps snapshots"
-echo -e "\n  Run evaluations:"
-echo -e "    python3 evaluate_rc1.py"
-echo -e "    python3 evaluate_rc2.py"
-echo ""

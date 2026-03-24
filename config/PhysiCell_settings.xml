@@ -506,6 +506,8 @@
                 <mechanical_pressure conserved="false" units="dimensionless">0.0</mechanical_pressure>
                 <emt_signal_time conserved="false" units="min"
                                  description="Fix B: accumulated time induction_signal has exceeded emt_induction_threshold">0.0</emt_signal_time>
+                <emt_activation_time conserved="false" units="min"
+                                     description="Timestamp when ZEB1 was last activated (for persistence timer)">0.0</emt_activation_time>
 
             </custom_data>
         </cell_definition>
@@ -935,6 +937,8 @@
             description="Fix B: reversion_signal below which EMT reverts (hysteresis; must be less than emt_induction_threshold)">0.10</emt_off_threshold>
         <emt_activation_delay type="double" units="min"
             description="Fix B: minutes signal must exceed emt_induction_threshold before EMT activates">360.0</emt_activation_delay>
+        <emt_persistence_time type="double" units="min"
+            description="Minimum duration EMT must remain active before reversion is allowed">7200.0</emt_persistence_time>
         <ecm_emt_require_caf_contact type="double" units="dimensionless"
             description="Fix C: if >0.5, ECM-EMT boost only applies when an activated CAF neighbor is present">1.0</ecm_emt_require_caf_contact>
         <ecm_motility_block_threshold type="double" units="dimensionless"

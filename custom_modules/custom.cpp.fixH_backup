@@ -223,8 +223,6 @@ void tumor_division_callback(Cell* pParent, Cell* pChild)
     write_custom_if_present(pChild, "intracellular_drug", 0.0);
     write_custom_if_present(pChild, "time_since_drug_exposure", -1.0);
     write_custom_if_present(pChild, "emt_extent", 0.0);
-    write_custom_if_present(pChild, "emt_activation_time", 0.0);
-    write_custom_if_present(pChild, "emt_signal_time", 0.0);
     write_custom_if_present(pChild, "time_alive", 0.0);
 }
 
@@ -1373,6 +1371,10 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
     }
 
     // Reversion signal: paracrine signals + fractional ECM contribution.
+    // ecm_reversion_weight < 1.0 means ECM partially sustains EMT but
+    // drug-induced CAF death / TGF-β drop can still trigger reversion.
+    // weight=0 (old structural fix): reversion too easy, kills C1.4.
+    // weight=1 (original code): reversion too hard, kills RC2-6.
     const double ecm_reversion_weight =
         read_xml_double_or_default("ecm_reversion_weight", 0.3);
     const double reversion_signal = induction_signal - (1.0 - ecm_reversion_weight) * ecm_boost;
@@ -1386,14 +1388,10 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
         read_xml_double_or_default("emt_off_threshold", 0.15);
     const double emt_activation_delay =
         read_xml_double_or_default("emt_activation_delay", 360.0);
-    const double emt_persistence_time =
-        read_xml_double_or_default("emt_persistence_time", 7200.0);
     const double current_zeb1 =
         read_custom_data_value_or_default(pCell, "zeb1_active", 0.0);
     double emt_signal_time =
         read_custom_data_value_or_default(pCell, "emt_signal_time", 0.0);
-    double emt_activation_time =
-        read_custom_data_value_or_default(pCell, "emt_activation_time", 0.0);
 
     bool emt_on = false;
 
@@ -1406,11 +1404,6 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
             if (emt_signal_time >= emt_activation_delay)
             {
                 emt_on = true;
-                // Record when EMT first activated
-                if (emt_activation_time <= 0.0)
-                {
-                    emt_activation_time = PhysiCell_globals.current_time;
-                }
             }
         }
         else
@@ -1420,15 +1413,12 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
     }
     else
     {
-        // Currently mesenchymal: revert only after persistence timer expires
-        // AND reversion signal drops below threshold.
-        double time_since_activation = PhysiCell_globals.current_time - emt_activation_time;
-        if (time_since_activation > emt_persistence_time &&
-            reversion_signal < emt_off_threshold)
+        // Currently mesenchymal: revert only when paracrine signals drop
+        // (ECM alone cannot sustain EMT — need active TGF-β/HIF1α)
+        if (reversion_signal < emt_off_threshold)
         {
             emt_on = false;
             emt_signal_time = 0.0;
-            emt_activation_time = 0.0; // reset for potential re-activation
         }
         else
         {
@@ -1437,7 +1427,6 @@ void module5_emt_engine(Cell* pCell, Phenotype& phenotype, double dt, ModulePhas
         }
     }
     set_custom_data_if_present(pCell, "emt_signal_time", emt_signal_time);
-    set_custom_data_if_present(pCell, "emt_activation_time", emt_activation_time);
 
     if (emt_on)
     {
