@@ -12,6 +12,7 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -1174,8 +1175,8 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         }
     }
 
-    // Step 2: Intracellular drug decay.
-    if (local_drug <= 0.0 && time_since_drug_exposure >= 0.0)
+    // Step 2: Intracellular drug decay (metabolic clearance — always active).
+    if (time_since_drug_exposure >= 0.0 && drug_natural_decay_rate > 0.0)
     {
         intracellular_drug = intracellular_drug * (1.0 - drug_natural_decay_rate * dt);
         intracellular_drug = std::max(0.0, intracellular_drug);
@@ -1221,8 +1222,8 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         abcb1_active = relax_toward(abcb1_active, 0.0, dt, 240.0);
     }
 
-    // Step 5: Efflux pump action.
-    if (local_drug > 0.0 && abcb1_active > 0.0)
+    // Step 5: Efflux pump action (works on intracellular drug regardless of external).
+    if (intracellular_drug > 0.0 && abcb1_active > 0.0)
     {
         const double efflux_amount =
             efflux_strength * clamp_unit(abcb1_active) * intracellular_drug * dt;
@@ -2448,6 +2449,182 @@ void custom_function(Cell* pCell, Phenotype& phenotype, double dt)
             }
         }
         if (ceiling_triggered.load(std::memory_order_relaxed)) return;
+    }
+
+    // ---- FAST SCREEN: periodic post-withdrawal metrics + early termination ----
+    // Activated by user parameter fast_screen_mode=1.
+    // Logs CSV every 60 min after drug_end_time with: time, tumor_count,
+    // zeb1_fraction, mean_cycle_rate, emt_to_epi_transitions (proxy).
+    // Early terminates if fail criteria met after drug_end_time + 2000 min.
+    {
+        static std::atomic<double> next_screen_check(-1.0);
+        static std::atomic<bool> screen_initialized(false);
+        static std::atomic<bool> screen_terminated(false);
+        static std::atomic<int> prev_zeb1_count(0);
+
+        const double fast_mode =
+            read_xml_double_or_default("fast_screen_mode", 0.0);
+        if (fast_mode > 0.5 &&
+            !screen_terminated.load(std::memory_order_relaxed))
+        {
+            const double sim_time = PhysiCell_globals.current_time;
+            const double drug_end =
+                read_xml_double_or_default("drug_end_time", 1e18);
+
+            // Initialize the first check time
+            if (!screen_initialized.load(std::memory_order_relaxed) &&
+                sim_time >= drug_end)
+            {
+                bool exp = false;
+                if (screen_initialized.compare_exchange_strong(
+                        exp, true, std::memory_order_acq_rel))
+                {
+                    next_screen_check.store(drug_end + 60.0,
+                                            std::memory_order_release);
+                }
+            }
+
+            double nsc = next_screen_check.load(std::memory_order_relaxed);
+            if (nsc > 0.0 && sim_time >= nsc)
+            {
+                double expected_next = nsc;
+                if (next_screen_check.compare_exchange_strong(
+                        expected_next, expected_next + 60.0,
+                        std::memory_order_acq_rel))
+                {
+                    // Aggregate metrics across all tumor cells
+                    Cell_Definition* pTD = find_cell_definition("tumor_cell");
+                    int tumor_count = 0;
+                    int zeb1_count = 0;
+                    double sum_cycle_rate = 0.0;
+
+                    if (pTD != NULL)
+                    {
+                        for (auto* c : *all_cells)
+                        {
+                            if (c == NULL || c->phenotype.death.dead) continue;
+                            if (c->type != pTD->type) continue;
+                            tumor_count++;
+                            double z = read_custom_data_value_or_default(
+                                c, "zeb1_active", 0.0);
+                            if (z >= 0.5) zeb1_count++;
+                            sum_cycle_rate +=
+                                c->phenotype.cycle.data.transition_rate(0, 0);
+                        }
+                    }
+
+                    double zeb1_frac = (tumor_count > 0)
+                        ? static_cast<double>(zeb1_count) / tumor_count
+                        : 0.0;
+                    double mean_cycle = (tumor_count > 0)
+                        ? sum_cycle_rate / tumor_count : 0.0;
+                    // EMT→epithelial transitions proxy: decrease in ZEB1+ count
+                    int prev_z = prev_zeb1_count.load(std::memory_order_relaxed);
+                    int emt_to_epi = std::max(0, prev_z - zeb1_count);
+                    prev_zeb1_count.store(zeb1_count,
+                                          std::memory_order_release);
+
+                    // Write CSV line
+                    std::string csv_path =
+                        PhysiCell_settings.folder + "/fast_screen.csv";
+                    bool write_header = false;
+                    {
+                        std::ifstream test(csv_path);
+                        if (!test.good()) write_header = true;
+                    }
+                    std::ofstream csv(csv_path, std::ios::app);
+                    if (csv.is_open())
+                    {
+                        if (write_header)
+                        {
+                            csv << "time,tumor_count,zeb1_count,zeb1_fraction,"
+                                << "mean_cycle_rate,emt_to_epi\n";
+                        }
+                        csv << sim_time << "," << tumor_count << ","
+                            << zeb1_count << "," << zeb1_frac << ","
+                            << mean_cycle << "," << emt_to_epi << "\n";
+                        csv.close();
+                    }
+
+                    // Early termination check after drug_end + 2000
+                    if (sim_time >= drug_end + 2000.0)
+                    {
+                        // Read baseline from first CSV line (drug_end+60)
+                        std::ifstream rd(csv_path);
+                        std::string hdr_line, first_line;
+                        if (std::getline(rd, hdr_line) &&
+                            std::getline(rd, first_line))
+                        {
+                            // Parse first data line for baseline zeb1_frac
+                            // and cycle rate
+                            double base_zeb1_frac = 0.0;
+                            double base_cycle = 0.0;
+                            int base_count = 0;
+                            {
+                                std::istringstream ss(first_line);
+                                std::string tok;
+                                int col = 0;
+                                while (std::getline(ss, tok, ','))
+                                {
+                                    if (col == 1)
+                                        base_count = std::stoi(tok);
+                                    else if (col == 3)
+                                        base_zeb1_frac = std::stod(tok);
+                                    else if (col == 4)
+                                        base_cycle = std::stod(tok);
+                                    col++;
+                                }
+                            }
+
+                            // FAIL: ZEB1 fraction flat/increased AND
+                            //       cycle rate still suppressed
+                            bool zeb1_stuck =
+                                (zeb1_frac >= base_zeb1_frac - 0.01);
+                            bool cycle_suppressed =
+                                (base_cycle > 0.0)
+                                    ? (mean_cycle <= base_cycle * 1.05)
+                                    : (mean_cycle <= 0.0);
+                            bool count_declining =
+                                (tumor_count <= base_count);
+
+                            if (zeb1_stuck && cycle_suppressed &&
+                                count_declining)
+                            {
+                                std::cerr
+                                    << "\n[FAST_SCREEN] t=" << sim_time
+                                    << " FAIL: zeb1_frac=" << zeb1_frac
+                                    << " (base=" << base_zeb1_frac << ")"
+                                    << " cycle=" << mean_cycle
+                                    << " (base=" << base_cycle << ")"
+                                    << " count=" << tumor_count
+                                    << " (base=" << base_count << ")"
+                                    << " — early termination.\n";
+
+                                std::string marker_path =
+                                    PhysiCell_settings.folder +
+                                    "/FAST_SCREEN_FAIL.txt";
+                                std::ofstream marker(marker_path);
+                                if (marker.is_open())
+                                {
+                                    marker << "FAST_SCREEN_FAIL at t="
+                                           << sim_time << "\n"
+                                           << "zeb1_frac=" << zeb1_frac
+                                           << " base=" << base_zeb1_frac
+                                           << "\nmean_cycle=" << mean_cycle
+                                           << " base=" << base_cycle
+                                           << "\ntumor_count=" << tumor_count
+                                           << " base=" << base_count << "\n";
+                                    marker.close();
+                                }
+                                PhysiCell_settings.max_time = sim_time;
+                                screen_terminated.store(
+                                    true, std::memory_order_release);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     // ---- DRUG SCHEDULING: timed Dirichlet BC on/off ----

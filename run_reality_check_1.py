@@ -543,10 +543,17 @@ def _evaluate(result: ReplicateResult) -> ReplicateResult:
 
     tumor_pos = positions[tumor_mask] if positions.size else np.empty((0, 3))
     centroid = np.nanmean(tumor_pos, axis=0) if tumor_pos.size else np.zeros(3)
-    tumor_radius = (
-        float(np.max(np.linalg.norm(tumor_pos - centroid, axis=1)))
-        if tumor_pos.size else 0.0
-    )
+    if tumor_pos.size:
+        _all_dists = np.linalg.norm(tumor_pos - centroid, axis=1)
+        _max_radius = float(np.max(_all_dists))
+        # Use 95th-percentile radius: robust to outlier EMT migrant cells
+        # that extend far beyond the main tumor mass.
+        tumor_radius = float(np.percentile(_all_dists, 95))
+        _n_outliers = int(np.sum(_all_dists > tumor_radius))
+        print(f"[DIAG_RADIUS] max_r={_max_radius:.1f}  p95_r={tumor_radius:.1f}  "
+              f"outliers={_n_outliers}/{len(_all_dists)} ({100*_n_outliers/len(_all_dists):.1f}%)")
+    else:
+        tumor_radius = 0.0
 
     o2 = micro_values.get("oxygen")
     ecm = micro_values.get("ecm_density")
