@@ -1,0 +1,1624 @@
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: baseline_10620
+Output: /home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_full_seed42/replicate_01_seed42/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         818         70         nan
+   21         833         62        2.14
+   28         814         70       -2.71
+   31         852         64       12.67
+   35         781         51      -17.75
+   42         833         67        7.43
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=0.49% (d14 818 -> d28 814) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=814 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.7373 d28=0.9907 need>=0.5899 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5452 d28=0.7206 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.4267 d28=0.9939 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=814 d42=833 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     99.39%       0.7663      0.8566
+   29    100.00%       0.7680      0.8558
+   30    100.00%       0.7706      0.8515
+   31    100.00%       0.7658      0.8407
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: resistant lineage-dominant
+  Resistance stability: stable
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.007507
+   29          0.000000          0.000624
+   30          0.000000          0.000040
+   31          0.000000          0.000003
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 41.03%
+  Day 31: ZEB1+ fraction = 44.13%
+  Day 42: ZEB1+ fraction = 47.78%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.7206
+  ECM at tumor d14:     0.5452
+  Tumor radius p95 d14/d28/d42: 274.15 / 266.58 / 704.66
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: A_strong_fast
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_countermeasures/A_strong_fast/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         497         37         nan
+   21         637         58       20.00
+   28         738         58       14.43
+   31         930         74       64.00
+   35        1256        113       81.50
+   42        3011        239      250.71
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-48.49% (d14 497 -> d28 738) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=738 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.7758 d28=0.0000 need>=0.6206 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.6027 d28=0.5035 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.8370 d28=0.9214 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=738 d42=3011 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     92.14%       0.9294      0.7623
+   29    100.00%       0.9972      0.7855
+   30    100.00%       0.9956      0.7360
+   31    100.00%       0.9966      0.6790
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: NO/WEAK
+  Regrowth driver: mixed lineage contribution
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000051          0.030631
+   29          0.000000          0.001145
+   30          0.000000          0.000083
+   31          0.000000          0.000007
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 40.92%
+  Day 31: ZEB1+ fraction = 40.86%
+  Day 42: ZEB1+ fraction = 38.86%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.5035
+  ECM at tumor d14:     0.6027
+  Tumor radius p95 d14/d28/d42: 264.34 / 1083.30 / 1246.93
+  Sanctuary zones: NO
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 2/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: B_strong_med
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_countermeasures/B_strong_med/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         599         49         nan
+   21         538         47       -8.71
+   28         476         42       -8.86
+   31         517         42       13.67
+   35         657         56       35.00
+   42        1374        109      102.43
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=20.53% (d14 599 -> d28 476) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=476 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.0072 d28=0.0000 need>=0.0058 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5964 d28=0.6159 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.6194 d28=0.8508 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=476 d42=1374 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     85.08%       0.8721      0.7705
+   29    100.00%       0.9919      0.8154
+   30    100.00%       0.9940      0.7778
+   31    100.00%       0.9881      0.7289
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: mixed lineage contribution
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000448          0.020667
+   29          0.000000          0.001283
+   30          0.000000          0.000119
+   31          0.000000          0.000012
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 50.63%
+  Day 31: ZEB1+ fraction = 49.90%
+  Day 42: ZEB1+ fraction = 38.86%
+  Interpretation: epithelial reversion occurred.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6159
+  ECM at tumor d14:     0.5964
+  Tumor radius p95 d14/d28/d42: 412.91 / 815.02 / 1115.91
+  Sanctuary zones: YES
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: C_med_fast
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_countermeasures/C_med_fast/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         932         43         nan
+   21        1007         93       10.71
+   28        1052         93        6.43
+   31        1185         64       44.33
+   35        1450        116       66.25
+   42        2687        248      176.71
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-12.88% (d14 932 -> d28 1052) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=1052 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.0849 d28=0.0000 need>=0.0679 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5481 d28=0.6308 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.7425 d28=0.9601 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=1052 d42=2687 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     96.01%       0.9642      0.8190
+   29    100.00%       0.9962      0.8282
+   30    100.00%       0.9980      0.8040
+   31    100.00%       0.9967      0.7724
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: mixed lineage contribution
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000122          0.016430
+   29          0.000000          0.000472
+   30          0.000000          0.000025
+   31          0.000000          0.000001
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 42.68%
+  Day 31: ZEB1+ fraction = 40.08%
+  Day 42: ZEB1+ fraction = 36.43%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6308
+  ECM at tumor d14:     0.5481
+  Tumor radius p95 d14/d28/d42: 373.24 / 915.96 / 1231.54
+  Sanctuary zones: YES
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 3/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: D_balanced
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_countermeasures/D_balanced/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         628         56         nan
+   21         662         52        4.86
+   28         954         65       41.71
+   31        1122        109       56.00
+   35        1537        124      103.75
+   42        3445        275      272.57
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-51.91% (d14 628 -> d28 954) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=954 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.0028 d28=0.0000 need>=0.0022 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.6195 d28=0.5024 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.7818 d28=0.9948 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=954 d42=3445 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     99.48%       0.9813      0.8482
+   29    100.00%       0.9897      0.7953
+   30    100.00%       0.9871      0.7535
+   31    100.00%       0.9887      0.7028
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: mixed lineage contribution
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000005          0.032703
+   29          0.000000          0.000777
+   30          0.000000          0.000052
+   31          0.000000          0.000004
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 39.83%
+  Day 31: ZEB1+ fraction = 45.72%
+  Day 42: ZEB1+ fraction = 38.96%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.5024
+  ECM at tumor d14:     0.6195
+  Tumor radius p95 d14/d28/d42: 433.16 / 1173.54 / 1296.55
+  Sanctuary zones: NO
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 2/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: E_low_thresh
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_countermeasures/E_low_thresh/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         728         55         nan
+   21         894         63       23.71
+   28         911         72        2.43
+   31         885         71       -8.67
+   35         847         58       -9.50
+   42         837         64       -1.43
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-25.14% (d14 728 -> d28 911) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=911 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.7488 d28=0.9984 need>=0.5990 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5963 d28=0.6630 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.4135 d28=0.9945 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=911 d42=837 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     99.45%       0.7673      0.8568
+   29    100.00%       0.7698      0.8473
+   30    100.00%       0.7695      0.8377
+   31    100.00%       0.7700      0.8243
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.009407
+   29          0.000000          0.000636
+   30          0.000000          0.000048
+   31          0.000000          0.000004
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 43.14%
+  Day 31: ZEB1+ fraction = 46.44%
+  Day 42: ZEB1+ fraction = 53.52%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6630
+  ECM at tumor d14:     0.5963
+  Tumor radius p95 d14/d28/d42: 290.22 / 342.18 / 728.06
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 3/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: F_force_uptake
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_countermeasures/F_force_uptake/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         583         50         nan
+   21         651         55        9.71
+   28         522         43      -18.43
+   31         512         38       -3.33
+   35         480         42       -8.00
+   42         404         27      -10.86
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=10.46% (d14 583 -> d28 522) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=522 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.8981 d28=0.9986 need>=0.7185 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5892 d28=0.7456 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.7702 d28=1.0000 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=522 d42=404 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9946      0.8574
+   29    100.00%       0.9931      0.8568
+   30    100.00%       0.9918      0.8568
+   31    100.00%       0.9954      0.8571
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: stable
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.003613
+   29          0.000000          0.000238
+   30          0.000000          0.000013
+   31          0.000000          0.000001
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 54.79%
+  Day 31: ZEB1+ fraction = 53.91%
+  Day 42: ZEB1+ fraction = 57.43%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.7456
+  ECM at tumor d14:     0.5892
+  Tumor radius p95 d14/d28/d42: 237.90 / 263.84 / 243.14
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: G_flood_drug
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_countermeasures/G_flood_drug/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         630         53         nan
+   21         713         51       11.86
+   28         717         61        0.57
+   31         644         59      -24.33
+   35         549         47      -23.75
+   42         446         41      -14.71
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-13.81% (d14 630 -> d28 717) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=717 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.6650 d28=0.9960 need>=0.5320 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5439 d28=0.7005 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.7413 d28=1.0000 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=717 d42=446 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9937      0.8572
+   29    100.00%       0.9920      0.8570
+   30    100.00%       0.9915      0.8566
+   31    100.00%       0.9941      0.8572
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: stable
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.013716
+   29          0.000000          0.000851
+   30          0.000000          0.000044
+   31          0.000000          0.000003
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 51.32%
+  Day 31: ZEB1+ fraction = 57.92%
+  Day 42: ZEB1+ fraction = 57.40%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.7005
+  ECM at tumor d14:     0.5439
+  Tumor radius p95 d14/d28/d42: 283.77 / 288.37 / 274.33
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 3/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: H_nuke_lowefflux
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/H_nuke_lowefflux/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         921         81         nan
+   21         621         45      -42.86
+   28         615         52       -0.86
+   31         580         47      -11.67
+   35         584         41        1.00
+   42         540         39       -6.29
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=33.22% (d14 921 -> d28 615) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=615 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.7027 d28=0.9941 need>=0.5621 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5560 d28=0.6688 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=1.0000 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=615 d42=540 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9956      0.8568
+   29    100.00%       0.9915      0.8569
+   30    100.00%       0.9937      0.8572
+   31    100.00%       0.9923      0.8571
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: stable
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.005586
+   29          0.000000          0.000363
+   30          0.000000          0.000018
+   31          0.000000          0.000001
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 47.80%
+  Day 31: ZEB1+ fraction = 52.76%
+  Day 42: ZEB1+ fraction = 53.89%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6688
+  ECM at tumor d14:     0.5560
+  Tumor radius p95 d14/d28/d42: 309.75 / 248.59 / 239.25
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: I_ultragentle
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/I_ultragentle/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         627         60         nan
+   21         496         58      -18.71
+   28         457         45       -5.57
+   31         570         45       37.67
+   35         866         71       74.00
+   42        1872        144      143.71
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=27.11% (d14 627 -> d28 457) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=457 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.7850 d28=0.0000 need>=0.6280 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.5662 d28=0.5328 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.3370 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=457 d42=1872 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     33.70%       0.4295      0.4014
+   29    100.00%       0.9834      0.6939
+   30    100.00%       0.9895      0.6015
+   31    100.00%       0.9883      0.5212
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: likely mixed/random survivors
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.003039          0.031589
+   29          0.000000          0.001426
+   30          0.000000          0.000170
+   31          0.000000          0.000025
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 49.45%
+  Day 31: ZEB1+ fraction = 45.96%
+  Day 42: ZEB1+ fraction = 41.77%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.5328
+  ECM at tumor d14:     0.5662
+  Tumor radius p95 d14/d28/d42: 266.56 / 930.92 / 983.38
+  Sanctuary zones: NO
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 3/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: J_maxresist
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/J_maxresist/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14        1008         77         nan
+   21        1487        125       68.43
+   28        2333        204      120.86
+   31        3029        248      232.00
+   35        4483        339      363.50
+   42        8319        654      548.00
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-131.45% (d14 1008 -> d28 2333) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=2333 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.3979 d28=0.0000 need>=0.3183 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.5683 d28=0.4929 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.7817 d28=0.9606 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=2333 d42=8319 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     96.06%       0.9565      0.7801
+   29    100.00%       0.9984      0.7740
+   30    100.00%       0.9983      0.7161
+   31    100.00%       0.9973      0.6611
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: mixed lineage contribution
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000039          0.022427
+   29          0.000000          0.000033
+   30          0.000000          0.000000
+   31          0.000000          0.000000
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 43.63%
+  Day 31: ZEB1+ fraction = 40.87%
+  Day 42: ZEB1+ fraction = 36.54%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.4929
+  ECM at tumor d14:     0.5683
+  Tumor radius p95 d14/d28/d42: 344.71 / 968.33 / 1174.87
+  Sanctuary zones: NO
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 2/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: K_highkc
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/K_highkc/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         789         57         nan
+   21         668         54      -17.29
+   28         634         49       -4.86
+   31         749         53       38.33
+   35         825         79       19.00
+   42        1614        132      112.71
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=19.65% (d14 789 -> d28 634) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=634 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.7914 d28=0.0346 need>=0.6331 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5936 d28=0.6965 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=1.0000 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=634 d42=1614 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9918      0.8568
+   29    100.00%       0.9918      0.8330
+   30    100.00%       0.9915      0.8148
+   31    100.00%       0.9905      0.7913
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: mixed lineage contribution
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.014763
+   29          0.000000          0.000922
+   30          0.000000          0.000059
+   31          0.000000          0.000004
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 43.22%
+  Day 31: ZEB1+ fraction = 45.13%
+  Day 42: ZEB1+ fraction = 36.12%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6965
+  ECM at tumor d14:     0.5936
+  Tumor radius p95 d14/d28/d42: 275.34 / 618.09 / 854.47
+  Sanctuary zones: YES
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: L_latedrug
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/L_latedrug/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         941         75         nan
+   21         941         75        0.00
+   28         536         53      -57.86
+   31         416         39      -40.00
+   35         536         53       30.00
+   42        2805        247      324.14
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=43.04% (d14 941 -> d28 536) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=536 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.0000 d28=0.6172 need>=0.0000 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.5701 d28=0.2540 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.9272 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=536 d42=2805 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     68.35%       0.7263      0.6385
+   29     76.36%       0.7647      0.5777
+   30     75.19%       0.7675      0.6029
+   31     82.21%       0.8289      0.7400
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: likely mixed/random survivors
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000484          0.054567
+   29          0.000487          0.055852
+   30          0.000305          0.058508
+   31          0.000454          0.065242
+
+  Interpretation: intracellular clearing=NO/MIXED; extracellular clearing=NO/MIXED.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 51.68%
+  Day 31: ZEB1+ fraction = 50.24%
+  Day 42: ZEB1+ fraction = 31.30%
+  Interpretation: epithelial reversion occurred.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.2540
+  ECM at tumor d14:     0.5701
+  Tumor radius p95 d14/d28/d42: 738.47 / 891.32 / 1039.89
+  Sanctuary zones: NO
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Barrier pass may be loophole: peri-ECM pre-treatment is ~0.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: M_shorttreat
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/M_shorttreat/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         480         48         nan
+   21         484         43        0.57
+   28         484         43        0.00
+   31         481         27       -1.00
+   35         422         32      -14.75
+   42         387         25       -5.00
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-0.83% (d14 480 -> d28 484) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=484 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.9471 d28=0.9932 need>=0.7577 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.6015 d28=0.7032 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=1.0000 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=484 d42=387 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9924      0.8571
+   29    100.00%       0.9931      0.8567
+   30    100.00%       0.9953      0.8570
+   31    100.00%       0.9919      0.8568
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.000000
+   29          0.000000          0.000000
+   30          0.000000          0.000000
+   31          0.000000          0.000000
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 46.28%
+  Day 31: ZEB1+ fraction = 50.10%
+  Day 42: ZEB1+ fraction = 57.88%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.7032
+  ECM at tumor d14:     0.6015
+  Tumor radius p95 d14/d28/d42: 217.64 / 231.93 / 225.13
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 3/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: N_nofloor
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/N_nofloor/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         775         60         nan
+   21         698         65      -11.00
+   28         633         54       -9.29
+   31         538         49      -31.67
+   35         511         42       -6.75
+   42         444         39       -9.57
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=18.32% (d14 775 -> d28 633) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=633 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.8927 d28=0.9939 need>=0.7141 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5437 d28=0.6825 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=1.0000 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=633 d42=444 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9939      0.8571
+   29    100.00%       0.9913      0.8568
+   30    100.00%       0.9927      0.8565
+   31    100.00%       0.9935      0.8567
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: stable
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.008639
+   29          0.000000          0.000798
+   30          0.000000          0.000061
+   31          0.000000          0.000006
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 44.55%
+  Day 31: ZEB1+ fraction = 49.63%
+  Day 42: ZEB1+ fraction = 53.83%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6825
+  ECM at tumor d14:     0.5437
+  Tumor radius p95 d14/d28/d42: 241.01 / 237.68 / 229.44
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: O_goldilocks
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave2/O_goldilocks/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         817         63         nan
+   21         854         72        5.29
+   28         912         70        8.29
+   31         920         77        2.67
+   35         881         52       -9.75
+   42         661         63      -31.43
+
+  Interpretation: treatment shrink=NO; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: FAIL | reduction=-11.63% (d14 817 -> d28 912) | Tumor did not reduce enough during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=912 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.8534 d28=0.9935 need>=0.6827 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5813 d28=0.6607 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.5838 d28=1.0000 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=912 d42=661 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9904      0.8566
+   29    100.00%       0.9913      0.8569
+   30    100.00%       0.9924      0.8570
+   31    100.00%       0.9913      0.8565
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: stable
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.007349
+   29          0.000000          0.000454
+   30          0.000000          0.000024
+   31          0.000000          0.000002
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 39.80%
+  Day 31: ZEB1+ fraction = 44.67%
+  Day 42: ZEB1+ fraction = 51.29%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6607
+  ECM at tumor d14:     0.5813
+  Tumor radius p95 d14/d28/d42: 261.23 / 287.19 / 280.05
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 3/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Intracellular drug ~0 throughout d28-31 survivors (possible survivorship filtering).
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: P_fixed_baseline
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/P_fixed_baseline/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         852         68         nan
+   21         422         49      -61.43
+   28         535         61       16.14
+   31         807         86       90.67
+   35        1576        119      192.25
+   42        3745        312      309.86
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=37.21% (d14 852 -> d28 535) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=535 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.0000 d28=0.3328 need>=0.0000 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.5640 d28=0.2458 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.7477 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=535 d42=3745 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     74.77%       0.7746      0.6449
+   29    100.00%       0.9858      0.6938
+   30    100.00%       0.9892      0.6013
+   31    100.00%       0.9858      0.5214
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: likely mixed/random survivors
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000654          0.061709
+   29          0.000000          0.001893
+   30          0.000000          0.000305
+   31          0.000000          0.000049
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 47.85%
+  Day 31: ZEB1+ fraction = 40.02%
+  Day 42: ZEB1+ fraction = 39.76%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.2458
+  ECM at tumor d14:     0.5640
+  Tumor radius p95 d14/d28/d42: 872.90 / 892.00 / 1121.29
+  Sanctuary zones: NO
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Barrier pass may be loophole: peri-ECM pre-treatment is ~0.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: Q_fixed_strong
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/Q_fixed_strong/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         759         63         nan
+   21         442         40      -45.29
+   28         250         19      -27.43
+   31         202         16      -16.00
+   35         204         23        0.50
+   42         116          8      -12.57
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=67.06% (d14 759 -> d28 250) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=250 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.8784 d28=0.9989 need>=0.7027 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5978 d28=0.7168 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.8840 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=250 d42=116 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     88.40%       0.8800      0.6587
+   29    100.00%       0.9948      0.6939
+   30    100.00%       0.9906      0.6015
+   31    100.00%       0.9929      0.5208
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000056          0.016460
+   29          0.000000          0.002319
+   30          0.000000          0.000322
+   31          0.000000          0.000048
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 60.80%
+  Day 31: ZEB1+ fraction = 65.35%
+  Day 42: ZEB1+ fraction = 65.52%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.7168
+  ECM at tumor d14:     0.5978
+  Tumor radius p95 d14/d28/d42: 274.41 / 244.23 / 227.95
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: R_no_priming
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/R_no_priming/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         551         47         nan
+   21         105         12      -63.71
+   28         299         37       27.71
+   31         628         40      109.67
+   35        1268        122      160.00
+   42        2703        221      205.00
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=45.74% (d14 551 -> d28 299) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=299 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.0252 d28=0.2934 need>=0.0201 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.5990 d28=0.1844 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.6890 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=299 d42=2703 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     68.90%       0.7282      0.6125
+   29    100.00%       0.9751      0.6936
+   30    100.00%       0.9864      0.6015
+   31    100.00%       0.9839      0.5210
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: likely mixed/random survivors
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000553          0.068914
+   29          0.000000          0.004237
+   30          0.000000          0.001071
+   31          0.000000          0.000274
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 31.10%
+  Day 31: ZEB1+ fraction = 34.87%
+  Day 42: ZEB1+ fraction = 38.85%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.1844
+  ECM at tumor d14:     0.5990
+  Tumor radius p95 d14/d28/d42: 380.92 / 958.68 / 1209.84
+  Sanctuary zones: NO
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: S_mod_priming
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/S_mod_priming/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         851         74         nan
+   21           9          0     -120.29
+   28           0          0       -1.29
+   31           0          0        0.00
+   35           0          0        0.00
+   42           0          0        0.00
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=100.00% (d14 851 -> d28 0) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: FAIL | survivors@d28=0 | Treatment eradicated tumor.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.5744 d28=nan need>=0.4595 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.5199 d28=nan | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): FAIL | frac_abcb1 d14=0.0000 d28=nan | Resistance fraction did not increase during treatment.
+  RC2-6 Regrowth: FAIL | d28=0 d42=0 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28       nan%          nan         nan
+   29       nan%          nan         nan
+   30       nan%          nan         nan
+   31       nan%          nan         nan
+
+  Interpretation: ABCB1 persistence post-withdrawal is weak/collapsing.
+
+4) Mechanism Check
+  Preferential resistant survival: NO/WEAK
+  Regrowth driver: no regrowth
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28               nan               nan
+   29               nan               nan
+   30               nan               nan
+   31               nan               nan
+
+  Interpretation: intracellular clearing=NO/MIXED; extracellular clearing=NO/MIXED.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = nan%
+  Day 31: ZEB1+ fraction = nan%
+  Day 42: ZEB1+ fraction = nan%
+  Interpretation: insufficient ZEB1 data.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: nan
+  ECM at tumor d14:     0.5199
+  Tumor radius p95 d14/d28/d42: 305.73 / 0.00 / 0.00
+  Sanctuary zones: NO
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 1/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: T_fixed_lowefflux
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/T_fixed_lowefflux/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         776         62         nan
+   21         430         34      -49.43
+   28         305         31      -17.86
+   31         275         26      -10.00
+   35         227         23      -12.00
+   42         140         10      -12.43
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=60.70% (d14 776 -> d28 305) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=305 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.3590 d28=0.9951 need>=0.2872 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5627 d28=0.7312 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.8164 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=305 d42=140 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     81.64%       0.8012      0.5881
+   29    100.00%       0.9928      0.6939
+   30    100.00%       0.9930      0.6007
+   31    100.00%       0.9927      0.5215
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000459          0.014352
+   29          0.000000          0.002208
+   30          0.000000          0.000222
+   31          0.000000          0.000028
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 53.77%
+  Day 31: ZEB1+ fraction = 60.73%
+  Day 42: ZEB1+ fraction = 58.57%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.7312
+  ECM at tumor d14:     0.5627
+  Tumor radius p95 d14/d28/d42: 313.46 / 205.26 / 196.00
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: U_fixed_highkill
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/U_fixed_highkill/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         822         65         nan
+   21         371         37      -64.43
+   28         252         14      -17.00
+   31         237         19       -5.00
+   35         213         19       -6.00
+   42         188         14       -3.57
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=69.34% (d14 822 -> d28 252) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=252 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.8952 d28=0.9976 need>=0.7161 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5934 d28=0.7376 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.9524 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: FAIL | d28=252 d42=188 | No regrowth after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     95.24%       0.9258      0.7309
+   29    100.00%       0.9860      0.6939
+   30    100.00%       0.9889      0.6010
+   31    100.00%       0.9928      0.5215
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: no regrowth
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000021          0.016327
+   29          0.000000          0.002557
+   30          0.000000          0.000249
+   31          0.000000          0.000031
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 60.71%
+  Day 31: ZEB1+ fraction = 58.65%
+  Day 42: ZEB1+ fraction = 61.17%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.7376
+  ECM at tumor d14:     0.5934
+  Tumor radius p95 d14/d28/d42: 251.47 / 227.90 / 200.73
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: V_fixed_latedrug
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/V_fixed_latedrug/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         998         81         nan
+   21         998         81        0.00
+   28         527         54      -67.29
+   31         415         47      -37.33
+   35         527         54       28.00
+   42        3886        342      479.86
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=47.19% (d14 998 -> d28 527) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=527 | Survivors remained after treatment.
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.0000 d28=0.3598 need>=0.0000 | Barrier remained above persistence threshold.
+  RC2-4 Spatial sanctuary: FAIL | ecm@tumor d14=0.6059 d28=0.2834 | No ECM-enriched sanctuary signal at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.7799 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=527 d42=3886 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     56.54%       0.6332      0.5337
+   29     59.95%       0.6619      0.4596
+   30     60.36%       0.6683      0.6016
+   31     60.96%       0.6641      0.5220
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: likely mixed/random survivors
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000573          0.045429
+   29          0.000613          0.046934
+   30          0.001169          0.048587
+   31          0.001191          0.049666
+
+  Interpretation: intracellular clearing=NO/MIXED; extracellular clearing=NO/MIXED.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 40.04%
+  Day 31: ZEB1+ fraction = 39.76%
+  Day 42: ZEB1+ fraction = 33.17%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.2834
+  ECM at tumor d14:     0.6059
+  Tumor radius p95 d14/d28/d42: 636.18 / 1023.64 / 1169.02
+  Sanctuary zones: NO
+  Barrier intact: YES
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags:
+    - Barrier pass may be loophole: peri-ECM pre-treatment is ~0.
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: W_fixed_goldilocks
+Output: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_wave3/W_fixed_goldilocks/output
+====================================================================================================
+
+1) Tumor Timeline (core signal)
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         716         61         nan
+   21         389         37      -46.71
+   28         254         24      -19.29
+   31         317         26       21.00
+   35         464         33       36.75
+   42        1099         85       90.71
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=YES; regrowth profile=explosive.
+
+2) RC2 Criteria Breakdown (explained)
+  RC2-1 Partial response: PASS | reduction=64.53% (d14 716 -> d28 254) | Tumor reduced by >=10% during treatment.
+  RC2-2 Not eradicated: PASS | survivors@d28=254 | Survivors remained after treatment.
+  RC2-3 Barrier persists: FAIL | peri_ecm d14=0.7829 d28=0.3674 need>=0.6263 | Barrier collapsed below persistence threshold.
+  RC2-4 Spatial sanctuary: PASS | ecm@tumor d14=0.5660 d28=0.6382 | Survivors occupy higher-ECM niches at treatment end.
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=0.9409 | Resistance fraction increased during treatment.
+  RC2-6 Regrowth: PASS | d28=254 d42=1099 | Tumor regrew after withdrawal.
+
+3) Resistance Dynamics (critical)
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28     94.09%       0.9150      0.8260
+   29    100.00%       0.9932      0.6939
+   30    100.00%       0.9875      0.6015
+   31    100.00%       0.9898      0.5215
+
+  Interpretation: ABCB1 persistence post-withdrawal is maintained.
+
+4) Mechanism Check
+  Preferential resistant survival: YES
+  Regrowth driver: likely mixed/random survivors
+  Resistance stability: transient/declining
+
+5) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000015          0.028898
+   29          0.000000          0.002828
+   30          0.000000          0.000333
+   31          0.000000          0.000036
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES.
+
+6) EMT / ZEB1 State
+  Day 28: ZEB1+ fraction = 48.03%
+  Day 31: ZEB1+ fraction = 43.22%
+  Day 42: ZEB1+ fraction = 38.03%
+  Interpretation: partial/limited reversion.
+
+7) Spatial / ECM Analysis
+  ECM at survivors d28: 0.6382
+  ECM at tumor d14:     0.5660
+  Tumor radius p95 d14/d28/d42: 264.06 / 576.38 / 786.51
+  Sanctuary zones: YES
+  Barrier intact: NO
+
+8) Final Verdict
+  Overall RC2 hard score: 4/5
+  Biological validity: CONDITIONAL / POSSIBLE FALSE PASS
+  Failure mechanism: one or more hard RC2 gates not satisfied.
+  Risks / flags: none material.
+
+====================================================================================================
+SUMMARY
+====================================================================================================
+  baseline_10620               hard=4/5   biological=CONDITIONAL/FALSE
+  A_strong_fast                hard=2/5   biological=CONDITIONAL/FALSE
+  B_strong_med                 hard=4/5   biological=CONDITIONAL/FALSE
+  C_med_fast                   hard=3/5   biological=CONDITIONAL/FALSE
+  D_balanced                   hard=2/5   biological=CONDITIONAL/FALSE
+  E_low_thresh                 hard=3/5   biological=CONDITIONAL/FALSE
+  F_force_uptake               hard=4/5   biological=CONDITIONAL/FALSE
+  G_flood_drug                 hard=3/5   biological=CONDITIONAL/FALSE
+  H_nuke_lowefflux             hard=4/5   biological=CONDITIONAL/FALSE
+  I_ultragentle                hard=3/5   biological=CONDITIONAL/FALSE
+  J_maxresist                  hard=2/5   biological=CONDITIONAL/FALSE
+  K_highkc                     hard=4/5   biological=CONDITIONAL/FALSE
+  L_latedrug                   hard=4/5   biological=CONDITIONAL/FALSE
+  M_shorttreat                 hard=3/5   biological=CONDITIONAL/FALSE
+  N_nofloor                    hard=4/5   biological=CONDITIONAL/FALSE
+  O_goldilocks                 hard=3/5   biological=CONDITIONAL/FALSE
+  P_fixed_baseline             hard=4/5   biological=CONDITIONAL/FALSE
+  Q_fixed_strong               hard=4/5   biological=CONDITIONAL/FALSE
+  R_no_priming                 hard=4/5   biological=CONDITIONAL/FALSE
+  S_mod_priming                hard=1/5   biological=CONDITIONAL/FALSE
+  T_fixed_lowefflux            hard=4/5   biological=CONDITIONAL/FALSE
+  U_fixed_highkill             hard=4/5   biological=CONDITIONAL/FALSE
+  V_fixed_latedrug             hard=4/5   biological=CONDITIONAL/FALSE
+  W_fixed_goldilocks           hard=4/5   biological=CONDITIONAL/FALSE
