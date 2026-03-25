@@ -1,0 +1,12 @@
+H) FINAL VERDICT
+  Hard Score: 4/5
+  Classification: FALSE PASS
+  Reason: Hard pass not achieved under strict RC2 biological criteria.
+  Risk Flags: WEAK_DRUG_EXPOSURE
+
+====================================================================================================
+SUMMARY
+====================================================================================================
+  seed_42                      hard=4/5   biological=FALSE PASS
+
+RANKED SUMMARY

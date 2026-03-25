@@ -1,0 +1,150 @@
+========================================================================
+  RESISTANCE SWEEP RESULTS — Stage 1 Micro-Sim
+========================================================================
+
+  drug_kill_multiplier \ abcb1_production_rate
+
+           |  ap=0.0008|  ap=0.001 |  ap=0.0015|
+  ---------+-----------+-----------+-----------+
+  km=1.0   |  PASS    |  PASS    |  PASS    |
+  km=1.2   |  PASS    |  PASS    |  PASS    |
+  km=1.5   |  PASS    |  PASS    |  PASS    |
+  km=1.8   |  PASS    |  PASS    |  PASS    |
+  ---------+-----------+-----------+-----------+
+
+------------------------------------------------------------------------
+  DETAILED RESULTS
+------------------------------------------------------------------------
+
+  [km1.0_ap0.0008] km=1.0 ap=0.0008  job=10654  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       49  100.0000    0.0000
+      29    41760       48  100.0000    0.0000
+      30    43200       52  100.0000    0.0000
+      31    44640       57  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.0_ap0.001] km=1.0 ap=0.001  job=10655  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       53  100.0000    0.0000
+      29    41760       54  100.0000    0.0000
+      30    43200       69  100.0000    0.0000
+      31    44640       74  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.0_ap0.0015] km=1.0 ap=0.0015  job=10656  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       72  100.0000    0.0000
+      29    41760       85  100.0000    0.0000
+      30    43200       93  100.0000    0.0000
+      31    44640      102  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.2_ap0.0008] km=1.2 ap=0.0008  job=10657  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       63  100.0000    0.0000
+      29    41760       71  100.0000    0.0000
+      30    43200       64  100.0000    0.0000
+      31    44640       70  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.2_ap0.001] km=1.2 ap=0.001  job=10658  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       47  100.0000    0.0000
+      29    41760       44  100.0000    0.0000
+      30    43200       47  100.0000    0.0000
+      31    44640       57  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.2_ap0.0015] km=1.2 ap=0.0015  job=10659  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       56  100.0000    0.0000
+      29    41760       59  100.0000    0.0000
+      30    43200       59  100.0000    0.0000
+      31    44640       78  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.5_ap0.0008] km=1.5 ap=0.0008  job=10660  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       54  100.0000    0.0000
+      29    41760       57  100.0000    0.0000
+      30    43200       71  100.0000    0.0000
+      31    44640       73  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.5_ap0.001] km=1.5 ap=0.001  job=10661  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       43  100.0000    0.0000
+      29    41760       41  100.0000    0.0000
+      30    43200       39  100.0000    0.0000
+      31    44640       35  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.5_ap0.0015] km=1.5 ap=0.0015  job=10662  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       60  100.0000    0.0000
+      29    41760       69  100.0000    0.0000
+      30    43200       79  100.0000    0.0000
+      31    44640       95  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.8_ap0.0008] km=1.8 ap=0.0008  job=10663  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320      119  100.0000    0.0000
+      29    41760      143  100.0000    0.0000
+      30    43200      171  100.0000    0.0000
+      31    44640      184  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.8_ap0.001] km=1.8 ap=0.001  job=10664  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       41  100.0000    0.0000
+      29    41760       36  100.0000    0.0000
+      30    43200       36  100.0000    0.0000
+      31    44640       36  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km1.8_ap0.0015] km=1.8 ap=0.0015  job=10665  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       42  100.0000    0.0000
+      29    41760       45  100.0000    0.0000
+      30    43200       47  100.0000    0.0000
+      31    44640       38  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+========================================================================
+  RECOMMENDED: km1.8_ap0.001
+    drug_kill_multiplier    = 1.8
+    abcb1_production_rate   = 0.001
+    drug_stress_threshold   = 0.02
+    Day 28 survivors:         41
+    ABCB1 retention d31/d28:  100.00%
+    Survival retention:       87.80%
+
+  12/12 combos passed.
+  All passing combos:
+    km1.8_ap0.001: n28=41 abcb1_ret=100.00% surv_ret=87.80%
+    km1.8_ap0.0015: n28=42 abcb1_ret=100.00% surv_ret=90.48%
+    km1.5_ap0.001: n28=43 abcb1_ret=100.00% surv_ret=81.40%
+    km1.2_ap0.001: n28=47 abcb1_ret=100.00% surv_ret=121.28%
+    km1.0_ap0.0008: n28=49 abcb1_ret=100.00% surv_ret=116.33%
+    km1.0_ap0.001: n28=53 abcb1_ret=100.00% surv_ret=139.62%
+    km1.5_ap0.0008: n28=54 abcb1_ret=100.00% surv_ret=135.19%
+    km1.2_ap0.0015: n28=56 abcb1_ret=100.00% surv_ret=139.29%
+    km1.5_ap0.0015: n28=60 abcb1_ret=100.00% surv_ret=158.33%
+    km1.2_ap0.0008: n28=63 abcb1_ret=100.00% surv_ret=111.11%
+    km1.0_ap0.0015: n28=72 abcb1_ret=100.00% surv_ret=141.67%
+    km1.8_ap0.0008: n28=119 abcb1_ret=100.00% surv_ret=154.62%
+========================================================================

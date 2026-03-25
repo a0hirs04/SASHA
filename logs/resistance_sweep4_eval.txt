@@ -1,0 +1,69 @@
+========================================================================
+  RESISTANCE SWEEP RESULTS — Stage 1 Micro-Sim
+========================================================================
+
+  drug_kill_multiplier \ abcb1_production_rate
+
+           |  ap=0.0008|
+  ---------+-----------+
+  km=2.0   |  PASS    |
+  km=2.2   |  PASS    |
+  km=2.5   |  PASS    |
+  km=2.8   |  FAIL    |
+  ---------+-----------+
+
+------------------------------------------------------------------------
+  DETAILED RESULTS
+------------------------------------------------------------------------
+
+  [km2.0_ap0.0008] km=2.0 ap=0.0008  job=10668  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       41  100.0000    0.0000
+      29    41760       49  100.0000    0.0000
+      30    43200       53  100.0000    0.0000
+      31    44640       54  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km2.2_ap0.0008] km=2.2 ap=0.0008  job=10669  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       42  100.0000    0.0000
+      29    41760       48  100.0000    0.0000
+      30    43200       52  100.0000    0.0000
+      31    44640       55  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km2.5_ap0.0008] km=2.5 ap=0.0008  job=10670  => PASS
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320       54  100.0000    0.0000
+      29    41760       50  100.0000    0.0000
+      30    43200       55  100.0000    0.0000
+      31    44640       52  100.0000    0.0000
+    Memory gate:   PASS
+    Survival gate: PASS
+
+  [km2.8_ap0.0008] km=2.8 ap=0.0008  job=10671  => FAIL
+     day   t(min)   n_live   ABCB1+%   ic_mean
+      28    40320        0       nan       nan
+      29    41760        0       nan       nan
+      30    43200        0       nan       nan
+      31    44640        0       nan       nan
+    Memory gate:   FAIL
+    Survival gate: FAIL
+
+========================================================================
+  RECOMMENDED: km2.0_ap0.0008
+    drug_kill_multiplier    = 2.0
+    abcb1_production_rate   = 0.0008
+    drug_stress_threshold   = 0.02
+    Day 28 survivors:         41
+    ABCB1 retention d31/d28:  100.00%
+    Survival retention:       131.71%
+
+  3/4 combos passed.
+  All passing combos:
+    km2.0_ap0.0008: n28=41 abcb1_ret=100.00% surv_ret=131.71%
+    km2.2_ap0.0008: n28=42 abcb1_ret=100.00% surv_ret=130.95%
+    km2.5_ap0.0008: n28=54 abcb1_ret=100.00% surv_ret=96.30%
+========================================================================

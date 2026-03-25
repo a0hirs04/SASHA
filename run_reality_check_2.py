@@ -137,7 +137,15 @@ CRITERIA_NAMES = [
 # ---------------------------------------------------------------------------
 # Config patching
 # ---------------------------------------------------------------------------
-def _patch_config(src: Path, dst: Path, output_dir: Path, seed: int) -> None:
+def _patch_config(
+    src: Path,
+    dst: Path,
+    output_dir: Path,
+    seed: int,
+    drug_kill_multiplier: Optional[float] = None,
+    abcb1_production_rate: Optional[float] = None,
+    drug_stress_threshold: Optional[float] = None,
+) -> None:
     tree = ET.parse(src)
     root = tree.getroot()
 
@@ -159,6 +167,14 @@ def _patch_config(src: Path, dst: Path, output_dir: Path, seed: int) -> None:
     _set(".//user_parameters/drug_start_time",   str(T_PRE))
     _set(".//user_parameters/drug_end_time",     str(T_TREAT_END))
     _set(".//user_parameters/drug_concentration", str(DRUG_CONCENTRATION))
+
+    # Optional sweep/transition overrides
+    if drug_kill_multiplier is not None:
+        _set(".//user_parameters/drug_kill_multiplier", str(drug_kill_multiplier))
+    if abcb1_production_rate is not None:
+        _set(".//user_parameters/abcb1_production_rate", str(abcb1_production_rate))
+    if drug_stress_threshold is not None:
+        _set(".//user_parameters/drug_stress_threshold", str(drug_stress_threshold))
 
     # Enable Dirichlet BCs for all substrates (drug starts at 0; C++ will raise it)
     def _enforce_dirichlet(var_name: str, value: str) -> None:
@@ -185,11 +201,17 @@ def _patch_config(src: Path, dst: Path, output_dir: Path, seed: int) -> None:
 # ---------------------------------------------------------------------------
 # SLURM helpers
 # ---------------------------------------------------------------------------
-def _write_slurm_script(rep_dir: Path, config_path: Path, rep_idx: int, seed: int) -> Path:
+def _write_slurm_script(
+    rep_dir: Path,
+    config_path: Path,
+    rep_idx: int,
+    seed: int,
+    job_name_prefix: str = "rc2",
+) -> Path:
     script = rep_dir / "run.slurm.sh"
     script.write_text(textwrap.dedent(f"""\
         #!/bin/bash
-        #SBATCH --job-name=rc2_rep{rep_idx+1}_s{seed}
+        #SBATCH --job-name={job_name_prefix}_r{rep_idx+1}_s{seed}
         #SBATCH --partition={SLURM_PARTITION}
         #SBATCH --nodes=1
         #SBATCH --ntasks-per-node=1
@@ -503,6 +525,30 @@ def main() -> int:
         action="store_true",
         help="Evaluate existing outputs only; do not delete or submit jobs",
     )
+    parser.add_argument(
+        "--job-name-prefix",
+        type=str,
+        default="rc2",
+        help="SLURM job-name prefix for submitted replicates",
+    )
+    parser.add_argument(
+        "--drug-kill-multiplier",
+        type=float,
+        default=None,
+        help="Optional override for user_parameters.drug_kill_multiplier",
+    )
+    parser.add_argument(
+        "--abcb1-production-rate",
+        type=float,
+        default=None,
+        help="Optional override for user_parameters.abcb1_production_rate",
+    )
+    parser.add_argument(
+        "--drug-stress-threshold",
+        type=float,
+        default=None,
+        help="Optional override for user_parameters.drug_stress_threshold",
+    )
     args = parser.parse_args()
 
     if args.dry_run and args.evaluate_only:
@@ -533,6 +579,12 @@ def main() -> int:
     print(f"  HPC: {SLURM_PARTITION} partition, {SLURM_CPUS} CPUs/node")
     print(f"  Quorum: >={quorum}/{num_replicates}")
     print(f"  Work dir: {work_dir}")
+    if args.drug_kill_multiplier is not None:
+        print(f"  Override: drug_kill_multiplier={args.drug_kill_multiplier}")
+    if args.abcb1_production_rate is not None:
+        print(f"  Override: abcb1_production_rate={args.abcb1_production_rate}")
+    if args.drug_stress_threshold is not None:
+        print(f"  Override: drug_stress_threshold={args.drug_stress_threshold}")
     print("=" * 72)
 
     if args.dry_run:
@@ -571,7 +623,15 @@ def main() -> int:
             output_dir.mkdir(parents=True, exist_ok=True)
 
             config_path = rep_dir / "config.xml"
-            _patch_config(BASE_CONFIG, config_path, output_dir, seed)
+            _patch_config(
+                BASE_CONFIG,
+                config_path,
+                output_dir,
+                seed,
+                drug_kill_multiplier=args.drug_kill_multiplier,
+                abcb1_production_rate=args.abcb1_production_rate,
+                drug_stress_threshold=args.drug_stress_threshold,
+            )
 
             # Copy tumour calibration knobs into run dir so binary can find them
             local_cfg = rep_dir / "config"
@@ -585,7 +645,13 @@ def main() -> int:
                 if src.exists():
                     shutil.copy(src, local_cfg / extra)
 
-            script = _write_slurm_script(rep_dir, config_path, i, seed)
+            script = _write_slurm_script(
+                rep_dir,
+                config_path,
+                i,
+                seed,
+                job_name_prefix=args.job_name_prefix,
+            )
 
             result = subprocess.run(
                 ["sbatch", "--parsable", str(script)],
