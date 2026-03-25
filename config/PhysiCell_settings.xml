@@ -915,6 +915,8 @@
             description="Knob 7a (Targetable): ABCB1 induction delay control">0.5</efflux_induction_delay>
         <efflux_strength type="double" units="dimensionless"
             description="Knob 7b (Targetable): ABCB1 efflux strength">0.7</efflux_strength>
+        <abcb1_production_rate type="double" units="1/min"
+            description="NRF2-driven ABCB1 synthesis rate. SS=rate*tau. 0.001→SS=1.0,t_resist~10h (too fast). 0.0005→SS=0.81,t_resist~26h (Goldilocks).">0.0005</abcb1_production_rate>
         <abcb1_decay_tau type="double" units="min"
             description="Relaxation tau for ABCB1 decay — anchored to ABCB1 protein half-life ~27h (1620 min)">1620.0</abcb1_decay_tau>
         <abcb1_max_daily_drop_fraction type="double" units="dimensionless"

@@ -1296,8 +1296,14 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     {
         // B. ABCB1 — efflux pump protein (slow: t_1/2 ~ 27 h, tau = 1620 min)
         // Production requires significant NRF2 (> 0.5); decay is protein-intrinsic.
+        // abcb1_production_rate is XML-tunable: lower values delay resistance onset,
+        // giving the drug a longer kill window before ABCB1 shields go up.
+        // 0.001 → SS=1.0, t_resist~10h (too fast: RC2-1 fails)
+        // 0.0005 → SS=0.81, t_resist~26h (Goldilocks: 1-day kill window)
         const double abcb1_tau = 1620.0;
-        const double abcb1_production = (nrf2_active > 0.5) ? 0.001 : 0.0;
+        const double abcb1_production_rate =
+            read_xml_double_or_default("abcb1_production_rate", 0.0005);
+        const double abcb1_production = (nrf2_active > 0.5) ? abcb1_production_rate : 0.0;
         abcb1_active += abcb1_production * dt;
         abcb1_active *= std::exp(-dt / abcb1_tau);
         abcb1_active = clamp_unit(abcb1_active);
