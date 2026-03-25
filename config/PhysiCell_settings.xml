@@ -877,6 +877,8 @@
             description="Intracellular drug level threshold for NRF2 activation">0.03</drug_stress_threshold>
         <nrf2_decay_rate type="double" units="1/hour"
             description="Slow NRF2 decay rate when drug stress is removed">0.01</nrf2_decay_rate>
+        <nrf2_persistence_threshold type="double" units="dimensionless"
+            description="Minimum intracellular drug needed to keep NRF2/ABCB1 maintenance active during withdrawal">0.003</nrf2_persistence_threshold>
         <drug_natural_decay_rate type="double" units="1/hour"
             description="Natural intracellular drug metabolism/decay rate">0.0</drug_natural_decay_rate>
         <hif1a_nrf2_priming_bonus type="double" units="dimensionless"
@@ -913,6 +915,12 @@
             description="Knob 7a (Targetable): ABCB1 induction delay control">0.5</efflux_induction_delay>
         <efflux_strength type="double" units="dimensionless"
             description="Knob 7b (Targetable): ABCB1 efflux strength">0.7</efflux_strength>
+        <abcb1_decay_tau type="double" units="min"
+            description="Relaxation tau for ABCB1 decay — anchored to ABCB1 protein half-life ~27h (1620 min)">1620.0</abcb1_decay_tau>
+        <abcb1_max_daily_drop_fraction type="double" units="dimensionless"
+            description="Maximum allowed fractional ABCB1 decrease per 24h (0.25 = protein persistence guardrail)">0.25</abcb1_max_daily_drop_fraction>
+        <abcb1_inheritance_floor type="double" units="dimensionless"
+            description="Minimum ABCB1 for daughters born in post-withdrawal resistance memory (must be > 0.5 analysis threshold)">0.6</abcb1_inheritance_floor>
         <mechanical_compaction_strength type="double" units="dimensionless"
             description="Knob 8 (Fixed): mechanical compaction / solid-stress strength">0.6</mechanical_compaction_strength>
         <compaction_ecm_increment type="double" units="dimensionless"

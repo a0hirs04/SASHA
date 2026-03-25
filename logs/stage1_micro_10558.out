@@ -1,0 +1,5 @@
+[stage1] build start: Tue Mar 24 23:26:47 UTC 2026
+make BUILD=release build-mode
+make[1]: Entering directory '/home/a0hirs04/PROJECT-NORTHSTAR'
+g++ -I. -I/home/a0hirs04/PROJECT-NORTHSTAR/Stroma_world/PhysiCell -I/home/a0hirs04/PROJECT-NORTHSTAR/Stroma_world/PhysiCell/BioFVM -std=c++17 -march=native -m64 -fomit-frame-pointer -mfpmath=both -fopenmp -O2 -c custom_modules/custom.cpp -o build/obj/release/custom_modules/custom.o
+make[1]: Leaving directory '/home/a0hirs04/PROJECT-NORTHSTAR'

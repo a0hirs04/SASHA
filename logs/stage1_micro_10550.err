@@ -1,0 +1,49 @@
+[setup_microenvironment] ECM impedance correction mode: dt-aware DRUG ONLY (O2/TGFb/SHH legacy)
+[ThresholdConfig] Loaded from XML:  HIF1A O2=15 mmHg  Necrosis O2=5 mmHg  TGFB=0.1  SHH=1e-05
+[setup_microenvironment] Loaded calibration profile: AsPC-1
+[setup_microenvironment] Substrate indices: oxygen=0 tgfb=1 shh=2 ecm_density=4 drug=3
+[setup_microenvironment] Completed in 1.67575 ms
+[create_cell_types] Completed in 6.55537 ms
+
+================================================================
+ §8.1  Baseline Validation Suite — Tumor-Intrinsic Traits v1.0 
+================================================================
+  [PASS]  Trait 1:  Constitutive Paracrine Secretion
+  [PASS]  Trait 2:  TGF-beta Insensitivity (Arrest Arm Only)
+  [PASS]  Trait 3:  Rapid Proliferation / Broken Checkpoints
+  [PASS]  Trait 4:  Apoptotic Resistance at Baseline
+  [PASS]  Trait 5:  Inducible EMT Under Stress  (Spatial)
+  [PASS]  Trait 6:  Hypoxia-Responsive Phenotype Switching
+  [PASS]  Trait 7:  Drug-Inducible Efflux  (Not Constitutive)
+  [PASS]  Trait 8:  ECM Compaction  (Passive / Mechanical)
+  [PASS]  Trait 9:  13-Knob Partition + AsPC-1/PANC-1 Knob 2
+  [PASS]  Trait 10:  SHH Paradox Fast Invariants
+----------------------------------------------------------------
+  Result: 10/10 passed — ALL PASS.  Baseline is validated.
+================================================================
+
+[setup_tissue] No intervention JSON provided; using active calibration defaults.
+[setup_tissue] Placed tumor=60 stromal=20 cluster_radius=60um stroma_ring=[80,120]um in 1.80343 ms
+
+[DIAG_T360_STROMAL] === One-time stromal diagnostic at t=360 ===
+[DIAG_T360_STROMAL] Total live stromal: 20  PSCs(acta2=0): 20  CAFs(acta2=1): 0
+[DIAG_T360_STROMAL] PSC #0  ID=61  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.183272
+[DIAG_T360_STROMAL] PSC #1  ID=66  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0
+[DIAG_T360_STROMAL] PSC #2  ID=76  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.174396
+[DIAG_T360_STROMAL] PSC #3  ID=60  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.0833446
+[DIAG_T360_STROMAL] PSC #4  ID=65  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.14742
+[DIAG_T360_MECH_VERIFY] Checking mechanical_pressure for 3 random stromal cells:
+[DIAG_T360_MECH_VERIFY]   cell ID=68  idx[16]=0  name_lookup=0  simple_pressure=0  STILL_ZERO
+[DIAG_T360_MECH_VERIFY]   cell ID=72  idx[16]=0.0859416  name_lookup=0.0859416  simple_pressure=0.175127  OK
+[DIAG_T360_MECH_VERIFY]   cell ID=75  idx[16]=0.0400928  name_lookup=0.0400928  simple_pressure=0.0815199  OK
+[DIAG_T360_STROMAL] === end diagnostic ===
+
+[perf] custom_function avg = 9.51344 us over 50000 calls
+[perf] custom_function avg = 9.56288 us over 100000 calls
+[perf] custom_function avg = 9.6485 us over 150000 calls
+[perf] custom_function avg = 9.78319 us over 200000 calls
+[perf] custom_function avg = 9.92249 us over 250000 calls
+[DRUG_SCHEDULE] t=20166 Drug ON  concentration=0.1
+[perf] custom_function avg = 9.82473 us over 300000 calls
+[perf] custom_function avg = 9.70664 us over 350000 calls
+[DRUG_SCHEDULE] t=40326 Drug WITHDRAWN (BC→0, interior dissipates)

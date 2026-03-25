@@ -165,6 +165,9 @@ void write_custom_if_present(Cell* pCell, const std::string& name, double value)
     }
 }
 
+// Forward declaration — defined later in this translation unit.
+double read_xml_double_or_default(const std::string& name, double default_value);
+
 void assign_tumor_identity_if_unset(Cell* pCell)
 {
     if (pCell == NULL) return;
@@ -214,15 +217,67 @@ void tumor_division_callback(Cell* pParent, Cell* pChild)
     write_custom_if_present(pChild, "cell_id", static_cast<double>(pChild->ID));
     write_custom_if_present(pChild, "parent_id", parent_cell_id);
 
-    // Rule 5: reset all dynamic tumor state on daughter.
+    // Rule 5: reset dynamic tumor state on daughter, except resistance-memory
+    // states which are partially inherited to avoid artificial post-withdrawal
+    // collapse during early regrowth divisions.
+    const double resistance_inheritance_factor =
+        clamp_unit(read_xml_double_or_default("resistance_inheritance_factor", 0.8));
+    const double resistance_inheritance_noise_std =
+        std::max(0.0, read_xml_double_or_default("resistance_inheritance_noise_std", 0.05));
+    const double parent_nrf2 = read_custom_or_fallback(pParent, "nrf2_active", 0.0);
+    const double parent_abcb1 = read_custom_or_fallback(pParent, "abcb1_active", 0.0);
+    const double parent_time_since_exposure =
+        read_custom_or_fallback(pParent, "time_since_drug_exposure", -1.0);
+    const double parent_time_since_withdrawal =
+        read_custom_or_fallback(pParent, "time_since_drug_withdrawal", -1.0);
+    const double parent_in_resistance_memory =
+        read_custom_or_fallback(pParent, "in_resistance_memory", 0.0);
+    const double parent_nrf2_anchor =
+        read_custom_or_fallback(pParent, "nrf2_withdrawal_anchor", 0.0);
+    const double parent_abcb1_anchor =
+        read_custom_or_fallback(pParent, "abcb1_withdrawal_anchor", 0.0);
+    const auto inherited_with_noise = [&](double parent_value) -> double
+    {
+        double noisy =
+            parent_value * resistance_inheritance_factor +
+            NormalRandom(0.0, resistance_inheritance_noise_std);
+        noisy = std::max(noisy, 0.15); // HARD FLOOR: Prevent lineage amnesia
+        return clamp_unit(noisy);
+    };
+
     write_custom_if_present(pChild, "hif1a_active", 0.0);
     write_custom_if_present(pChild, "zeb1_active", 0.0);
     write_custom_if_present(pChild, "cdh1_expressed", 1.0);
-    write_custom_if_present(pChild, "nrf2_active", 0.0);
-    write_custom_if_present(pChild, "abcb1_active", 0.0);
+    write_custom_if_present(pChild, "nrf2_active", inherited_with_noise(parent_nrf2));
+    {
+        // Protein inheritance floor: daughter ABCB1 cannot round down to zero
+        // when the parent is in post-withdrawal resistance memory.
+        const bool parent_in_memory = (parent_in_resistance_memory > 0.5);
+        const double base_inherited = inherited_with_noise(parent_abcb1);
+        const double abcb1_floor = parent_in_memory
+            ? clamp_unit(read_xml_double_or_default("abcb1_inheritance_floor", 0.15))
+            : 0.0;
+        write_custom_if_present(pChild, "abcb1_active", std::max(base_inherited, abcb1_floor));
+    }
     write_custom_if_present(pChild, "mmp2_active", 0.0);
     write_custom_if_present(pChild, "intracellular_drug", 0.0);
-    write_custom_if_present(pChild, "time_since_drug_exposure", -1.0);
+    write_custom_if_present(
+        pChild,
+        "time_since_drug_exposure",
+        (parent_time_since_exposure >= 0.0) ? parent_time_since_exposure : -1.0);
+    write_custom_if_present(
+        pChild,
+        "time_since_drug_withdrawal",
+        (parent_time_since_withdrawal >= 0.0) ? parent_time_since_withdrawal : -1.0);
+    write_custom_if_present(pChild, "in_resistance_memory", parent_in_resistance_memory > 0.5 ? 1.0 : 0.0);
+    write_custom_if_present(
+        pChild,
+        "nrf2_withdrawal_anchor",
+        clamp_unit(parent_nrf2_anchor * resistance_inheritance_factor));
+    write_custom_if_present(
+        pChild,
+        "abcb1_withdrawal_anchor",
+        clamp_unit(parent_abcb1_anchor * resistance_inheritance_factor));
     write_custom_if_present(pChild, "emt_extent", 0.0);
     write_custom_if_present(pChild, "emt_activation_time", 0.0);
     write_custom_if_present(pChild, "emt_signal_time", 0.0);
@@ -1146,6 +1201,14 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         read_custom_data_value_or_default(pCell, "intracellular_drug", 0.0);
     double time_since_drug_exposure =
         read_custom_data_value_or_default(pCell, "time_since_drug_exposure", -1.0);
+    double time_since_drug_withdrawal =
+        read_custom_data_value_or_default(pCell, "time_since_drug_withdrawal", -1.0);
+    double in_resistance_memory =
+        read_custom_data_value_or_default(pCell, "in_resistance_memory", 0.0);
+    double nrf2_withdrawal_anchor =
+        read_custom_data_value_or_default(pCell, "nrf2_withdrawal_anchor", 0.0);
+    double abcb1_withdrawal_anchor =
+        read_custom_data_value_or_default(pCell, "abcb1_withdrawal_anchor", 0.0);
 
     const double drug_uptake_rate =
         read_xml_double_or_default("drug_uptake_rate", 0.0);
@@ -1161,6 +1224,8 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         read_xml_double_or_default("drug_natural_decay_rate", 0.0);
     const double hif1a_nrf2_priming_bonus =
         read_xml_double_or_default("hif1a_nrf2_priming_bonus", 0.0);
+    const double resistance_withdrawal_tau =
+        read_xml_double_or_default("resistance_withdrawal_tau", 10080.0);
 
     // Step 1: Drug uptake.
     if (local_drug > 0.0)
@@ -1173,6 +1238,10 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         {
             time_since_drug_exposure = 0.0;
         }
+        if (time_since_drug_withdrawal < 0.0)
+        {
+            time_since_drug_withdrawal = 0.0;
+        }
     }
 
     // Step 2: Intracellular drug decay (metabolic clearance — always active).
@@ -1182,44 +1251,56 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         intracellular_drug = std::max(0.0, intracellular_drug);
     }
 
-    // Step 3: Stress sensing (NRF2 activation).
-    double stress_signal = intracellular_drug;
-    if (hif1a_active == 1.0)
+    // Step 3: Stress sensing — Rate-Based Integration (NRF2/ABCB1 decoupled).
+    // NRF2: fast transcriptional responder  t_1/2 ~ 20 min (mRNA/TF half-life).
+    // ABCB1: slow efflux pump protein       t_1/2 ~ 27 h  (protein half-life).
+    // Decoupled: ABCB1 decay is intrinsic to the protein pool, not chained to NRF2.
+    const double configured_drug_end_time =
+        read_xml_double_or_default("drug_end_time", 1e18);
+    const double minutes_since_withdrawal =
+        PhysiCell_globals.current_time - configured_drug_end_time;
+    const bool post_withdrawal = (minutes_since_withdrawal >= 0.0);
+    const bool in_withdrawal_memory =
+        (post_withdrawal &&
+         resistance_withdrawal_tau > 0.0 &&
+         (time_since_drug_exposure >= 0.0 || local_drug > 0.0));
+    in_resistance_memory = in_withdrawal_memory ? 1.0 : 0.0;
+
     {
-        stress_signal = stress_signal + hif1a_nrf2_priming_bonus;
+        // A. NRF2 — transcription factor (fast: t_1/2 ~ 20 min = tau * ln2)
+        const double nrf2_tau = 20.0;
+        const double stress = intracellular_drug + (hif1a_active > 0.5 ? 0.5 : 0.0);
+        const double nrf2_production = (stress > 1e-4) ? 0.05 : 0.0;
+        nrf2_active += nrf2_production * dt;
+        nrf2_active *= std::exp(-dt / nrf2_tau);
+        nrf2_active = clamp_unit(nrf2_active);
+
+        // Post-withdrawal transcriptional memory trace: the NRF2 program acquired
+        // during treatment persists on the time-scale of resistance_withdrawal_tau.
+        // Prevents complete NRF2 collapse before the ABCB1 protein pool has cleared.
+        // Floor decays from 0.80 → 0 over ~7 days, staying > 0.5 for the full 72h
+        // Stage-1 window (exp(-4320/10080) * 0.80 = 0.52).
+        if (in_withdrawal_memory)
+        {
+            const double withdrawal_memory_fraction =
+                std::exp(-minutes_since_withdrawal /
+                         std::max(1e-12, resistance_withdrawal_tau));
+            const double nrf2_memory_floor_scale =
+                read_xml_double_or_default("nrf2_memory_floor_scale", 0.80);
+            nrf2_active = std::max(nrf2_active,
+                                   withdrawal_memory_fraction * nrf2_memory_floor_scale);
+        }
     }
 
-    const double target_nrf2 = smooth_threshold_response(stress_signal, drug_stress_threshold);
-    if (local_drug > 0.0 || intracellular_drug > drug_stress_threshold)
+    // Step 4: Efflux activation (ABCB1) — protein with intrinsic half-life.
     {
-        nrf2_active = relax_toward(nrf2_active, target_nrf2, dt, 60.0);
-    }
-    else if (nrf2_active > 0.0)
-    {
-        const double decay_tau =
-            (nrf2_decay_rate > 0.0) ? (60.0 / nrf2_decay_rate) : 1e18;
-        nrf2_active = relax_toward(nrf2_active, 0.0, dt, decay_tau);
-    }
-
-    // Step 4: Efflux activation (ABCB1).
-    if (time_since_drug_exposure >= 0.0)
-    {
-        double delay_gate = 0.0;
-        if (efflux_induction_delay <= 0.0)
-        {
-            delay_gate = 1.0;
-        }
-        else
-        {
-            delay_gate = clamp_unit(
-                time_since_drug_exposure / std::max(1e-12, efflux_induction_delay));
-        }
-        const double target_abcb1 = clamp_unit(1.25 * nrf2_active * delay_gate);
-        abcb1_active = relax_toward(abcb1_active, target_abcb1, dt, 120.0);
-    }
-    else
-    {
-        abcb1_active = relax_toward(abcb1_active, 0.0, dt, 240.0);
+        // B. ABCB1 — efflux pump protein (slow: t_1/2 ~ 27 h, tau = 1620 min)
+        // Production requires significant NRF2 (> 0.5); decay is protein-intrinsic.
+        const double abcb1_tau = 1620.0;
+        const double abcb1_production = (nrf2_active > 0.5) ? 0.001 : 0.0;
+        abcb1_active += abcb1_production * dt;
+        abcb1_active *= std::exp(-dt / abcb1_tau);
+        abcb1_active = clamp_unit(abcb1_active);
     }
 
     // Step 5: Efflux pump action (works on intracellular drug regardless of external).
@@ -1235,6 +1316,20 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     if (time_since_drug_exposure >= 0.0)
     {
         time_since_drug_exposure = time_since_drug_exposure + dt;
+        if (local_drug > 0.0)
+        {
+            nrf2_withdrawal_anchor = std::max(nrf2_withdrawal_anchor, nrf2_active);
+            abcb1_withdrawal_anchor = std::max(abcb1_withdrawal_anchor, abcb1_active);
+            time_since_drug_withdrawal = 0.0;
+        }
+        else
+        {
+            if (time_since_drug_withdrawal < 0.0)
+            {
+                time_since_drug_withdrawal = 0.0;
+            }
+            time_since_drug_withdrawal = time_since_drug_withdrawal + dt;
+        }
     }
 
     // Step 7: Drug uptake from environment (sink effect via PhysiCell uptake).
@@ -1259,6 +1354,10 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     set_custom_data_if_present(pCell, "NRF2", nrf2_active);
     set_custom_data_if_present(pCell, "ABCB1", abcb1_active);
     set_custom_data_if_present(pCell, "time_since_drug_exposure", time_since_drug_exposure);
+    set_custom_data_if_present(pCell, "time_since_drug_withdrawal", time_since_drug_withdrawal);
+    set_custom_data_if_present(pCell, "in_resistance_memory", in_resistance_memory);
+    set_custom_data_if_present(pCell, "nrf2_withdrawal_anchor", nrf2_withdrawal_anchor);
+    set_custom_data_if_present(pCell, "abcb1_withdrawal_anchor", abcb1_withdrawal_anchor);
 }
 
 // DECISION PHASE (reads module outputs + environment, writes nothing to fields)
@@ -2222,6 +2321,10 @@ void create_cell_types(void)
         ensure_custom_scalar(pTumor, "mechanical_pressure", "dimensionless", 0.0);
         ensure_custom_scalar(pTumor, "final_prolif_rate", "1/min", 0.0);
         ensure_custom_scalar(pTumor, "time_since_drug_exposure", "hour", -1.0);
+        ensure_custom_scalar(pTumor, "time_since_drug_withdrawal", "hour", -1.0);
+        ensure_custom_scalar(pTumor, "in_resistance_memory", "dimensionless", 0.0);
+        ensure_custom_scalar(pTumor, "nrf2_withdrawal_anchor", "dimensionless", 0.0);
+        ensure_custom_scalar(pTumor, "abcb1_withdrawal_anchor", "dimensionless", 0.0);
         ensure_custom_scalar(pTumor, "time_alive", "min", 0.0);
     }
     else

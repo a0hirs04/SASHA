@@ -1,0 +1,6 @@
+custom_modules/custom.cpp: In function ‘void {anonymous}::tumor_division_callback(PhysiCell::Cell*, PhysiCell::Cell*)’:
+custom_modules/custom.cpp:221:20: error: ‘read_xml_double_or_default’ was not declared in this scope
+  221 |         clamp_unit(read_xml_double_or_default("resistance_inheritance_factor", 0.8));
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~
+make[1]: *** [Makefile:110: build/obj/release/custom_modules/custom.o] Error 1
+make: *** [Makefile:93: release] Error 2

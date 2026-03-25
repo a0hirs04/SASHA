@@ -1,0 +1,3 @@
+cp: cannot create regular file 'stroma_world': Text file busy
+make[1]: *** [Makefile:99: build-mode] Error 1
+make: *** [Makefile:93: release] Error 2

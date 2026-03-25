@@ -1,0 +1,27 @@
+[setup_microenvironment] ECM impedance correction mode: dt-aware DRUG ONLY (O2/TGFb/SHH legacy)
+[ThresholdConfig] Loaded from XML:  HIF1A O2=15 mmHg  Necrosis O2=5 mmHg  TGFB=0.1  SHH=1e-05
+[setup_microenvironment] Loaded calibration profile: AsPC-1
+[setup_microenvironment] Substrate indices: oxygen=0 tgfb=1 shh=2 ecm_density=4 drug=3
+[setup_microenvironment] Completed in 1.35009 ms
+[create_cell_types] Completed in 6.65454 ms
+
+================================================================
+ §8.1  Baseline Validation Suite — Tumor-Intrinsic Traits v1.0 
+================================================================
+  [PASS]  Trait 1:  Constitutive Paracrine Secretion
+  [PASS]  Trait 2:  TGF-beta Insensitivity (Arrest Arm Only)
+  [PASS]  Trait 3:  Rapid Proliferation / Broken Checkpoints
+  [PASS]  Trait 4:  Apoptotic Resistance at Baseline
+  [PASS]  Trait 5:  Inducible EMT Under Stress  (Spatial)
+  [PASS]  Trait 6:  Hypoxia-Responsive Phenotype Switching
+  [PASS]  Trait 7:  Drug-Inducible Efflux  (Not Constitutive)
+  [PASS]  Trait 8:  ECM Compaction  (Passive / Mechanical)
+  [PASS]  Trait 9:  13-Knob Partition + AsPC-1/PANC-1 Knob 2
+  [PASS]  Trait 10:  SHH Paradox Fast Invariants
+----------------------------------------------------------------
+  Result: 10/10 passed — ALL PASS.  Baseline is validated.
+================================================================
+
+[setup_tissue] No intervention JSON provided; using active calibration defaults.
+[setup_tissue] Placed tumor=80 stromal=0 cluster_radius=60um stroma_ring=[80,120]um in 1.76622 ms
+[DRUG_SCHEDULE] t=0 Drug ON  concentration=1

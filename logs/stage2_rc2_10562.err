@@ -1,0 +1,58 @@
+[setup_microenvironment] ECM impedance correction mode: dt-aware DRUG ONLY (O2/TGFb/SHH legacy)
+[ThresholdConfig] Loaded from XML:  HIF1A O2=15 mmHg  Necrosis O2=5 mmHg  TGFB=0.1  SHH=1e-05
+[setup_microenvironment] Loaded calibration profile: AsPC-1
+[setup_microenvironment] Substrate indices: oxygen=0 tgfb=1 shh=2 ecm_density=4 drug=3
+[setup_microenvironment] Completed in 6.75982 ms
+[create_cell_types] Completed in 6.63635 ms
+
+================================================================
+ §8.1  Baseline Validation Suite — Tumor-Intrinsic Traits v1.0 
+================================================================
+  [PASS]  Trait 1:  Constitutive Paracrine Secretion
+  [PASS]  Trait 2:  TGF-beta Insensitivity (Arrest Arm Only)
+  [PASS]  Trait 3:  Rapid Proliferation / Broken Checkpoints
+  [PASS]  Trait 4:  Apoptotic Resistance at Baseline
+  [PASS]  Trait 5:  Inducible EMT Under Stress  (Spatial)
+  [PASS]  Trait 6:  Hypoxia-Responsive Phenotype Switching
+  [PASS]  Trait 7:  Drug-Inducible Efflux  (Not Constitutive)
+  [PASS]  Trait 8:  ECM Compaction  (Passive / Mechanical)
+  [PASS]  Trait 9:  13-Knob Partition + AsPC-1/PANC-1 Knob 2
+  [PASS]  Trait 10:  SHH Paradox Fast Invariants
+----------------------------------------------------------------
+  Result: 10/10 passed — ALL PASS.  Baseline is validated.
+================================================================
+
+[setup_tissue] No intervention JSON provided; using active calibration defaults.
+[setup_tissue] Placed tumor=50 stromal=500 cluster_radius=100um stroma_ring=[100,300]um in 7.64771 ms
+
+[DIAG_T360_STROMAL] === One-time stromal diagnostic at t=366 ===
+[DIAG_T360_STROMAL] Total live stromal: 508  PSCs(acta2=0): 355  CAFs(acta2=1): 153
+[DIAG_T360_STROMAL] PSC #0  ID=163  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.0951095
+[DIAG_T360_STROMAL] PSC #1  ID=492  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.130123
+[DIAG_T360_STROMAL] PSC #2  ID=480  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.07786
+[DIAG_T360_STROMAL] PSC #3  ID=82  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.229196
+[DIAG_T360_STROMAL] PSC #4  ID=458  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.256518
+[DIAG_T360_STROMAL] CAF #0  ID=51  transition_rate(0,0)=0.0001079  acta2_active=1  activation_mode=1  mechanical_pressure[16]=0.111872
+[DIAG_T360_STROMAL] CAF #1  ID=60  transition_rate(0,0)=0.00012232  acta2_active=1  activation_mode=1  mechanical_pressure[16]=0
+[DIAG_T360_STROMAL] CAF #2  ID=61  transition_rate(0,0)=0.0001  acta2_active=1  activation_mode=1  mechanical_pressure[16]=0.196293
+[DIAG_T360_MECH_VERIFY] Checking mechanical_pressure for 3 random stromal cells:
+[DIAG_T360_MECH_VERIFY]   cell ID=433  idx[16]=0.258142  name_lookup=0.258142  simple_pressure=0.860472  OK
+[DIAG_T360_MECH_VERIFY]   cell ID=296  idx[16]=0.0987017  name_lookup=0.0987017  simple_pressure=0.329006  OK
+[DIAG_T360_MECH_VERIFY]   cell ID=479  idx[16]=0  name_lookup=0  simple_pressure=0  STILL_ZERO
+[DIAG_T360_STROMAL] === end diagnostic ===
+
+[perf] custom_function avg = 10.8332 us over 50000 calls
+[perf] custom_function avg = 10.895 us over 100000 calls
+[perf] custom_function avg = 10.9522 us over 150000 calls
+[perf] custom_function avg = 11.0492 us over 200000 calls
+[perf] custom_function avg = 11.1564 us over 250000 calls
+[perf] custom_function avg = 11.2387 us over 300000 calls
+[perf] custom_function avg = 11.3218 us over 350000 calls
+[perf] custom_function avg = 11.381 us over 400000 calls
+[perf] custom_function avg = 11.4559 us over 450000 calls
+[perf] custom_function avg = 11.5163 us over 500000 calls
+[perf] custom_function avg = 11.5776 us over 550000 calls
+[perf] custom_function avg = 11.637 us over 600000 calls
+[perf] custom_function avg = 11.6891 us over 650000 calls
+[perf] custom_function avg = 11.7314 us over 700000 calls
+[perf] custom_function avg = 11.7674 us over 750000 calls
