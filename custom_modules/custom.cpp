@@ -9,7 +9,9 @@
 #include <cassert>
 #include <chrono>
 #include <cmath>
+#include <cstdlib>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <random>
 #include <sstream>
@@ -128,6 +130,231 @@ inline double stromal_tgfb_support(double gli1_active,
 // find_variable_index may resolve to the wrong slot after the schema
 // rebuild, so stromal cells must use this hardcoded index.
 static constexpr int STROMAL_MECH_PRESSURE_IDX = 16;
+
+// Focused RC2 drug-pipeline diagnostics (enabled with RC2_DRUG_DEBUG=1).
+static constexpr double RC2_DAY14_MIN = 14.0 * 1440.0;
+static constexpr double RC2_DAY21_MIN = 21.0 * 1440.0;
+static constexpr double RC2_DAY28_MIN = 28.0 * 1440.0;
+
+std::atomic<long long> g_diag_module7_calls(0);
+std::atomic<long long> g_diag_uptake_calls(0);
+std::atomic<int> g_diag_efflux_dominance_flags(0);
+
+std::atomic<bool> g_diag_d21_summary_emitted(false);
+std::atomic<bool> g_diag_d28_summary_emitted(false);
+
+std::atomic<int> g_diag_baseline_tumor_d14(-1);
+
+inline bool drug_pipeline_debug_enabled()
+{
+    static int enabled = -1;
+    if (enabled >= 0) return enabled > 0;
+
+    enabled = 0;
+    const char* env = std::getenv("RC2_DRUG_DEBUG");
+    if (env != NULL && std::atoi(env) > 0)
+    {
+        enabled = 1;
+        return true;
+    }
+
+    if (parameters.ints.find_index("rc2_drug_debug") >= 0)
+    {
+        enabled = (parameters.ints("rc2_drug_debug") > 0) ? 1 : 0;
+    }
+    else if (parameters.doubles.find_index("rc2_drug_debug") >= 0)
+    {
+        enabled = (parameters.doubles("rc2_drug_debug") > 0.5) ? 1 : 0;
+    }
+    return enabled > 0;
+}
+
+inline const char* diag_checkpoint_label(double t, double dt)
+{
+    const double window = std::max(1.0, dt);
+    if (t >= RC2_DAY21_MIN && t < RC2_DAY21_MIN + window) return "d21";
+    if (t >= RC2_DAY28_MIN && t < RC2_DAY28_MIN + window) return "d28";
+    return NULL;
+}
+
+void emit_rc2_drug_pipeline_summary_if_needed(double t, double dt)
+{
+    if (!drug_pipeline_debug_enabled()) return;
+    const char* label = diag_checkpoint_label(t, dt);
+    if (label == NULL) return;
+
+    std::atomic<bool>& gate =
+        (std::string(label) == "d21") ? g_diag_d21_summary_emitted : g_diag_d28_summary_emitted;
+
+    bool expected = false;
+    if (!gate.compare_exchange_strong(expected, true, std::memory_order_acq_rel))
+    {
+        return;
+    }
+
+    Cell_Definition* pTumorDef = find_cell_definition("tumor_cell");
+    Cell_Definition* pStromaDef = find_cell_definition("stromal_cell");
+    if (pTumorDef == NULL)
+    {
+        #pragma omp critical(diag_log_guard)
+        {
+            std::cerr << "[RC2_DRUG_DIAG][" << label
+                      << "] unable to resolve tumor definition; summary skipped\n";
+        }
+        return;
+    }
+
+    struct TumorPoint
+    {
+        Cell* c;
+        double local_drug;
+        double intracellular;
+    };
+
+    std::vector<TumorPoint> live_tumor;
+    live_tumor.reserve(4096);
+    double stroma_drug_sum = 0.0;
+    int stroma_count = 0;
+    int live_tumor_count = 0;
+
+    std::vector<double> centroid(3, 0.0);
+
+    for (auto* c : *all_cells)
+    {
+        if (c == NULL || c->phenotype.death.dead) continue;
+        const std::vector<double>& dens = c->nearest_density_vector();
+        double local_drug = 0.0;
+        if (drug_index >= 0 && drug_index < static_cast<int>(dens.size()))
+        {
+            local_drug = dens[drug_index];
+        }
+
+        if (c->type == pTumorDef->type)
+        {
+            double intracellular = 0.0;
+            const int intra_idx = c->custom_data.find_variable_index("intracellular_drug");
+            if (intra_idx >= 0)
+            {
+                intracellular = c->custom_data[intra_idx];
+            }
+            live_tumor.push_back({c, local_drug, intracellular});
+            ++live_tumor_count;
+            for (int i = 0; i < 3; ++i)
+            {
+                centroid[i] += c->position[i];
+            }
+        }
+        else if (pStromaDef != NULL && c->type == pStromaDef->type)
+        {
+            stroma_drug_sum += local_drug;
+            ++stroma_count;
+        }
+    }
+
+    if (live_tumor_count > 0)
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            centroid[i] /= static_cast<double>(live_tumor_count);
+        }
+    }
+
+    std::vector<double> radii;
+    radii.reserve(live_tumor.size());
+    for (const auto& tp : live_tumor)
+    {
+        const double dx = tp.c->position[0] - centroid[0];
+        const double dy = tp.c->position[1] - centroid[1];
+        const double dz = tp.c->position[2] - centroid[2];
+        radii.push_back(std::sqrt(dx * dx + dy * dy + dz * dz));
+    }
+
+    double radius95 = 0.0;
+    if (!radii.empty())
+    {
+        std::sort(radii.begin(), radii.end());
+        const std::size_t idx = static_cast<std::size_t>(
+            std::min<double>(radii.size() - 1,
+                std::floor(0.95 * static_cast<double>(radii.size() - 1))));
+        radius95 = radii[idx];
+    }
+    const double core_cut = 0.5 * radius95;
+
+    double core_drug_sum = 0.0;
+    int core_count = 0;
+    double peri_drug_sum = 0.0;
+    int peri_count = 0;
+    double tumor_intra_sum = 0.0;
+
+    for (const auto& tp : live_tumor)
+    {
+        const double dx = tp.c->position[0] - centroid[0];
+        const double dy = tp.c->position[1] - centroid[1];
+        const double dz = tp.c->position[2] - centroid[2];
+        const double r = std::sqrt(dx * dx + dy * dy + dz * dz);
+        if (r <= core_cut)
+        {
+            core_drug_sum += tp.local_drug;
+            ++core_count;
+        }
+        else
+        {
+            peri_drug_sum += tp.local_drug;
+            ++peri_count;
+        }
+        tumor_intra_sum += tp.intracellular;
+    }
+
+    const double mean_core_drug = (core_count > 0)
+        ? core_drug_sum / static_cast<double>(core_count) : 0.0;
+    const double mean_peri_drug = (peri_count > 0)
+        ? peri_drug_sum / static_cast<double>(peri_count) : 0.0;
+    const double mean_stroma_drug = (stroma_count > 0)
+        ? stroma_drug_sum / static_cast<double>(stroma_count) : 0.0;
+    const double mean_tumor_intra = (live_tumor_count > 0)
+        ? tumor_intra_sum / static_cast<double>(live_tumor_count) : 0.0;
+
+    if (g_diag_baseline_tumor_d14.load(std::memory_order_relaxed) < 0 &&
+        t >= RC2_DAY14_MIN)
+    {
+        g_diag_baseline_tumor_d14.store(live_tumor_count, std::memory_order_release);
+    }
+    const int baseline = g_diag_baseline_tumor_d14.load(std::memory_order_acquire);
+
+    double reduction = 0.0;
+    if (baseline > 0)
+    {
+        reduction = (static_cast<double>(baseline) - static_cast<double>(live_tumor_count)) /
+                    static_cast<double>(baseline);
+    }
+
+    const bool non_bio_kill = (mean_tumor_intra < 1e-6 && reduction > 0.20);
+
+    #pragma omp critical(diag_log_guard)
+    {
+        std::cerr << std::fixed << std::setprecision(6);
+        std::cerr << "[RC2_DRUG_DIAG][" << label << "][DIFFUSION_SUMMARY]"
+                  << " t=" << t
+                  << " mean_extra_core=" << mean_core_drug
+                  << " mean_extra_periphery=" << mean_peri_drug
+                  << " mean_extra_stroma=" << mean_stroma_drug
+                  << " mean_intracellular_tumor=" << mean_tumor_intra
+                  << " live_tumor=" << live_tumor_count
+                  << " baseline_d14=" << baseline
+                  << " tumor_reduction=" << reduction
+                  << " module7_calls=" << g_diag_module7_calls.load(std::memory_order_relaxed)
+                  << " uptake_calls=" << g_diag_uptake_calls.load(std::memory_order_relaxed)
+                  << "\n";
+        std::cerr << "[RC2_DRUG_DIAG][EQUATION] intracellular_drug += "
+                  << "drug_uptake_rate * local_drug * dt (executed when local_drug > 0)\n";
+        if (non_bio_kill)
+        {
+            std::cerr << "[RC2_DRUG_DIAG][ASSERT] Non-biological kill mechanism detected"
+                      << " (mean_intracellular_drug=" << mean_tumor_intra
+                      << ", tumor_reduction=" << reduction << ")\n";
+        }
+    }
+}
 
 inline bool ends_with_json(const std::string& s)
 {
@@ -1186,6 +1413,8 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
         return;
     }
 
+    g_diag_module7_calls.fetch_add(1, std::memory_order_relaxed);
+
     if (drug_index < 0) return;
 
     const std::vector<double>& densities = pCell->nearest_density_vector();
@@ -1252,11 +1481,18 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     const double resistance_withdrawal_tau =
         read_xml_double_or_default("resistance_withdrawal_tau", 10080.0);
 
+    double uptake_term = 0.0;
+    double intracellular_before_efflux = intracellular_drug;
+    double intracellular_after_efflux = intracellular_drug;
+    double efflux_amount = 0.0;
+    const double intracellular_before_update = intracellular_drug;
+
     // Step 1: Drug uptake.
     if (local_drug > 0.0)
     {
-        const double uptake = drug_uptake_rate * local_drug * dt;
-        intracellular_drug = intracellular_drug + uptake;
+        uptake_term = drug_uptake_rate * local_drug * dt;
+        g_diag_uptake_calls.fetch_add(1, std::memory_order_relaxed);
+        intracellular_drug = intracellular_drug + uptake_term;
         intracellular_drug = std::min(1.0, intracellular_drug);
 
         if (time_since_drug_exposure < 0.0)
@@ -1335,12 +1571,15 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     }
 
     // Step 5: Efflux pump action (works on intracellular drug regardless of external).
+    intracellular_before_efflux = intracellular_drug;
+    intracellular_after_efflux = intracellular_drug;
     if (intracellular_drug > 0.0 && abcb1_active > 0.0)
     {
-        const double efflux_amount =
+        efflux_amount =
             efflux_strength * clamp_unit(abcb1_active) * intracellular_drug * dt;
         intracellular_drug = intracellular_drug - efflux_amount;
         intracellular_drug = std::max(0.0, intracellular_drug);
+        intracellular_after_efflux = intracellular_drug;
     }
 
     // Step 6: Advance exposure clock.
@@ -1389,6 +1628,75 @@ void module7_drug_response(Cell* pCell, Phenotype& phenotype, double dt, ModuleP
     set_custom_data_if_present(pCell, "in_resistance_memory", in_resistance_memory);
     set_custom_data_if_present(pCell, "nrf2_withdrawal_anchor", nrf2_withdrawal_anchor);
     set_custom_data_if_present(pCell, "abcb1_withdrawal_anchor", abcb1_withdrawal_anchor);
+
+    if (drug_pipeline_debug_enabled())
+    {
+        // Per-step flux balance probe (sampled to avoid log explosion).
+        if (UniformRandom() < 0.02)
+        {
+            const double uptake_flux = drug_uptake_rate * local_drug;
+            const double efflux_rate = efflux_strength * clamp_unit(abcb1_active);
+            const double efflux_flux = efflux_rate * intracellular_before_efflux;
+            #pragma omp critical(diag_log_guard)
+            {
+                std::cerr << std::fixed << std::setprecision(6)
+                          << "[RC2_FLUX]"
+                          << " t=" << PhysiCell_globals.current_time
+                          << " id=" << pCell->ID
+                          << " local_drug=" << local_drug
+                          << " uptake_flux=" << uptake_flux
+                          << " efflux_flux=" << efflux_flux
+                          << " intra_before=" << intracellular_before_update
+                          << " intra_after=" << intracellular_drug
+                          << "\n";
+            }
+        }
+
+        if (intracellular_drug < 1e-6 && local_drug > 0.1)
+        {
+            const int n = g_diag_efflux_dominance_flags.fetch_add(1, std::memory_order_relaxed);
+            if (n < 200)
+            {
+                #pragma omp critical(diag_log_guard)
+                {
+                    std::cerr << std::fixed << std::setprecision(6)
+                              << "[RC2_DRUG_DIAG][ASSERT] EFFLUX DOMINANCE — NO ACCUMULATION"
+                              << " t=" << PhysiCell_globals.current_time
+                              << " id=" << pCell->ID
+                              << " local_drug=" << local_drug
+                              << " intracellular_drug=" << intracellular_drug
+                              << "\n";
+                }
+            }
+        }
+
+        emit_rc2_drug_pipeline_summary_if_needed(PhysiCell_globals.current_time, dt);
+        const char* checkpoint =
+            diag_checkpoint_label(PhysiCell_globals.current_time, dt);
+        if (checkpoint != NULL)
+        {
+            #pragma omp critical(diag_log_guard)
+            {
+                std::cerr << std::fixed << std::setprecision(6)
+                          << "[RC2_DRUG_DIAG][" << checkpoint << "][UPTAKE_CELL]"
+                          << " id=" << pCell->ID
+                          << " local_drug=" << local_drug
+                          << " intracellular_drug=" << intracellular_drug
+                          << " uptake_rate=" << drug_uptake_rate
+                          << " uptake_term=" << uptake_term
+                          << "\n";
+                std::cerr << std::fixed << std::setprecision(6)
+                          << "[RC2_DRUG_DIAG][" << checkpoint << "][EFFLUX_CELL]"
+                          << " id=" << pCell->ID
+                          << " intracellular_before_efflux=" << intracellular_before_efflux
+                          << " efflux_amount=" << efflux_amount
+                          << " intracellular_after_efflux=" << intracellular_after_efflux
+                          << " abcb1_active=" << abcb1_active
+                          << " efflux_strength=" << efflux_strength
+                          << "\n";
+            }
+        }
+    }
 }
 
 // DECISION PHASE (reads module outputs + environment, writes nothing to fields)
@@ -1791,7 +2099,74 @@ void module4_proliferation_death(Cell* pCell, Phenotype& phenotype, double dt, M
             0.0,
             base_death_rate * (1.0 - death_resistance_modifier) + (drug_kill_multiplier * drug_kill_rate) + emt_death_penalty);
 
+        const double baseline_component =
+            base_death_rate * (1.0 - death_resistance_modifier);
+        const double drug_component = drug_kill_multiplier * drug_kill_rate;
+
         phenotype.death.rates[apoptosis_index] = total_apoptosis_rate;
+
+        if (drug_pipeline_debug_enabled())
+        {
+            const char* checkpoint =
+                diag_checkpoint_label(PhysiCell_globals.current_time, dt);
+            if (checkpoint != NULL)
+            {
+                #pragma omp critical(diag_log_guard)
+                {
+                    std::cerr << std::fixed << std::setprecision(6)
+                              << "[RC2_DRUG_DIAG][" << checkpoint << "][APOPTOSIS_CELL]"
+                              << " id=" << pCell->ID
+                              << " intracellular_drug=" << intracellular_drug
+                              << " baseline_component=" << baseline_component
+                              << " drug_component=" << drug_component
+                              << " emt_component=" << emt_death_penalty
+                              << " total_apoptosis_rate=" << total_apoptosis_rate
+                              << "\n";
+                }
+            }
+
+            // Narrow CSV debug window (day 21 + 1h) to avoid log explosion.
+            const double diag_start = 30240.0;
+            const double diag_end = 30300.0;
+            if (PhysiCell_globals.current_time > diag_start &&
+                PhysiCell_globals.current_time < diag_end)
+            {
+                static bool header_printed = false;
+                if (!header_printed)
+                {
+                    #pragma omp critical(diag_log_guard)
+                    {
+                        if (!header_printed)
+                        {
+                            std::cout << "DEBUG_LOG:Time,ID,Type,Loc_Drug,Intra_Drug,Efflux_Level,Death_Drug,Death_Base,O2" << std::endl;
+                            header_printed = true;
+                        }
+                    }
+                }
+
+                const double local_drug_dbg = read_density_value(densities, drug_index);
+                const double o2_dbg = read_density_value(densities, oxygen_index);
+
+                if (UniformRandom() < 0.05)
+                {
+                    #pragma omp critical(diag_log_guard)
+                    {
+                        std::cout << std::fixed << std::setprecision(6)
+                                  << "DEBUG_LOG:"
+                                  << PhysiCell_globals.current_time << ","
+                                  << pCell->ID << ","
+                                  << pCell->type << ","
+                                  << local_drug_dbg << ","
+                                  << intracellular_drug << ","
+                                  << efflux_level << ","
+                                  << drug_component << ","
+                                  << baseline_component << ","
+                                  << o2_dbg
+                                  << std::endl;
+                    }
+                }
+            }
+        }
     }
 
     if (is_stromal)

@@ -1,0 +1,1904 @@
+Using config file /home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_drug_pipeline_diag_km1p8_day22/config.xml ... 
+Setting up RNG with seed 42
+1
+dc? 1
+User parameters in XML config file: 
+Bool parameters:: 
+
+Int parameters:: 
+number_of_tumor_cells: 50 [none]
+number_of_stromal_cells: 500 [none]
+emt_phenotype_extent: 3 [dimensionless]
+host_death_ceiling: 50000 [cells]
+
+Double parameters:: 
+tumor_cluster_radius: 100 [micron]
+stroma_inner_radius: 100 [micron]
+stroma_outer_radius: 300 [micron]
+mechanics_voxel_size: 30 [micron]
+tgfb_activation_threshold: 0.1 [dimensionless]
+shh_activation_threshold: 1e-05 [dimensionless]
+oxygen_necrosis_threshold: 5 [mmHg]
+oxygen_hypoxia_threshold: 15 [mmHg]
+drug_start_time: 20160 [min]
+drug_end_time: 40320 [min]
+drug_concentration: 1 [dimensionless]
+shh_inhibition_start_time: 1e+18 [min]
+shh_inhibition_strength: 0 [dimensionless]
+tgfb_secretion_rate: 0.8 [dimensionless]
+shh_secretion_rate: 0.7 [dimensionless]
+hif1a_tgfb_amplification_factor: 1.5 [dimensionless]
+caf_tgfb_secretion_rate: 0.3 [dimensionless]
+tgfb_brake_sensitivity: 0.05 [dimensionless]
+proliferation_rate: 0.75 [dimensionless]
+checkpoint_integrity: 0.05 [dimensionless]
+apoptosis_resistance: 0.85 [dimensionless]
+base_proliferation_rate: 0.00048 [1/min]
+go_grow_penalty: 0.95 [dimensionless]
+hypoxia_proliferation_modifier: 0.2 [dimensionless]
+hypoxia_death_resistance_bonus: 0.1 [dimensionless]
+contact_inhibition_threshold: 25 [dimensionless]
+stromal_contact_inhibition_threshold: 0.8 [dimensionless]
+drug_kill_coefficient: 0.05 [1/min]
+efflux_drug_reduction: 0.7 [dimensionless]
+caf_proliferation_rate: 0.0001 [1/min]
+caf_base_death_rate: 0 [1/min]
+caf_crowded_death_rate: 0 [1/min]
+gli1_proliferation_boost: 1.3 [dimensionless]
+psc_proliferation_rate: 0 [1/min]
+ecm_production_rate_base: 0.01 [1/min]
+ecm_production_rate_boosted: 0.015 [1/min]
+ecm_ha_fraction_default: 0.6 [dimensionless]
+mmp2_degradation_rate: 0.005 [1/min]
+ecm_natural_decay_rate: 0.0001 [1/min]
+drug_uptake_rate: 0.1 [1/hour]
+drug_stress_threshold: 0.03 [dimensionless]
+nrf2_decay_rate: 0.01 [1/hour]
+nrf2_persistence_threshold: 0.003 [dimensionless]
+drug_natural_decay_rate: 0 [1/hour]
+hif1a_nrf2_priming_bonus: 0.02 [dimensionless]
+emt_induction_threshold: 0.3 [dimensionless]
+hif1a_emt_boost: 0.02 [dimensionless]
+motility_epithelial: 0.1 [micron/min]
+motility_mesenchymal_low: 0.5 [micron/min]
+motility_mesenchymal_med: 1 [micron/min]
+motility_mesenchymal_high: 2 [micron/min]
+adhesion_epithelial: 5 [dimensionless]
+adhesion_mesenchymal_low: 3 [dimensionless]
+adhesion_mesenchymal_med: 1.5 [dimensionless]
+adhesion_mesenchymal_high: 0.5 [dimensionless]
+hypoxia_response_threshold: 0.35 [dimensionless]
+efflux_induction_delay: 0.5 [dimensionless]
+efflux_strength: 0.7 [dimensionless]
+abcb1_production_rate: 0.0005 [1/min]
+abcb1_decay_tau: 1620 [min]
+abcb1_max_daily_drop_fraction: 0.25 [dimensionless]
+abcb1_inheritance_floor: 0.6 [dimensionless]
+mechanical_compaction_strength: 0.6 [dimensionless]
+compaction_ecm_increment: 0.01 [dimensionless]
+crowding_base_pressure: 0.3 [dimensionless]
+stromal_contact_emt_boost: 0 [dimensionless]
+ecm_emt_threshold: 0.3 [dimensionless]
+ecm_emt_ramp: 0.3 [dimensionless]
+ecm_emt_strength: 0.4 [dimensionless]
+ecm_emt_cap: 0.3 [dimensionless]
+ecm_reversion_weight: 0.3 [dimensionless]
+emt_death_increase: 5e-05 [1/min]
+emt_off_threshold: 0.1 [dimensionless]
+emt_activation_delay: 360 [min]
+emt_persistence_time: 7200 [min]
+ecm_emt_require_caf_contact: 1 [dimensionless]
+ecm_motility_block_threshold: 0.8 [dimensionless]
+drug_kill_multiplier: 1.8 [dimensionless]
+
+String parameters:: 
+calibration_profile: AsPC-1 [none]
+tumor_calibration_knobs_json: config/tumor_calibration_knobs.json [none]
+emt_phenotype_extent: HIGH [none]
+hypoxia_phenotype_shift: HIGH [none]
+
+
+which boundaries?
+1 1 1 1 1 1
+
+Microenvironment summary: microenvironment: 
+
+Mesh information: 
+type: uniform Cartesian
+Domain: [-1000,1000] micron x [-1000,1000] micron x [-10,10] micron
+   resolution: dx = 20 micron
+   voxels: 10000
+   voxel faces: 0
+   volume: 8e+07 cubic micron
+Densities: (5 total)
+   oxygen:
+     units: mmHg
+     diffusion coefficient: 100000 micron^2 / min
+     decay rate: 0.1 min^-1
+     diffusion length scale: 1000 micron
+     initial condition: 38 mmHg
+     boundary condition: 38 mmHg (enabled: false)
+   tgfb:
+     units: dimensionless
+     diffusion coefficient: 1000 micron^2 / min
+     decay rate: 0.01 min^-1
+     diffusion length scale: 316.228 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   shh:
+     units: dimensionless
+     diffusion coefficient: 1000 micron^2 / min
+     decay rate: 0.01 min^-1
+     diffusion length scale: 316.228 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   drug:
+     units: dimensionless
+     diffusion coefficient: 5000 micron^2 / min
+     decay rate: 0.002 min^-1
+     diffusion length scale: 1581.14 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+   ecm_density:
+     units: dimensionless
+     diffusion coefficient: 0 micron^2 / min
+     decay rate: 0.0001 min^-1
+     diffusion length scale: 0 micron
+     initial condition: 0 dimensionless
+     boundary condition: 0 dimensionless (enabled: false)
+
+[setup_microenvironment] ECM impedance correction mode: dt-aware DRUG ONLY (O2/TGFb/SHH legacy)
+[ThresholdConfig] Loaded from XML:  HIF1A O2=15 mmHg  Necrosis O2=5 mmHg  TGFB=0.1  SHH=1e-05
+[setup_microenvironment] Loaded calibration profile: AsPC-1
+[setup_microenvironment] Substrate indices: oxygen=0 tgfb=1 shh=2 ecm_density=4 drug=3
+[setup_microenvironment] Completed in 7.25069 ms
+virtual_wall_at_domain_edge: enabled
+Pre-processing type 0 named tumor_cell
+Pre-processing type 1 named stromal_cell
+Processing tumor_cell ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+  --------- attachment_elastic_constant = 0.01
+Processing stromal_cell ... 
+Note: setting cell definition to 2D based on microenvironment domain settings ... 
+copying data ... 
+tumor_cell to stromal_cell
+  --------- attachment_elastic_constant = 0.01
+Signals: 
+=======
+0 : oxygen
+1 : tgfb
+2 : shh
+3 : drug
+4 : ecm_density
+5 : intracellular oxygen
+6 : intracellular tgfb
+7 : intracellular shh
+8 : intracellular drug
+9 : intracellular ecm_density
+10 : oxygen gradient
+11 : tgfb gradient
+12 : shh gradient
+13 : drug gradient
+14 : ecm_density gradient
+15 : pressure
+16 : volume
+17 : contact with tumor_cell
+18 : contact with stromal_cell
+19 : contact with live cell
+20 : contact with dead cell
+21 : contact with apoptotic cell
+22 : contact with necrotic cell
+23 : contact with other dead cell
+24 : contact with basement membrane
+25 : damage
+26 : damage delivered
+27 : attacking
+28 : dead
+29 : total attack time
+30 : time
+31 : custom:KRAS
+32 : custom:MYC
+33 : custom:EGFR
+34 : custom:TP53
+35 : custom:CDKN2A
+36 : custom:SMAD4
+37 : custom:RB1
+38 : custom:BCL_XL
+39 : custom:BAX
+40 : custom:ZEB1
+41 : custom:CDH1
+42 : custom:MMP2
+43 : custom:TGFB1_expr
+44 : custom:SHH_expr
+45 : custom:HIF1A
+46 : custom:NRF2
+47 : custom:ABCB1
+48 : custom:is_mesenchymal
+49 : custom:stress_level
+50 : custom:drug_sensitivity
+51 : custom:apoptosis_threshold
+52 : custom:cell_id
+53 : custom:parent_id
+54 : custom:gene_state_KRAS
+55 : custom:gene_state_TP53
+56 : custom:gene_state_CDKN2A
+57 : custom:gene_state_SMAD4
+58 : custom:gene_state_BCL_XL
+59 : custom:gene_state_MYC
+60 : custom:gene_state_EGFR
+61 : custom:gene_state_RB1
+62 : custom:gene_state_BAX
+63 : custom:gene_state_ZEB1
+64 : custom:gene_state_CDH1
+65 : custom:gene_state_MMP2
+66 : custom:gene_state_TGFB1
+67 : custom:gene_state_SHH
+68 : custom:gene_state_HIF1A
+69 : custom:gene_state_NRF2
+70 : custom:gene_state_ABCB1
+71 : custom:gene_state_HAS2
+72 : custom:gene_state_COL1A1
+73 : custom:gene_state_GLI1
+74 : custom:gene_state_ACTA2
+75 : custom:hif1a_active
+76 : custom:zeb1_active
+77 : custom:cdh1_expressed
+78 : custom:nrf2_active
+79 : custom:abcb1_active
+80 : custom:mmp2_active
+81 : custom:intracellular_drug
+82 : custom:time_since_drug_exposure
+83 : custom:time_alive
+84 : custom:emt_extent
+85 : custom:mechanical_pressure
+86 : custom:emt_signal_time
+87 : custom:emt_activation_time
+88 : apoptotic
+89 : necrotic
+
+
+Behaviors: 
+=========
+0 : oxygen secretion
+1 : tgfb secretion
+2 : shh secretion
+3 : drug secretion
+4 : ecm_density secretion
+5 : oxygen secretion target
+6 : tgfb secretion target
+7 : shh secretion target
+8 : drug secretion target
+9 : ecm_density secretion target
+10 : oxygen uptake
+11 : tgfb uptake
+12 : shh uptake
+13 : drug uptake
+14 : ecm_density uptake
+15 : oxygen export
+16 : tgfb export
+17 : shh export
+18 : drug export
+19 : ecm_density export
+20 : cycle entry
+21 : exit from cycle phase 1
+22 : exit from cycle phase 2
+23 : exit from cycle phase 3
+24 : exit from cycle phase 4
+25 : exit from cycle phase 5
+26 : apoptosis
+27 : necrosis
+28 : migration speed
+29 : migration bias
+30 : migration persistence time
+31 : chemotactic response to oxygen
+32 : chemotactic response to tgfb
+33 : chemotactic response to shh
+34 : chemotactic response to drug
+35 : chemotactic response to ecm_density
+36 : cell-cell adhesion
+37 : cell-cell adhesion elastic constant
+38 : adhesive affinity to tumor_cell
+39 : adhesive affinity to stromal_cell
+40 : relative maximum adhesion distance
+41 : cell-cell repulsion
+42 : cell-BM adhesion
+43 : cell-BM repulsion
+44 : phagocytose apoptotic cell
+45 : phagocytose necrotic cell
+46 : phagocytose other dead cell
+47 : phagocytose tumor_cell
+48 : phagocytose stromal_cell
+49 : attack tumor_cell
+50 : attack stromal_cell
+51 : fuse to tumor_cell
+52 : fuse to stromal_cell
+53 : transition to tumor_cell
+54 : transition to stromal_cell
+55 : asymmetric division to tumor_cell
+56 : asymmetric division to stromal_cell
+57 : custom:KRAS
+58 : custom:MYC
+59 : custom:EGFR
+60 : custom:TP53
+61 : custom:CDKN2A
+62 : custom:SMAD4
+63 : custom:RB1
+64 : custom:BCL_XL
+65 : custom:BAX
+66 : custom:ZEB1
+67 : custom:CDH1
+68 : custom:MMP2
+69 : custom:TGFB1_expr
+70 : custom:SHH_expr
+71 : custom:HIF1A
+72 : custom:NRF2
+73 : custom:ABCB1
+74 : custom:is_mesenchymal
+75 : custom:stress_level
+76 : custom:drug_sensitivity
+77 : custom:apoptosis_threshold
+78 : custom:cell_id
+79 : custom:parent_id
+80 : custom:gene_state_KRAS
+81 : custom:gene_state_TP53
+82 : custom:gene_state_CDKN2A
+83 : custom:gene_state_SMAD4
+84 : custom:gene_state_BCL_XL
+85 : custom:gene_state_MYC
+86 : custom:gene_state_EGFR
+87 : custom:gene_state_RB1
+88 : custom:gene_state_BAX
+89 : custom:gene_state_ZEB1
+90 : custom:gene_state_CDH1
+91 : custom:gene_state_MMP2
+92 : custom:gene_state_TGFB1
+93 : custom:gene_state_SHH
+94 : custom:gene_state_HIF1A
+95 : custom:gene_state_NRF2
+96 : custom:gene_state_ABCB1
+97 : custom:gene_state_HAS2
+98 : custom:gene_state_COL1A1
+99 : custom:gene_state_GLI1
+100 : custom:gene_state_ACTA2
+101 : custom:hif1a_active
+102 : custom:zeb1_active
+103 : custom:cdh1_expressed
+104 : custom:nrf2_active
+105 : custom:abcb1_active
+106 : custom:mmp2_active
+107 : custom:intracellular_drug
+108 : custom:time_since_drug_exposure
+109 : custom:time_alive
+110 : custom:emt_extent
+111 : custom:mechanical_pressure
+112 : custom:emt_signal_time
+113 : custom:emt_activation_time
+114 : is_movable
+115 : immunogenicity to tumor_cell
+116 : immunogenicity to stromal_cell
+117 : cell attachment rate
+118 : cell detachment rate
+119 : maximum number of cell attachments
+120 : attack damage rate
+121 : attack duration
+122 : damage rate
+123 : damage repair rate
+
+
+ruleset
+	Ruleset disabled ... 
+Behavioral rules for cell type tumor_cell:
+===================================================
+
+Behavioral rules for cell type stromal_cell:
+===================================================
+
+Exporting rules to file /home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_drug_pipeline_diag_km1p8_day22/output/cell_rules_parsed.csv (v3 format) ... 
+Done!
+
+0 :: type:0 name: tumor_cell
+	 cycle model: Live (code=5)
+		Phase 0: Live
+		Cycle transitions: 
+		-----------------
+		Live --> Live w mean duration 100 min
+	 death models: 
+		0 : Apoptosis (code=100) with rate 0.00015 1/min
+		death phase transitions: 
+		------------------------
+		Apoptotic --> Debris w mean duration 516 min
+		1 : Necrosis (code=101) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Necrotic (swelling) --> Necrotic (lysed) w mean duration 1e-16 min
+		Necrotic (lysed) --> Debris w mean duration 86400 min
+	 key functions: 
+		 migration bias rule: false
+		 custom rule: false
+		 phenotype rule: true
+		 volume update function: true
+		 mechanics function: true
+		 contact function: false
+		 cell division function: true
+	motility (enabled: true in 2D)
+		speed: 0.1 micron/min
+		bias: 0 
+		persistence time: 10 min
+		chemotaxis (enabled: false)
+			along 1 * grad(oxygen) 
+	mechanics:
+		cell_cell_adhesion_strength: 5
+		cell_cell_repulsion_strength: 10
+		rel max adhesion dist: 1.25
+		cell_BM_adhesion_strength: 4
+		cell_BM_repulsion_strength: 100
+		attachment_elastic_constant: 0.01
+		attachment_rate: 0
+		detachment_rate: 0
+	custom data: 
+		KRAS: 1 dimensionless
+		MYC: 0 dimensionless
+		EGFR: 1 dimensionless
+		TP53: 0 dimensionless
+		CDKN2A: 0 dimensionless
+		SMAD4: 0 dimensionless
+		RB1: 0 dimensionless
+		BCL_XL: 0 dimensionless
+		BAX: 0 dimensionless
+		ZEB1: 0 dimensionless
+		CDH1: 0 dimensionless
+		MMP2: 0 dimensionless
+		TGFB1_expr: 0 dimensionless
+		SHH_expr: 0 dimensionless
+		HIF1A: 0 dimensionless
+		NRF2: 0 dimensionless
+		ABCB1: 0 dimensionless
+		is_mesenchymal: 0 dimensionless
+		stress_level: 0 dimensionless
+		drug_sensitivity: 1 dimensionless
+		apoptosis_threshold: 0.5 dimensionless
+		cell_id: -1 none
+		parent_id: -1 none
+		gene_state_KRAS: 1 none
+		gene_state_TP53: 2 none
+		gene_state_CDKN2A: 2 none
+		gene_state_SMAD4: 2 none
+		gene_state_BCL_XL: 1 none
+		gene_state_MYC: 0 none
+		gene_state_EGFR: 0 none
+		gene_state_RB1: 0 none
+		gene_state_BAX: 0 none
+		gene_state_ZEB1: 0 none
+		gene_state_CDH1: 0 none
+		gene_state_MMP2: 0 none
+		gene_state_TGFB1: 0 none
+		gene_state_SHH: 0 none
+		gene_state_HIF1A: 0 none
+		gene_state_NRF2: 0 none
+		gene_state_ABCB1: 0 none
+		gene_state_HAS2: 0 none
+		gene_state_COL1A1: 0 none
+		gene_state_GLI1: 0 none
+		gene_state_ACTA2: 0 none
+		hif1a_active: 0 dimensionless
+		zeb1_active: 0 dimensionless
+		cdh1_expressed: 1 dimensionless
+		nrf2_active: 0 dimensionless
+		abcb1_active: 0 dimensionless
+		mmp2_active: 0 dimensionless
+		intracellular_drug: 0 dimensionless
+		time_since_drug_exposure: -1 hour
+		time_alive: 0 min
+		emt_extent: 0 dimensionless
+		mechanical_pressure: 0 dimensionless
+		emt_signal_time: 0 min
+		emt_activation_time: 0 min
+		final_prolif_rate: 0 1/min
+		time_since_drug_withdrawal: -1 hour
+		in_resistance_memory: 0 dimensionless
+		nrf2_withdrawal_anchor: 0 dimensionless
+		abcb1_withdrawal_anchor: 0 dimensionless
+	custom vector data: 
+			NOTE: custom vector data will eventually be merged with custom data
+1 :: type:1 name: stromal_cell
+	 cycle model: Live (code=5)
+		Phase 0: Live
+		Cycle transitions: 
+		-----------------
+		Live --> Live w mean duration inf min
+	 death models: 
+		0 : Apoptosis (code=100) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Apoptotic --> Debris w mean duration 516 min
+		1 : Necrosis (code=101) with rate 0 1/min
+		death phase transitions: 
+		------------------------
+		Necrotic (swelling) --> Necrotic (lysed) w mean duration 1e-16 min
+		Necrotic (lysed) --> Debris w mean duration 86400 min
+	 key functions: 
+		 migration bias rule: false
+		 custom rule: false
+		 phenotype rule: true
+		 volume update function: true
+		 mechanics function: true
+		 contact function: false
+		 cell division function: true
+	motility (enabled: true in 2D)
+		speed: 0.05 micron/min
+		bias: 0 
+		persistence time: 10 min
+		chemotaxis (enabled: false)
+			along 1 * grad(oxygen) 
+	mechanics:
+		cell_cell_adhesion_strength: 0.8
+		cell_cell_repulsion_strength: 10
+		rel max adhesion dist: 1.25
+		cell_BM_adhesion_strength: 4
+		cell_BM_repulsion_strength: 100
+		attachment_elastic_constant: 0.01
+		attachment_rate: 0
+		detachment_rate: 0
+	custom data: 
+		cell_id: -1 none
+		parent_id: -1 none
+		gene_state_SMAD4: 0 none
+		gene_state_ACTA2: 0 none
+		gene_state_GLI1: 0 none
+		gene_state_HAS2: 0 none
+		gene_state_COL1A1: 0 none
+		gene_state_TGFB1: 0 none
+		gene_state_SHH: 0 none
+		acta2_active: 0 dimensionless
+		gli1_active: 0 dimensionless
+		activation_mode: 0 dimensionless
+		hif1a_active: 0 dimensionless
+		ecm_production_rate: 0 dimensionless
+		tgfb_secretion_active: 0 dimensionless
+		time_alive: 0 min
+		mechanical_pressure: 0 dimensionless
+		_stromal_reserved_0: 0 none
+		_stromal_reserved_1: 0 none
+		_stromal_reserved_2: 0 none
+		_stromal_reserved_3: 0 none
+		_stromal_reserved_4: 0 none
+		_stromal_reserved_5: 0 none
+		_stromal_reserved_6: 0 none
+		_stromal_reserved_7: 0 none
+		_stromal_reserved_8: 0 none
+		_stromal_reserved_9: 0 none
+		_stromal_reserved_10: 0 none
+		_stromal_reserved_11: 0 none
+		_stromal_reserved_12: 0 none
+		_stromal_reserved_13: 0 none
+		_stromal_reserved_14: 0 none
+		_stromal_reserved_15: 0 none
+		_stromal_reserved_16: 0 none
+		_stromal_reserved_17: 0 none
+		_stromal_reserved_18: 0 none
+		_stromal_reserved_19: 0 none
+		_stromal_reserved_20: 0 none
+		_stromal_reserved_21: 0 none
+		_stromal_reserved_22: 0 none
+		_stromal_reserved_23: 0 none
+		_stromal_reserved_24: 0 none
+		_stromal_reserved_25: 0 none
+		_stromal_reserved_26: 0 none
+		_stromal_reserved_27: 0 none
+		_stromal_reserved_28: 0 none
+		_stromal_reserved_29: 0 none
+		_stromal_reserved_30: 0 none
+		_stromal_reserved_31: 0 none
+		_stromal_reserved_32: 0 none
+		_stromal_reserved_33: 0 none
+		_stromal_reserved_34: 0 none
+		_stromal_reserved_35: 0 none
+		_stromal_reserved_36: 0 none
+		_stromal_reserved_37: 0 none
+		_stromal_reserved_38: 0 none
+		_stromal_reserved_39: 0 none
+		_stromal_reserved_40: 0 none
+		_stromal_reserved_41: 0 none
+		_stromal_reserved_42: 0 none
+		_stromal_reserved_43: 0 none
+		_stromal_reserved_44: 0 none
+	custom vector data: 
+			NOTE: custom vector data will eventually be merged with custom data
+[create_cell_types] Completed in 8.32092 ms
+
+================================================================
+ §8.1  Baseline Validation Suite — Tumor-Intrinsic Traits v1.0 
+================================================================
+  [PASS]  Trait 1:  Constitutive Paracrine Secretion
+  [PASS]  Trait 2:  TGF-beta Insensitivity (Arrest Arm Only)
+  [PASS]  Trait 3:  Rapid Proliferation / Broken Checkpoints
+  [PASS]  Trait 4:  Apoptotic Resistance at Baseline
+  [PASS]  Trait 5:  Inducible EMT Under Stress  (Spatial)
+  [PASS]  Trait 6:  Hypoxia-Responsive Phenotype Switching
+  [PASS]  Trait 7:  Drug-Inducible Efflux  (Not Constitutive)
+  [PASS]  Trait 8:  ECM Compaction  (Passive / Mechanical)
+  [PASS]  Trait 9:  13-Knob Partition + AsPC-1/PANC-1 Knob 2
+  [PASS]  Trait 10:  SHH Paradox Fast Invariants
+----------------------------------------------------------------
+  Result: 10/10 passed — ALL PASS.  Baseline is validated.
+================================================================
+
+[setup_tissue] No intervention JSON provided; using active calibration defaults.
+[setup_tissue] Placed tumor=50 stromal=500 cluster_radius=100um stroma_ring=[100,300]um in 7.44692 ms
+Using PhysiCell version 1.14.2
+	Please cite DOI: 10.1371/journal.pcbi.1005991
+	Project website: http://physicell.org
+
+See ALL_CITATIONS.txt for this list.
+current simulated time: 0 min (max: 31680 min)
+total agents: 550
+interval wall time: 0 days, 0 hours, 0 minutes, and 1.239e-05 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 1.532e-05 seconds 
+
+
+Using method diffusion_decay_solver__constant_coefficients_LOD_2D (2D LOD with Thomas Algorithm) ... 
+
+current simulated time: 360 min (max: 31680 min)
+total agents: 562
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.5925 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 18.5925 seconds 
+
+
+[DIAG_T360_STROMAL] === One-time stromal diagnostic at t=366 ===
+[DIAG_T360_STROMAL] Total live stromal: 505  PSCs(acta2=0): 355  CAFs(acta2=1): 150
+[DIAG_T360_STROMAL] PSC #0  ID=163  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.0343217
+[DIAG_T360_STROMAL] PSC #1  ID=492  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.131662
+[DIAG_T360_STROMAL] PSC #2  ID=480  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.165011
+[DIAG_T360_STROMAL] PSC #3  ID=82  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.197895
+[DIAG_T360_STROMAL] PSC #4  ID=458  transition_rate(0,0)=0  acta2_active=0  activation_mode=0  mechanical_pressure[16]=0.186267
+[DIAG_T360_STROMAL] CAF #0  ID=51  transition_rate(0,0)=0.000113028  acta2_active=1  activation_mode=1  mechanical_pressure[16]=0.373792
+[DIAG_T360_STROMAL] CAF #1  ID=60  transition_rate(0,0)=0.000128728  acta2_active=1  activation_mode=1  mechanical_pressure[16]=0.00208483
+[DIAG_T360_STROMAL] CAF #2  ID=61  transition_rate(0,0)=0.0001  acta2_active=1  activation_mode=1  mechanical_pressure[16]=0.174608
+[DIAG_T360_MECH_VERIFY] Checking mechanical_pressure for 3 random stromal cells:
+[DIAG_T360_MECH_VERIFY]   cell ID=228  idx[16]=0.142403  name_lookup=0.142403  simple_pressure=0.474676  OK
+[DIAG_T360_MECH_VERIFY]   cell ID=324  idx[16]=0.170923  name_lookup=0.170923  simple_pressure=0.569745  OK
+[DIAG_T360_MECH_VERIFY]   cell ID=481  idx[16]=0.410321  name_lookup=0.410321  simple_pressure=1.36774  OK
+[DIAG_T360_STROMAL] === end diagnostic ===
+
+[perf] custom_function avg = 7.91333 us over 50000 calls
+current simulated time: 720 min (max: 31680 min)
+total agents: 578
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.7452 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 37.3378 seconds 
+
+[perf] custom_function avg = 7.98044 us over 100000 calls
+current simulated time: 1080 min (max: 31680 min)
+total agents: 589
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.6023 seconds 
+total wall time: 0 days, 0 hours, 0 minutes, and 55.9401 seconds 
+
+current simulated time: 1440 min (max: 31680 min)
+total agents: 598
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.681 seconds 
+total wall time: 0 days, 0 hours, 1 minutes, and 14.6211 seconds 
+
+[perf] custom_function avg = 8.06913 us over 150000 calls
+current simulated time: 1800 min (max: 31680 min)
+total agents: 617
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.7855 seconds 
+total wall time: 0 days, 0 hours, 1 minutes, and 33.4066 seconds 
+
+[perf] custom_function avg = 8.22622 us over 200000 calls
+current simulated time: 2160 min (max: 31680 min)
+total agents: 628
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.9505 seconds 
+total wall time: 0 days, 0 hours, 1 minutes, and 52.3571 seconds 
+
+current simulated time: 2520 min (max: 31680 min)
+total agents: 644
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.9322 seconds 
+total wall time: 0 days, 0 hours, 2 minutes, and 11.2893 seconds 
+
+[perf] custom_function avg = 8.32646 us over 250000 calls
+current simulated time: 2880 min (max: 31680 min)
+total agents: 665
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.9387 seconds 
+total wall time: 0 days, 0 hours, 2 minutes, and 30.228 seconds 
+
+[perf] custom_function avg = 8.39972 us over 300000 calls
+current simulated time: 3240 min (max: 31680 min)
+total agents: 678
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.9063 seconds 
+total wall time: 0 days, 0 hours, 2 minutes, and 49.1343 seconds 
+
+[perf] custom_function avg = 8.45825 us over 350000 calls
+current simulated time: 3600 min (max: 31680 min)
+total agents: 702
+interval wall time: 0 days, 0 hours, 0 minutes, and 18.9489 seconds 
+total wall time: 0 days, 0 hours, 3 minutes, and 8.08316 seconds 
+
+[perf] custom_function avg = 8.53219 us over 400000 calls
+current simulated time: 3960 min (max: 31680 min)
+total agents: 716
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.012 seconds 
+total wall time: 0 days, 0 hours, 3 minutes, and 27.0951 seconds 
+
+[perf] custom_function avg = 8.61095 us over 450000 calls
+current simulated time: 4320 min (max: 31680 min)
+total agents: 747
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.1068 seconds 
+total wall time: 0 days, 0 hours, 3 minutes, and 46.2019 seconds 
+
+current simulated time: 4680 min (max: 31680 min)
+total agents: 770
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.0664 seconds 
+total wall time: 0 days, 0 hours, 4 minutes, and 5.26835 seconds 
+
+[perf] custom_function avg = 8.67444 us over 500000 calls
+current simulated time: 5040 min (max: 31680 min)
+total agents: 798
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.1009 seconds 
+total wall time: 0 days, 0 hours, 4 minutes, and 24.3692 seconds 
+
+[perf] custom_function avg = 8.73533 us over 550000 calls
+current simulated time: 5400 min (max: 31680 min)
+total agents: 824
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.1602 seconds 
+total wall time: 0 days, 0 hours, 4 minutes, and 43.5294 seconds 
+
+[perf] custom_function avg = 8.79032 us over 600000 calls
+current simulated time: 5760 min (max: 31680 min)
+total agents: 841
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.2048 seconds 
+total wall time: 0 days, 0 hours, 5 minutes, and 2.73426 seconds 
+
+[perf] custom_function avg = 8.84617 us over 650000 calls
+current simulated time: 6120 min (max: 31680 min)
+total agents: 877
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.296 seconds 
+total wall time: 0 days, 0 hours, 5 minutes, and 22.0303 seconds 
+
+[perf] custom_function avg = 8.91157 us over 700000 calls
+current simulated time: 6480 min (max: 31680 min)
+total agents: 909
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.2797 seconds 
+total wall time: 0 days, 0 hours, 5 minutes, and 41.31 seconds 
+
+[perf] custom_function avg = 8.96014 us over 750000 calls
+current simulated time: 6840 min (max: 31680 min)
+total agents: 944
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.3351 seconds 
+total wall time: 0 days, 0 hours, 6 minutes, and 0.645191 seconds 
+
+[perf] custom_function avg = 9.00269 us over 800000 calls
+[perf] custom_function avg = 9.0371 us over 850000 calls
+current simulated time: 7200 min (max: 31680 min)
+total agents: 982
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.4602 seconds 
+total wall time: 0 days, 0 hours, 6 minutes, and 20.1054 seconds 
+
+[perf] custom_function avg = 9.07815 us over 900000 calls
+current simulated time: 7560 min (max: 31680 min)
+total agents: 1009
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.5799 seconds 
+total wall time: 0 days, 0 hours, 6 minutes, and 39.6853 seconds 
+
+[perf] custom_function avg = 9.11646 us over 950000 calls
+current simulated time: 7920 min (max: 31680 min)
+total agents: 1050
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.7064 seconds 
+total wall time: 0 days, 0 hours, 6 minutes, and 59.3917 seconds 
+
+[perf] custom_function avg = 9.1556 us over 1000000 calls
+current simulated time: 8280 min (max: 31680 min)
+total agents: 1076
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.7355 seconds 
+total wall time: 0 days, 0 hours, 7 minutes, and 19.1272 seconds 
+
+[perf] custom_function avg = 9.19667 us over 1050000 calls
+current simulated time: 8640 min (max: 31680 min)
+total agents: 1122
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.8373 seconds 
+total wall time: 0 days, 0 hours, 7 minutes, and 38.9645 seconds 
+
+[perf] custom_function avg = 9.23385 us over 1100000 calls
+[perf] custom_function avg = 9.27159 us over 1150000 calls
+current simulated time: 9000 min (max: 31680 min)
+total agents: 1140
+interval wall time: 0 days, 0 hours, 0 minutes, and 19.9857 seconds 
+total wall time: 0 days, 0 hours, 7 minutes, and 58.9502 seconds 
+
+[perf] custom_function avg = 9.30963 us over 1200000 calls
+current simulated time: 9360 min (max: 31680 min)
+total agents: 1175
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.0174 seconds 
+total wall time: 0 days, 0 hours, 8 minutes, and 18.9676 seconds 
+
+[perf] custom_function avg = 9.34771 us over 1250000 calls
+[perf] custom_function avg = 9.37933 us over 1300000 calls
+current simulated time: 9720 min (max: 31680 min)
+total agents: 1205
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.1508 seconds 
+total wall time: 0 days, 0 hours, 8 minutes, and 39.1184 seconds 
+
+[perf] custom_function avg = 9.41116 us over 1350000 calls
+current simulated time: 10080 min (max: 31680 min)
+total agents: 1235
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.2344 seconds 
+total wall time: 0 days, 0 hours, 8 minutes, and 59.3528 seconds 
+
+[perf] custom_function avg = 9.44357 us over 1400000 calls
+current simulated time: 10440 min (max: 31680 min)
+total agents: 1275
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.2762 seconds 
+total wall time: 0 days, 0 hours, 9 minutes, and 19.6291 seconds 
+
+[perf] custom_function avg = 9.47368 us over 1450000 calls
+[perf] custom_function avg = 9.50236 us over 1500000 calls
+current simulated time: 10800 min (max: 31680 min)
+total agents: 1322
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.4649 seconds 
+total wall time: 0 days, 0 hours, 9 minutes, and 40.094 seconds 
+
+[perf] custom_function avg = 9.53388 us over 1550000 calls
+[perf] custom_function avg = 9.56598 us over 1600000 calls
+current simulated time: 11160 min (max: 31680 min)
+total agents: 1365
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.6795 seconds 
+total wall time: 0 days, 0 hours, 10 minutes, and 0.773486 seconds 
+
+[perf] custom_function avg = 9.59712 us over 1650000 calls
+current simulated time: 11520 min (max: 31680 min)
+total agents: 1384
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.7369 seconds 
+total wall time: 0 days, 0 hours, 10 minutes, and 21.5104 seconds 
+
+[perf] custom_function avg = 9.62552 us over 1700000 calls
+[perf] custom_function avg = 9.65105 us over 1750000 calls
+current simulated time: 11880 min (max: 31680 min)
+total agents: 1402
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.7949 seconds 
+total wall time: 0 days, 0 hours, 10 minutes, and 42.3053 seconds 
+
+[perf] custom_function avg = 9.67761 us over 1800000 calls
+current simulated time: 12240 min (max: 31680 min)
+total agents: 1441
+interval wall time: 0 days, 0 hours, 0 minutes, and 20.9168 seconds 
+total wall time: 0 days, 0 hours, 11 minutes, and 3.22208 seconds 
+
+[perf] custom_function avg = 9.7049 us over 1850000 calls
+[perf] custom_function avg = 9.73188 us over 1900000 calls
+current simulated time: 12600 min (max: 31680 min)
+total agents: 1486
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.116 seconds 
+total wall time: 0 days, 0 hours, 11 minutes, and 24.3381 seconds 
+
+[perf] custom_function avg = 9.75599 us over 1950000 calls
+[perf] custom_function avg = 9.77982 us over 2000000 calls
+current simulated time: 12960 min (max: 31680 min)
+total agents: 1540
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.302 seconds 
+total wall time: 0 days, 0 hours, 11 minutes, and 45.6401 seconds 
+
+[perf] custom_function avg = 9.80314 us over 2050000 calls
+[perf] custom_function avg = 9.82571 us over 2100000 calls
+current simulated time: 13320 min (max: 31680 min)
+total agents: 1566
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.478 seconds 
+total wall time: 0 days, 0 hours, 12 minutes, and 7.11808 seconds 
+
+[perf] custom_function avg = 9.84861 us over 2150000 calls
+[perf] custom_function avg = 9.86962 us over 2200000 calls
+current simulated time: 13680 min (max: 31680 min)
+total agents: 1606
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.5274 seconds 
+total wall time: 0 days, 0 hours, 12 minutes, and 28.6454 seconds 
+
+[perf] custom_function avg = 9.89136 us over 2250000 calls
+current simulated time: 14040 min (max: 31680 min)
+total agents: 1662
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.6511 seconds 
+total wall time: 0 days, 0 hours, 12 minutes, and 50.2965 seconds 
+
+[perf] custom_function avg = 9.91154 us over 2300000 calls
+[perf] custom_function avg = 9.93139 us over 2350000 calls
+current simulated time: 14400 min (max: 31680 min)
+total agents: 1717
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.8453 seconds 
+total wall time: 0 days, 0 hours, 13 minutes, and 12.1418 seconds 
+
+[perf] custom_function avg = 9.95327 us over 2400000 calls
+[perf] custom_function avg = 9.97109 us over 2450000 calls
+current simulated time: 14760 min (max: 31680 min)
+total agents: 1761
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.9857 seconds 
+total wall time: 0 days, 0 hours, 13 minutes, and 34.1275 seconds 
+
+[perf] custom_function avg = 9.99516 us over 2500000 calls
+[perf] custom_function avg = 10.0097 us over 2550000 calls
+current simulated time: 15120 min (max: 31680 min)
+total agents: 1826
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.0684 seconds 
+total wall time: 0 days, 0 hours, 13 minutes, and 56.1958 seconds 
+
+[perf] custom_function avg = 10.0251 us over 2600000 calls
+[perf] custom_function avg = 10.0406 us over 2650000 calls
+[perf] custom_function avg = 10.0555 us over 2700000 calls
+current simulated time: 15480 min (max: 31680 min)
+total agents: 1876
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.2313 seconds 
+total wall time: 0 days, 0 hours, 14 minutes, and 18.4271 seconds 
+
+[perf] custom_function avg = 10.0695 us over 2750000 calls
+[perf] custom_function avg = 10.0825 us over 2800000 calls
+current simulated time: 15840 min (max: 31680 min)
+total agents: 1920
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.3814 seconds 
+total wall time: 0 days, 0 hours, 14 minutes, and 40.8085 seconds 
+
+[perf] custom_function avg = 10.0959 us over 2850000 calls
+[perf] custom_function avg = 10.1083 us over 2900000 calls
+current simulated time: 16200 min (max: 31680 min)
+total agents: 1967
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.52 seconds 
+total wall time: 0 days, 0 hours, 15 minutes, and 3.3285 seconds 
+
+[perf] custom_function avg = 10.1216 us over 2950000 calls
+[perf] custom_function avg = 10.1331 us over 3000000 calls
+current simulated time: 16560 min (max: 31680 min)
+total agents: 2015
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.6567 seconds 
+total wall time: 0 days, 0 hours, 15 minutes, and 25.9852 seconds 
+
+[perf] custom_function avg = 10.1448 us over 3050000 calls
+[perf] custom_function avg = 10.1556 us over 3100000 calls
+[perf] custom_function avg = 10.1661 us over 3150000 calls
+current simulated time: 16920 min (max: 31680 min)
+total agents: 2069
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.7205 seconds 
+total wall time: 0 days, 0 hours, 15 minutes, and 48.7058 seconds 
+
+[perf] custom_function avg = 10.1777 us over 3200000 calls
+[perf] custom_function avg = 10.1892 us over 3250000 calls
+current simulated time: 17280 min (max: 31680 min)
+total agents: 2115
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.8146 seconds 
+total wall time: 0 days, 0 hours, 16 minutes, and 11.5204 seconds 
+
+[perf] custom_function avg = 10.2006 us over 3300000 calls
+[perf] custom_function avg = 10.2105 us over 3350000 calls
+[perf] custom_function avg = 10.2198 us over 3400000 calls
+current simulated time: 17640 min (max: 31680 min)
+total agents: 2152
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.8662 seconds 
+total wall time: 0 days, 0 hours, 16 minutes, and 34.3866 seconds 
+
+[perf] custom_function avg = 10.2287 us over 3450000 calls
+[perf] custom_function avg = 10.2369 us over 3500000 calls
+current simulated time: 18000 min (max: 31680 min)
+total agents: 2218
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.928 seconds 
+total wall time: 0 days, 0 hours, 16 minutes, and 57.3146 seconds 
+
+[perf] custom_function avg = 10.2457 us over 3550000 calls
+[perf] custom_function avg = 10.2548 us over 3600000 calls
+[perf] custom_function avg = 10.2633 us over 3650000 calls
+current simulated time: 18360 min (max: 31680 min)
+total agents: 2259
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.1228 seconds 
+total wall time: 0 days, 0 hours, 17 minutes, and 20.4374 seconds 
+
+[perf] custom_function avg = 10.2724 us over 3700000 calls
+[perf] custom_function avg = 10.281 us over 3750000 calls
+[perf] custom_function avg = 10.289 us over 3800000 calls
+current simulated time: 18720 min (max: 31680 min)
+total agents: 2300
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.1977 seconds 
+total wall time: 0 days, 0 hours, 17 minutes, and 43.6351 seconds 
+
+[perf] custom_function avg = 10.2975 us over 3850000 calls
+[perf] custom_function avg = 10.3056 us over 3900000 calls
+current simulated time: 19080 min (max: 31680 min)
+total agents: 2342
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.2903 seconds 
+total wall time: 0 days, 0 hours, 18 minutes, and 6.92544 seconds 
+
+[perf] custom_function avg = 10.3141 us over 3950000 calls
+[perf] custom_function avg = 10.3228 us over 4000000 calls
+[perf] custom_function avg = 10.3306 us over 4050000 calls
+current simulated time: 19440 min (max: 31680 min)
+total agents: 2382
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.3557 seconds 
+total wall time: 0 days, 0 hours, 18 minutes, and 30.2811 seconds 
+
+[perf] custom_function avg = 10.3346 us over 4100000 calls
+[perf] custom_function avg = 10.3385 us over 4150000 calls
+[perf] custom_function avg = 10.3421 us over 4200000 calls
+current simulated time: 19800 min (max: 31680 min)
+total agents: 2427
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.4073 seconds 
+total wall time: 0 days, 0 hours, 18 minutes, and 53.6885 seconds 
+
+[perf] custom_function avg = 10.3469 us over 4250000 calls
+[perf] custom_function avg = 10.3527 us over 4300000 calls
+[perf] custom_function avg = 10.3614 us over 4350000 calls
+current simulated time: 20160 min (max: 31680 min)
+total agents: 2487
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.6474 seconds 
+total wall time: 0 days, 0 hours, 19 minutes, and 17.3358 seconds 
+
+[DRUG_SCHEDULE] t=20166 Drug ON  concentration=1
+[CUSTOM_DATA_DEBUG] drug present. cell_type=tumor_cell n_vars=62
+  [0] KRAS = 1
+  [1] MYC = 0.5
+  [2] EGFR = 0.5
+  [3] TP53 = 0
+  [4] CDKN2A = 0.8
+  [5] SMAD4 = 0
+  [6] RB1 = 0
+  [7] BCL_XL = 0
+  [8] BAX = 0.5
+  [9] ZEB1 = 0
+  [10] CDH1 = 1
+  [11] MMP2 = 0
+  [12] TGFB1_expr = 0.8
+  [13] SHH_expr = 0.7
+  [14] HIF1A = 0.3
+  [15] NRF2 = 7.59725e-27
+  [16] ABCB1 = 0.0137198
+  [17] is_mesenchymal = 0
+  [18] stress_level = 0
+  [19] drug_sensitivity = 0
+  [20] apoptosis_threshold = 0
+  [21] cell_id = 3558
+  [22] parent_id = 3303
+  [23] gene_state_KRAS = 1
+  [24] gene_state_TP53 = 2
+  [25] gene_state_CDKN2A = 2
+  [26] gene_state_SMAD4 = 2
+  [27] gene_state_BCL_XL = 1
+  [28] gene_state_MYC = 0
+  [29] gene_state_EGFR = 0
+  [30] gene_state_RB1 = 0
+  [31] gene_state_BAX = 0
+  [32] gene_state_ZEB1 = 0
+  [33] gene_state_CDH1 = 0
+  [34] gene_state_MMP2 = 0
+  [35] gene_state_TGFB1 = 0
+  [36] gene_state_SHH = 0
+  [37] gene_state_HIF1A = 0
+  [38] gene_state_NRF2 = 0
+  [39] gene_state_ABCB1 = 0
+  [40] gene_state_HAS2 = 0
+  [41] gene_state_COL1A1 = 0
+  [42] gene_state_GLI1 = 0
+  [43] gene_state_ACTA2 = 0
+  [44] hif1a_active = 0
+  [45] zeb1_active = 0
+  [46] cdh1_expressed = 1
+  [47] nrf2_active = 7.59725e-27
+  [48] abcb1_active = 0.0137198
+  [49] mmp2_active = 0
+  [50] intracellular_drug = 0
+  [51] time_since_drug_exposure = -1
+  [52] time_alive = 0
+  [53] emt_extent = 0
+  [54] mechanical_pressure = 6.41245
+  [55] emt_signal_time = 0
+  [56] emt_activation_time = 0
+  [57] final_prolif_rate = 0.00048
+  [58] time_since_drug_withdrawal = -1
+  [59] in_resistance_memory = 0
+  [60] nrf2_withdrawal_anchor = 0
+  [61] abcb1_withdrawal_anchor = 0
+  idx[intracellular_drug]=50
+  idx[nrf2_active]=47
+  idx[abcb1_active]=48
+  idx[NRF2]=15
+  idx[ABCB1]=16
+  idx[time_since_drug_exposure]=51
+  idx[mechanical_pressure]=54
+  idx[drug_uptake_rate]=-1
+[perf] custom_function avg = 10.3659 us over 4400000 calls
+[perf] custom_function avg = 10.3573 us over 4450000 calls
+current simulated time: 20520 min (max: 31680 min)
+total agents: 2507
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.2668 seconds 
+total wall time: 0 days, 0 hours, 19 minutes, and 40.6026 seconds 
+
+[perf] custom_function avg = 10.3338 us over 4500000 calls
+[perf] custom_function avg = 10.3084 us over 4550000 calls
+current simulated time: 20880 min (max: 31680 min)
+total agents: 1868
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.8051 seconds 
+total wall time: 0 days, 0 hours, 20 minutes, and 3.40771 seconds 
+
+[perf] custom_function avg = 10.2836 us over 4600000 calls
+[perf] custom_function avg = 10.2595 us over 4650000 calls
+current simulated time: 21240 min (max: 31680 min)
+total agents: 1674
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.1414 seconds 
+total wall time: 0 days, 0 hours, 20 minutes, and 24.5492 seconds 
+
+[perf] custom_function avg = 10.2369 us over 4700000 calls
+[perf] custom_function avg = 10.2142 us over 4750000 calls
+current simulated time: 21600 min (max: 31680 min)
+total agents: 1728
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.1642 seconds 
+total wall time: 0 days, 0 hours, 20 minutes, and 45.7133 seconds 
+
+[perf] custom_function avg = 10.1927 us over 4800000 calls
+[perf] custom_function avg = 10.1716 us over 4850000 calls
+current simulated time: 21960 min (max: 31680 min)
+total agents: 1792
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.2476 seconds 
+total wall time: 0 days, 0 hours, 21 minutes, and 6.96094 seconds 
+
+[perf] custom_function avg = 10.151 us over 4900000 calls
+[perf] custom_function avg = 10.1304 us over 4950000 calls
+current simulated time: 22320 min (max: 31680 min)
+total agents: 1843
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.353 seconds 
+total wall time: 0 days, 0 hours, 21 minutes, and 28.314 seconds 
+
+[perf] custom_function avg = 10.1102 us over 5000000 calls
+[perf] custom_function avg = 10.0902 us over 5050000 calls
+current simulated time: 22680 min (max: 31680 min)
+total agents: 1911
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.4984 seconds 
+total wall time: 0 days, 0 hours, 21 minutes, and 49.8124 seconds 
+
+[perf] custom_function avg = 10.0708 us over 5100000 calls
+[perf] custom_function avg = 10.0522 us over 5150000 calls
+[perf] custom_function avg = 10.0336 us over 5200000 calls
+current simulated time: 23040 min (max: 31680 min)
+total agents: 1970
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.6843 seconds 
+total wall time: 0 days, 0 hours, 22 minutes, and 11.4967 seconds 
+
+[perf] custom_function avg = 10.0158 us over 5250000 calls
+[perf] custom_function avg = 9.99808 us over 5300000 calls
+current simulated time: 23400 min (max: 31680 min)
+total agents: 2035
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.8075 seconds 
+total wall time: 0 days, 0 hours, 22 minutes, and 33.3043 seconds 
+
+[perf] custom_function avg = 9.9809 us over 5350000 calls
+[perf] custom_function avg = 9.96366 us over 5400000 calls
+[perf] custom_function avg = 9.94676 us over 5450000 calls
+current simulated time: 23760 min (max: 31680 min)
+total agents: 2105
+interval wall time: 0 days, 0 hours, 0 minutes, and 21.9538 seconds 
+total wall time: 0 days, 0 hours, 22 minutes, and 55.2581 seconds 
+
+[perf] custom_function avg = 9.93043 us over 5500000 calls
+[perf] custom_function avg = 9.9141 us over 5550000 calls
+current simulated time: 24120 min (max: 31680 min)
+total agents: 2176
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.1322 seconds 
+total wall time: 0 days, 0 hours, 23 minutes, and 17.3902 seconds 
+
+[perf] custom_function avg = 9.89828 us over 5600000 calls
+[perf] custom_function avg = 9.88272 us over 5650000 calls
+[perf] custom_function avg = 9.86732 us over 5700000 calls
+current simulated time: 24480 min (max: 31680 min)
+total agents: 2236
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.2988 seconds 
+total wall time: 0 days, 0 hours, 23 minutes, and 39.689 seconds 
+
+[perf] custom_function avg = 9.85234 us over 5750000 calls
+[perf] custom_function avg = 9.83751 us over 5800000 calls
+[perf] custom_function avg = 9.82287 us over 5850000 calls
+current simulated time: 24840 min (max: 31680 min)
+total agents: 2294
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.3668 seconds 
+total wall time: 0 days, 0 hours, 24 minutes, and 2.05578 seconds 
+
+[perf] custom_function avg = 9.80818 us over 5900000 calls
+[perf] custom_function avg = 9.79324 us over 5950000 calls
+current simulated time: 25200 min (max: 31680 min)
+total agents: 2375
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.5706 seconds 
+total wall time: 0 days, 0 hours, 24 minutes, and 24.6264 seconds 
+
+[perf] custom_function avg = 9.77859 us over 6000000 calls
+[perf] custom_function avg = 9.76411 us over 6050000 calls
+[perf] custom_function avg = 9.74981 us over 6100000 calls
+current simulated time: 25560 min (max: 31680 min)
+total agents: 2433
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.7116 seconds 
+total wall time: 0 days, 0 hours, 24 minutes, and 47.338 seconds 
+
+[perf] custom_function avg = 9.73583 us over 6150000 calls
+[perf] custom_function avg = 9.72202 us over 6200000 calls
+[perf] custom_function avg = 9.70872 us over 6250000 calls
+current simulated time: 25920 min (max: 31680 min)
+total agents: 2517
+interval wall time: 0 days, 0 hours, 0 minutes, and 22.8968 seconds 
+total wall time: 0 days, 0 hours, 25 minutes, and 10.2348 seconds 
+
+[perf] custom_function avg = 9.69627 us over 6300000 calls
+[perf] custom_function avg = 9.68347 us over 6350000 calls
+[perf] custom_function avg = 9.67077 us over 6400000 calls
+current simulated time: 26280 min (max: 31680 min)
+total agents: 2601
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.1226 seconds 
+total wall time: 0 days, 0 hours, 25 minutes, and 33.3574 seconds 
+
+[perf] custom_function avg = 9.65887 us over 6450000 calls
+[perf] custom_function avg = 9.64662 us over 6500000 calls
+[perf] custom_function avg = 9.63469 us over 6550000 calls
+current simulated time: 26640 min (max: 31680 min)
+total agents: 2672
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.3005 seconds 
+total wall time: 0 days, 0 hours, 25 minutes, and 56.6579 seconds 
+
+[perf] custom_function avg = 9.62343 us over 6600000 calls
+[perf] custom_function avg = 9.61201 us over 6650000 calls
+[perf] custom_function avg = 9.60047 us over 6700000 calls
+[perf] custom_function avg = 9.58906 us over 6750000 calls
+current simulated time: 27000 min (max: 31680 min)
+total agents: 2749
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.4629 seconds 
+total wall time: 0 days, 0 hours, 26 minutes, and 20.1208 seconds 
+
+[perf] custom_function avg = 9.5781 us over 6800000 calls
+[perf] custom_function avg = 9.5671 us over 6850000 calls
+[perf] custom_function avg = 9.55625 us over 6900000 calls
+current simulated time: 27360 min (max: 31680 min)
+total agents: 2832
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.6516 seconds 
+total wall time: 0 days, 0 hours, 26 minutes, and 43.7724 seconds 
+
+[perf] custom_function avg = 9.54592 us over 6950000 calls
+[perf] custom_function avg = 9.53566 us over 7000000 calls
+[perf] custom_function avg = 9.52571 us over 7050000 calls
+current simulated time: 27720 min (max: 31680 min)
+total agents: 2915
+interval wall time: 0 days, 0 hours, 0 minutes, and 23.9251 seconds 
+total wall time: 0 days, 0 hours, 27 minutes, and 7.69757 seconds 
+
+[perf] custom_function avg = 9.51611 us over 7100000 calls
+[perf] custom_function avg = 9.50629 us over 7150000 calls
+[perf] custom_function avg = 9.49624 us over 7200000 calls
+[perf] custom_function avg = 9.48642 us over 7250000 calls
+current simulated time: 28080 min (max: 31680 min)
+total agents: 2977
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.0764 seconds 
+total wall time: 0 days, 0 hours, 27 minutes, and 31.774 seconds 
+
+[perf] custom_function avg = 9.47745 us over 7300000 calls
+[perf] custom_function avg = 9.46812 us over 7350000 calls
+[perf] custom_function avg = 9.45894 us over 7400000 calls
+[perf] custom_function avg = 9.45007 us over 7450000 calls
+current simulated time: 28440 min (max: 31680 min)
+total agents: 3040
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.2313 seconds 
+total wall time: 0 days, 0 hours, 27 minutes, and 56.0053 seconds 
+
+[perf] custom_function avg = 9.44165 us over 7500000 calls
+[perf] custom_function avg = 9.43307 us over 7550000 calls
+[perf] custom_function avg = 9.42463 us over 7600000 calls
+current simulated time: 28800 min (max: 31680 min)
+total agents: 3102
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.4339 seconds 
+total wall time: 0 days, 0 hours, 28 minutes, and 20.4392 seconds 
+
+[perf] custom_function avg = 9.41666 us over 7650000 calls
+[perf] custom_function avg = 9.4083 us over 7700000 calls
+[perf] custom_function avg = 9.40011 us over 7750000 calls
+[perf] custom_function avg = 9.39216 us over 7800000 calls
+current simulated time: 29160 min (max: 31680 min)
+total agents: 3170
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.5498 seconds 
+total wall time: 0 days, 0 hours, 28 minutes, and 44.989 seconds 
+
+[perf] custom_function avg = 9.3844 us over 7850000 calls
+[perf] custom_function avg = 9.37678 us over 7900000 calls
+[perf] custom_function avg = 9.36926 us over 7950000 calls
+[perf] custom_function avg = 9.3617 us over 8000000 calls
+current simulated time: 29520 min (max: 31680 min)
+total agents: 3260
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.7524 seconds 
+total wall time: 0 days, 0 hours, 29 minutes, and 9.74142 seconds 
+
+[perf] custom_function avg = 9.35435 us over 8050000 calls
+[perf] custom_function avg = 9.3468 us over 8100000 calls
+[perf] custom_function avg = 9.33935 us over 8150000 calls
+[perf] custom_function avg = 9.33199 us over 8200000 calls
+current simulated time: 29880 min (max: 31680 min)
+total agents: 3337
+interval wall time: 0 days, 0 hours, 0 minutes, and 24.9514 seconds 
+total wall time: 0 days, 0 hours, 29 minutes, and 34.6928 seconds 
+
+[perf] custom_function avg = 9.32474 us over 8250000 calls
+[perf] custom_function avg = 9.31745 us over 8300000 calls
+[perf] custom_function avg = 9.31019 us over 8350000 calls
+[perf] custom_function avg = 9.30313 us over 8400000 calls
+current simulated time: 30240 min (max: 31680 min)
+total agents: 3395
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.0757 seconds 
+total wall time: 0 days, 0 hours, 29 minutes, and 59.7685 seconds 
+
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=2860 local_drug=0.248915 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.149349
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=2860 intracellular_before_efflux=0.149349 efflux_amount=0.506097 intracellular_after_efflux=0.000000 abcb1_active=0.806828 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=3807 local_drug=0.175022 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.105013
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=3807 intracellular_before_efflux=0.105013 efflux_amount=0.355854 intracellular_after_efflux=0.000000 abcb1_active=0.806821 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=2860 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+DEBUG_LOG:Time,ID,Type,Loc_Drug,Intra_Drug,Efflux_Level,Death_Drug,Death_Base,O2
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=3807 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=2552 local_drug=0.211249 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.126749
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=2552 intracellular_before_efflux=0.126749 efflux_amount=0.429507 intracellular_after_efflux=0.000000 abcb1_active=0.806817 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=3193 local_drug=0.194067 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.116440
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=3193 intracellular_before_efflux=0.116440 efflux_amount=0.394593 intracellular_after_efflux=0.000000 abcb1_active=0.806859 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=3590 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=3590 intracellular_before_efflux=0.093975 efflux_amount=0.318445 intracellular_after_efflux=0.000000 abcb1_active=0.806811 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=2552 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=3193 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=3590 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4743 local_drug=0.276594 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.165957
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4743 intracellular_before_efflux=0.165957 efflux_amount=0.564511 intracellular_after_efflux=0.000000 abcb1_active=0.809895 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=3411 local_drug=0.211249 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.126749
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=3411 intracellular_before_efflux=0.126749 efflux_amount=0.429535 intracellular_after_efflux=0.000000 abcb1_active=0.806870 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4854 local_drug=0.244626 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.146776
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4854 intracellular_before_efflux=0.146776 efflux_amount=0.497199 intracellular_after_efflux=0.000000 abcb1_active=0.806541 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=3411 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=3278 local_drug=0.380482 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.228289
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=3278 intracellular_before_efflux=0.228289 efflux_amount=0.773595 intracellular_after_efflux=0.000000 abcb1_active=0.806825 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5185 local_drug=0.236375 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.141825
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5185 intracellular_before_efflux=0.141825 efflux_amount=0.470815 intracellular_after_efflux=0.000000 abcb1_active=0.790403 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=3278 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4854 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4743 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5185 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5647 local_drug=0.216422 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.129853
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5647 intracellular_before_efflux=0.129853 efflux_amount=0.474866 intracellular_after_efflux=0.000000 abcb1_active=0.870700 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4284 local_drug=0.273044 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.163827
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4284 intracellular_before_efflux=0.163827 efflux_amount=0.554814 intracellular_after_efflux=0.000000 abcb1_active=0.806332 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4963 local_drug=0.208282 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.124969
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4963 intracellular_before_efflux=0.124969 efflux_amount=0.418254 intracellular_after_efflux=0.000000 abcb1_active=0.796870 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5188 local_drug=0.216422 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.129853
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5188 intracellular_before_efflux=0.129853 efflux_amount=0.439045 intracellular_after_efflux=0.000000 abcb1_active=0.805021 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4089 local_drug=0.343997 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.206398
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4089 intracellular_before_efflux=0.206398 efflux_amount=0.699292 intracellular_after_efflux=0.000000 abcb1_active=0.806683 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4963 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+DEBUG_LOG:30245.999998,4963,0,0.208282,0.000000,0.796870,0.000000,0.000135,0.000568
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4089 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=3794 local_drug=0.299312 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.179587
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=3794 intracellular_before_efflux=0.179587 efflux_amount=0.608563 intracellular_after_efflux=0.000000 abcb1_active=0.806827 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5188 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=3794 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5027 local_drug=0.249962 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.149977
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5027 intracellular_before_efflux=0.149977 efflux_amount=0.502762 intracellular_after_efflux=0.000000 abcb1_active=0.798156 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5844 local_drug=0.239434 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.143661
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5844 intracellular_before_efflux=0.143661 efflux_amount=0.469019 intracellular_after_efflux=0.000000 abcb1_active=0.777326 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=2805 local_drug=0.216761 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.130057
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=2805 intracellular_before_efflux=0.130057 efflux_amount=0.440721 intracellular_after_efflux=0.000000 abcb1_active=0.806829 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4687 local_drug=0.248009 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.148805
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4687 intracellular_before_efflux=0.148805 efflux_amount=0.505259 intracellular_after_efflux=0.000000 abcb1_active=0.808437 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=2805 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4687 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4095 local_drug=0.256079 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.153648
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4095 intracellular_before_efflux=0.153648 efflux_amount=0.520568 intracellular_after_efflux=0.000000 abcb1_active=0.806683 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4966 local_drug=0.290585 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.174351
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4966 intracellular_before_efflux=0.174351 efflux_amount=0.589108 intracellular_after_efflux=0.000000 abcb1_active=0.804490 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5027 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4284 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4095 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5844 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][DIFFUSION_SUMMARY] t=30245.999998 mean_extra_core=0.193620 mean_extra_periphery=0.252794 mean_extra_stroma=0.560604 mean_intracellular_tumor=0.000000 live_tumor=157 baseline_d14=157 tumor_reduction=0.000000 module7_calls=1696638 uptake_calls=201465
+[RC2_DRUG_DIAG][EQUATION] intracellular_drug += drug_uptake_rate * local_drug * dt (executed when local_drug > 0)
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=2748 local_drug=0.273923 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.164354
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=2748 intracellular_before_efflux=0.164354 efflux_amount=0.556947 intracellular_after_efflux=0.000000 abcb1_active=0.806834 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4966 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=2748 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5647 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5192 local_drug=0.221977 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.133186
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5192 intracellular_before_efflux=0.133186 efflux_amount=0.447354 intracellular_after_efflux=0.000000 abcb1_active=0.799727 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4129 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4129 intracellular_before_efflux=0.093975 efflux_amount=0.318492 intracellular_after_efflux=0.000000 abcb1_active=0.806931 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4021 local_drug=0.314476 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.188686
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4021 intracellular_before_efflux=0.188686 efflux_amount=0.639305 intracellular_after_efflux=0.000000 abcb1_active=0.806715 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4129 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4021 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5192 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4023 local_drug=0.214391 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128635
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4023 intracellular_before_efflux=0.128635 efflux_amount=0.435751 intracellular_after_efflux=0.000000 abcb1_active=0.806549 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5650 local_drug=0.179998 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.107999
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5650 intracellular_before_efflux=0.107999 efflux_amount=0.360640 intracellular_after_efflux=0.000000 abcb1_active=0.795073 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4023 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4975 local_drug=0.295090 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.177054
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4975 intracellular_before_efflux=0.177054 efflux_amount=0.597764 intracellular_after_efflux=0.000000 abcb1_active=0.803849 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5193 local_drug=0.217698 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.130619
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5193 intracellular_before_efflux=0.130619 efflux_amount=0.446256 intracellular_after_efflux=0.000000 abcb1_active=0.813446 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4754 local_drug=0.214902 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128941
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4754 intracellular_before_efflux=0.128941 efflux_amount=0.435046 intracellular_after_efflux=0.000000 abcb1_active=0.803331 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4040 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4040 intracellular_before_efflux=0.093975 efflux_amount=0.318524 intracellular_after_efflux=0.000000 abcb1_active=0.807011 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5193 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4040 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4975 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4754 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4155 local_drug=0.376336 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.225802
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4155 intracellular_before_efflux=0.225802 efflux_amount=0.764827 intracellular_after_efflux=0.000000 abcb1_active=0.806468 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4312 local_drug=0.228441 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.137064
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4312 intracellular_before_efflux=0.137064 efflux_amount=0.465355 intracellular_after_efflux=0.000000 abcb1_active=0.808371 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5203 local_drug=0.181117 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.108670
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5203 intracellular_before_efflux=0.108670 efflux_amount=0.372286 intracellular_after_efflux=0.000000 abcb1_active=0.815675 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4155 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4312 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5203 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4160 local_drug=0.302456 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.181473
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4160 intracellular_before_efflux=0.181473 efflux_amount=0.615862 intracellular_after_efflux=0.000000 abcb1_active=0.808018 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4775 local_drug=0.358319 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.214991
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4775 intracellular_before_efflux=0.214991 efflux_amount=0.730825 intracellular_after_efflux=0.000000 abcb1_active=0.809362 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5438 local_drug=0.290585 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.174351
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5438 intracellular_before_efflux=0.174351 efflux_amount=0.584583 intracellular_after_efflux=0.000000 abcb1_active=0.798310 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4160 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5438 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5220 local_drug=0.237454 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.142472
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5220 intracellular_before_efflux=0.142472 efflux_amount=0.484674 intracellular_after_efflux=0.000000 abcb1_active=0.809973 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4775 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4171 local_drug=0.292782 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.175669
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4171 intracellular_before_efflux=0.175669 efflux_amount=0.595270 intracellular_after_efflux=0.000000 abcb1_active=0.806805 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5220 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5616 local_drug=0.221282 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.132769
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5616 intracellular_before_efflux=0.132769 efflux_amount=0.445735 intracellular_after_efflux=0.000000 abcb1_active=0.799338 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4322 local_drug=0.243722 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.146233
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4322 intracellular_before_efflux=0.146233 efflux_amount=0.495375 intracellular_after_efflux=0.000000 abcb1_active=0.806565 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4171 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5650 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4981 local_drug=0.205700 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.123420
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4981 intracellular_before_efflux=0.123420 efflux_amount=0.420443 intracellular_after_efflux=0.000000 abcb1_active=0.811097 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4174 local_drug=0.184026 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.110416
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4174 intracellular_before_efflux=0.110416 efflux_amount=0.374073 intracellular_after_efflux=0.000000 abcb1_active=0.806633 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4322 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4815 local_drug=0.321289 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.192773
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4815 intracellular_before_efflux=0.192773 efflux_amount=0.651126 intracellular_after_efflux=0.000000 abcb1_active=0.804209 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5255 local_drug=0.200670 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.120402
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5255 intracellular_before_efflux=0.120402 efflux_amount=0.393070 intracellular_after_efflux=0.000000 abcb1_active=0.777296 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4981 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4174 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4815 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5255 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4989 local_drug=0.244888 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.146933
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4989 intracellular_before_efflux=0.146933 efflux_amount=0.493316 intracellular_after_efflux=0.000000 abcb1_active=0.799385 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4827 local_drug=0.184026 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.110416
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4827 intracellular_before_efflux=0.110416 efflux_amount=0.373317 intracellular_after_efflux=0.000000 abcb1_active=0.805003 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5273 local_drug=0.285579 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.171347
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5273 intracellular_before_efflux=0.171347 efflux_amount=0.574222 intracellular_after_efflux=0.000000 abcb1_active=0.797909 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4352 local_drug=0.221397 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.132838
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4352 intracellular_before_efflux=0.132838 efflux_amount=0.450009 intracellular_after_efflux=0.000000 abcb1_active=0.806583 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5273 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4827 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4989 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4352 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4502 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4502 intracellular_before_efflux=0.093975 efflux_amount=0.318261 intracellular_after_efflux=0.000000 abcb1_active=0.806345 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4226 local_drug=0.201473 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.120884
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4226 intracellular_before_efflux=0.120884 efflux_amount=0.409434 intracellular_after_efflux=0.000000 abcb1_active=0.806427 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4354 local_drug=0.282560 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.169536
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4354 intracellular_before_efflux=0.169536 efflux_amount=0.574979 intracellular_after_efflux=0.000000 abcb1_active=0.807495 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4226 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5296 local_drug=0.214391 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128635
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5296 intracellular_before_efflux=0.128635 efflux_amount=0.439629 intracellular_after_efflux=0.000000 abcb1_active=0.813727 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5670 local_drug=0.282560 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.169536
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5670 intracellular_before_efflux=0.169536 efflux_amount=0.555481 intracellular_after_efflux=0.000000 abcb1_active=0.780112 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5296 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4239 local_drug=0.181117 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.108670
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4239 intracellular_before_efflux=0.108670 efflux_amount=0.368491 intracellular_after_efflux=0.000000 abcb1_active=0.807360 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4354 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5670 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4239 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4502 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5038 local_drug=0.301953 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.181172
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5038 intracellular_before_efflux=0.181172 efflux_amount=0.610519 intracellular_after_efflux=0.000000 abcb1_active=0.802340 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5654 local_drug=0.211249 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.126749
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5654 intracellular_before_efflux=0.126749 efflux_amount=0.415159 intracellular_after_efflux=0.000000 abcb1_active=0.779863 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4244 local_drug=0.184026 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.110416
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4244 intracellular_before_efflux=0.110416 efflux_amount=0.373951 intracellular_after_efflux=0.000000 abcb1_active=0.806371 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4516 local_drug=0.203004 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.121802
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4516 intracellular_before_efflux=0.121802 efflux_amount=0.412635 intracellular_after_efflux=0.000000 abcb1_active=0.806604 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4376 local_drug=0.196045 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.117627
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4376 intracellular_before_efflux=0.117627 efflux_amount=0.399480 intracellular_after_efflux=0.000000 abcb1_active=0.808609 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4244 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4376 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4891 local_drug=0.243722 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.146233
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4891 intracellular_before_efflux=0.146233 efflux_amount=0.492971 intracellular_after_efflux=0.000000 abcb1_active=0.802651 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4248 local_drug=0.298608 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.179165
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4248 intracellular_before_efflux=0.179165 efflux_amount=0.607468 intracellular_after_efflux=0.000000 abcb1_active=0.807275 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4891 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5323 local_drug=0.175022 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.105013
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5323 intracellular_before_efflux=0.105013 efflux_amount=0.359051 intracellular_after_efflux=0.000000 abcb1_active=0.814071 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4896 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4896 intracellular_before_efflux=0.093975 efflux_amount=0.319031 intracellular_after_efflux=0.000000 abcb1_active=0.808297 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5323 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5654 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4248 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4896 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4382 local_drug=0.334593 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.200756
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4382 intracellular_before_efflux=0.200756 efflux_amount=0.679414 intracellular_after_efflux=0.000000 abcb1_active=0.805780 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5330 local_drug=0.228287 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.136972
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5330 intracellular_before_efflux=0.136972 efflux_amount=0.463324 intracellular_after_efflux=0.000000 abcb1_active=0.805384 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4251 local_drug=0.204317 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.122590
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4251 intracellular_before_efflux=0.122590 efflux_amount=0.415757 intracellular_after_efflux=0.000000 abcb1_active=0.807487 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4909 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4909 intracellular_before_efflux=0.093975 efflux_amount=0.319178 intracellular_after_efflux=0.000000 abcb1_active=0.808668 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5330 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4251 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5332 local_drug=0.239434 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.143661
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5332 intracellular_before_efflux=0.143661 efflux_amount=0.485368 intracellular_after_efflux=0.000000 abcb1_active=0.804422 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5038 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5332 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4382 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4909 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5337 local_drug=0.196045 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.117627
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5337 intracellular_before_efflux=0.117627 efflux_amount=0.398706 intracellular_after_efflux=0.000000 abcb1_active=0.807044 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5685 local_drug=0.221977 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.133186
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5685 intracellular_before_efflux=0.133186 efflux_amount=0.453787 intracellular_after_efflux=0.000000 abcb1_active=0.811227 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4912 local_drug=0.257611 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.154567
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4912 intracellular_before_efflux=0.154567 efflux_amount=0.520583 intracellular_after_efflux=0.000000 abcb1_active=0.801908 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5049 local_drug=0.291491 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.174894
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5049 intracellular_before_efflux=0.174894 efflux_amount=0.596300 intracellular_after_efflux=0.000000 abcb1_active=0.811783 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5337 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5049 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5616 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4912 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5343 local_drug=0.256405 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.153843
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5343 intracellular_before_efflux=0.153843 efflux_amount=0.523648 intracellular_after_efflux=0.000000 abcb1_active=0.810425 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4919 local_drug=0.267643 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.160586
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4919 intracellular_before_efflux=0.160586 efflux_amount=0.539117 intracellular_after_efflux=0.000000 abcb1_active=0.799332 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4516 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5343 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4919 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5208 local_drug=0.264203 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.158522
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5208 intracellular_before_efflux=0.158522 efflux_amount=0.536227 intracellular_after_efflux=0.000000 abcb1_active=0.805398 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5067 local_drug=0.179998 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.107999
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5067 intracellular_before_efflux=0.107999 efflux_amount=0.366406 intracellular_after_efflux=0.000000 abcb1_active=0.807784 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4920 local_drug=0.208794 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.125276
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4920 intracellular_before_efflux=0.125276 efflux_amount=0.423270 intracellular_after_efflux=0.000000 abcb1_active=0.804452 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5360 local_drug=0.232469 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.139481
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5360 intracellular_before_efflux=0.139481 efflux_amount=0.461922 intracellular_after_efflux=0.000000 abcb1_active=0.788503 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5685 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4920 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5360 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5417 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5417 intracellular_before_efflux=0.093975 efflux_amount=0.319026 intracellular_after_efflux=0.000000 abcb1_active=0.808283 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5208 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5366 local_drug=0.204579 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.122748
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5366 intracellular_before_efflux=0.122748 efflux_amount=0.414991 intracellular_after_efflux=0.000000 abcb1_active=0.804963 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5067 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4937 local_drug=0.213992 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128395
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4937 intracellular_before_efflux=0.128395 efflux_amount=0.436034 intracellular_after_efflux=0.000000 abcb1_active=0.808578 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5366 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4937 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5367 local_drug=0.204317 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.122590
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5367 intracellular_before_efflux=0.122590 efflux_amount=0.403471 intracellular_after_efflux=0.000000 abcb1_active=0.783625 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5074 local_drug=0.196045 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.117627
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5074 intracellular_before_efflux=0.117627 efflux_amount=0.397277 intracellular_after_efflux=0.000000 abcb1_active=0.804152 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4459 local_drug=0.205700 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.123420
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4459 intracellular_before_efflux=0.123420 efflux_amount=0.418045 intracellular_after_efflux=0.000000 abcb1_active=0.806471 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5367 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5417 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4949 local_drug=0.246156 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.147693
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4949 intracellular_before_efflux=0.147693 efflux_amount=0.501577 intracellular_after_efflux=0.000000 abcb1_active=0.808588 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5372 local_drug=0.221977 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.133186
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5372 intracellular_before_efflux=0.133186 efflux_amount=0.445328 intracellular_after_efflux=0.000000 abcb1_active=0.796105 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5074 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4949 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5267 local_drug=0.230695 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.138417
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5267 intracellular_before_efflux=0.138417 efflux_amount=0.467330 intracellular_after_efflux=0.000000 abcb1_active=0.803868 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5372 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4459 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5267 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5423 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5423 intracellular_before_efflux=0.093975 efflux_amount=0.323567 intracellular_after_efflux=0.000000 abcb1_active=0.819788 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5085 local_drug=0.259111 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.155467
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5085 intracellular_before_efflux=0.155467 efflux_amount=0.533770 intracellular_after_efflux=0.000000 abcb1_active=0.817461 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5697 local_drug=0.233800 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.140280
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5697 intracellular_before_efflux=0.140280 efflux_amount=0.506325 intracellular_after_efflux=0.000000 abcb1_active=0.859380 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5085 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5395 local_drug=0.258670 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.155202
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5395 intracellular_before_efflux=0.155202 efflux_amount=0.525017 intracellular_after_efflux=0.000000 abcb1_active=0.805428 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5086 local_drug=0.204579 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.122748
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5086 intracellular_before_efflux=0.122748 efflux_amount=0.412926 intracellular_after_efflux=0.000000 abcb1_active=0.800958 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5395 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5697 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5086 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4469 local_drug=0.196045 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.117627
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4469 intracellular_before_efflux=0.117627 efflux_amount=0.398486 intracellular_after_efflux=0.000000 abcb1_active=0.806598 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4561 local_drug=0.228441 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.137064
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4561 intracellular_before_efflux=0.137064 efflux_amount=0.463921 intracellular_after_efflux=0.000000 abcb1_active=0.805880 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5404 local_drug=0.209486 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.125691
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5404 intracellular_before_efflux=0.125691 efflux_amount=0.422424 intracellular_after_efflux=0.000000 abcb1_active=0.800191 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4561 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5404 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4469 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5406 local_drug=0.255709 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.153425
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5406 intracellular_before_efflux=0.153425 efflux_amount=0.512460 intracellular_after_efflux=0.000000 abcb1_active=0.795270 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4565 local_drug=0.214391 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128635
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4565 intracellular_before_efflux=0.128635 efflux_amount=0.436443 intracellular_after_efflux=0.000000 abcb1_active=0.807829 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5120 local_drug=0.179998 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.107999
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5120 intracellular_before_efflux=0.107999 efflux_amount=0.360565 intracellular_after_efflux=0.000000 abcb1_active=0.794907 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5406 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5120 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4565 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5423 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5883 local_drug=0.214391 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128635
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5883 intracellular_before_efflux=0.128635 efflux_amount=0.428363 intracellular_after_efflux=0.000000 abcb1_active=0.792873 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5883 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4583 local_drug=0.217698 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.130619
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4583 intracellular_before_efflux=0.130619 efflux_amount=0.442162 intracellular_after_efflux=0.000000 abcb1_active=0.805983 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5731 local_drug=0.196045 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.117627
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5731 intracellular_before_efflux=0.117627 efflux_amount=0.375904 intracellular_after_efflux=0.000000 abcb1_active=0.760888 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4583 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5731 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5439 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5439 intracellular_before_efflux=0.093975 efflux_amount=0.316437 intracellular_after_efflux=0.000000 abcb1_active=0.801725 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4589 local_drug=0.230961 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.138577
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4589 intracellular_before_efflux=0.138577 efflux_amount=0.469937 intracellular_after_efflux=0.000000 abcb1_active=0.807420 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5171 local_drug=0.185490 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.111294
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5171 intracellular_before_efflux=0.111294 efflux_amount=0.378462 intracellular_after_efflux=0.000000 abcb1_active=0.809660 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4589 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5171 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+DEBUG_LOG:30245.999998,5171,0,0.185490,0.000000,0.809660,0.000000,0.000135,0.000284
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5736 local_drug=0.181117 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.108670
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5736 intracellular_before_efflux=0.108670 efflux_amount=0.382723 intracellular_after_efflux=0.000000 abcb1_active=0.838544 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5439 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5736 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5444 local_drug=0.210390 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.126234
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5444 intracellular_before_efflux=0.126234 efflux_amount=0.418321 intracellular_after_efflux=0.000000 abcb1_active=0.789010 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5740 local_drug=0.234028 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.140417
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5740 intracellular_before_efflux=0.140417 efflux_amount=0.433463 intracellular_after_efflux=0.000000 abcb1_active=0.734993 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5444 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5740 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5776 local_drug=0.181117 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.108670
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5776 intracellular_before_efflux=0.108670 efflux_amount=0.354979 intracellular_after_efflux=0.000000 abcb1_active=0.777755 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5741 local_drug=0.211249 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.126749
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5741 intracellular_before_efflux=0.126749 efflux_amount=0.411772 intracellular_after_efflux=0.000000 abcb1_active=0.773501 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5454 local_drug=0.204579 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.122748
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5454 intracellular_before_efflux=0.122748 efflux_amount=0.410485 intracellular_after_efflux=0.000000 abcb1_active=0.796223 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5776 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5741 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5454 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5745 local_drug=0.221977 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.133186
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5745 intracellular_before_efflux=0.133186 efflux_amount=0.430301 intracellular_after_efflux=0.000000 abcb1_active=0.769243 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4634 local_drug=0.214902 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128941
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4634 intracellular_before_efflux=0.128941 efflux_amount=0.436896 intracellular_after_efflux=0.000000 abcb1_active=0.806746 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5745 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4634 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5456 local_drug=0.236375 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.141825
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5456 intracellular_before_efflux=0.141825 efflux_amount=0.488316 intracellular_after_efflux=0.000000 abcb1_active=0.819784 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4791 local_drug=0.179998 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.107999
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4791 intracellular_before_efflux=0.107999 efflux_amount=0.364987 intracellular_after_efflux=0.000000 abcb1_active=0.804655 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5456 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4791 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5752 local_drug=0.204579 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.122748
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5752 intracellular_before_efflux=0.122748 efflux_amount=0.414728 intracellular_after_efflux=0.000000 abcb1_active=0.804454 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5464 local_drug=0.194067 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.116440
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5464 intracellular_before_efflux=0.116440 efflux_amount=0.383598 intracellular_after_efflux=0.000000 abcb1_active=0.784375 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5752 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5464 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5469 local_drug=0.235788 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.141473
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5469 intracellular_before_efflux=0.141473 efflux_amount=0.504033 intracellular_after_efflux=0.000000 abcb1_active=0.848275 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5763 local_drug=0.179998 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.107999
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5763 intracellular_before_efflux=0.107999 efflux_amount=0.327580 intracellular_after_efflux=0.000000 abcb1_active=0.722187 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5469 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5763 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4677 local_drug=0.243722 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.146233
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4677 intracellular_before_efflux=0.146233 efflux_amount=0.494374 intracellular_after_efflux=0.000000 abcb1_active=0.804934 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5475 local_drug=0.243722 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.146233
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5475 intracellular_before_efflux=0.146233 efflux_amount=0.513153 intracellular_after_efflux=0.000000 abcb1_active=0.835510 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5772 local_drug=0.256405 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.153843
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5772 intracellular_before_efflux=0.153843 efflux_amount=0.494039 intracellular_after_efflux=0.000000 abcb1_active=0.764600 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4677 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+DEBUG_LOG:30245.999998,4677,0,0.243722,0.000000,0.804934,0.000000,0.000135,0.000575
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5475 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4678 local_drug=0.275632 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.165379
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4678 intracellular_before_efflux=0.165379 efflux_amount=0.561041 intracellular_after_efflux=0.000000 abcb1_active=0.807727 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5772 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4678 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+DEBUG_LOG:30245.999998,4678,0,0.275632,0.000000,0.807727,0.000000,0.000135,0.001536
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5483 local_drug=0.230961 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.138577
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5483 intracellular_before_efflux=0.138577 efflux_amount=0.470328 intracellular_after_efflux=0.000000 abcb1_active=0.808091 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5483 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5783 local_drug=0.194067 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.116440
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5783 intracellular_before_efflux=0.116440 efflux_amount=0.385449 intracellular_after_efflux=0.000000 abcb1_active=0.788160 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4686 local_drug=0.194067 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.116440
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4686 intracellular_before_efflux=0.116440 efflux_amount=0.397104 intracellular_after_efflux=0.000000 abcb1_active=0.811992 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5493 local_drug=0.236375 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.141825
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5493 intracellular_before_efflux=0.141825 efflux_amount=0.491747 intracellular_after_efflux=0.000000 abcb1_active=0.825544 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4686 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5493 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+DEBUG_LOG:30245.999998,5493,0,0.236375,0.000000,0.825544,0.000000,0.000135,0.001175
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5783 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4688 local_drug=0.239434 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.143661
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4688 intracellular_before_efflux=0.143661 efflux_amount=0.485552 intracellular_after_efflux=0.000000 abcb1_active=0.804727 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5501 local_drug=0.275820 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.165492
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5501 intracellular_before_efflux=0.165492 efflux_amount=0.562527 intracellular_after_efflux=0.000000 abcb1_active=0.809314 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5789 local_drug=0.194067 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.116440
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5789 intracellular_before_efflux=0.116440 efflux_amount=0.379329 intracellular_after_efflux=0.000000 abcb1_active=0.775647 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4688 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5501 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5789 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4696 local_drug=0.156625 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.093975
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4696 intracellular_before_efflux=0.093975 efflux_amount=0.318207 intracellular_after_efflux=0.000000 abcb1_active=0.806209 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5510 local_drug=0.239434 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.143661
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5510 intracellular_before_efflux=0.143661 efflux_amount=0.484409 intracellular_after_efflux=0.000000 abcb1_active=0.802833 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4696 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5510 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5797 local_drug=0.258670 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.155202
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5797 intracellular_before_efflux=0.155202 efflux_amount=0.557359 intracellular_after_efflux=0.000000 abcb1_active=0.855043 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5797 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4707 local_drug=0.184026 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.110416
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4707 intracellular_before_efflux=0.110416 efflux_amount=0.374731 intracellular_after_efflux=0.000000 abcb1_active=0.808052 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5800 local_drug=0.232469 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.139481
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5800 intracellular_before_efflux=0.139481 efflux_amount=0.460123 intracellular_after_efflux=0.000000 abcb1_active=0.785432 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4707 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5800 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5516 local_drug=0.273748 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.164249
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5516 intracellular_before_efflux=0.164249 efflux_amount=0.541307 intracellular_after_efflux=0.000000 abcb1_active=0.784680 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=4712 local_drug=0.255709 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.153425
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=4712 intracellular_before_efflux=0.153425 efflux_amount=0.521365 intracellular_after_efflux=0.000000 abcb1_active=0.809087 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5809 local_drug=0.221977 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.133186
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5809 intracellular_before_efflux=0.133186 efflux_amount=0.413467 intracellular_after_efflux=0.000000 abcb1_active=0.739148 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=4712 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5516 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5809 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5535 local_drug=0.209448 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.125669
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5535 intracellular_before_efflux=0.125669 efflux_amount=0.442740 intracellular_after_efflux=0.000000 abcb1_active=0.838828 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5535 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5836 local_drug=0.216422 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.129853
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5836 intracellular_before_efflux=0.129853 efflux_amount=0.448090 intracellular_after_efflux=0.000000 abcb1_active=0.821605 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5538 local_drug=0.181117 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.108670
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5538 intracellular_before_efflux=0.108670 efflux_amount=0.380015 intracellular_after_efflux=0.000000 abcb1_active=0.832609 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5836 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5538 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5838 local_drug=0.292613 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.175568
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5838 intracellular_before_efflux=0.175568 efflux_amount=0.592103 intracellular_after_efflux=0.000000 abcb1_active=0.802978 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5539 local_drug=0.284105 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.170463
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5539 intracellular_before_efflux=0.170463 efflux_amount=0.572926 intracellular_after_efflux=0.000000 abcb1_active=0.800237 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5838 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+DEBUG_LOG:30245.999998,5838,0,0.292613,0.000000,0.802978,0.000000,0.000135,0.000365
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5539 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5845 local_drug=0.204579 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.122748
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5845 intracellular_before_efflux=0.122748 efflux_amount=0.475944 intracellular_after_efflux=0.000000 abcb1_active=0.923195 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5550 local_drug=0.181117 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.108670
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5550 intracellular_before_efflux=0.108670 efflux_amount=0.373110 intracellular_after_efflux=0.000000 abcb1_active=0.817482 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5845 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5550 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5846 local_drug=0.216422 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.129853
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5846 intracellular_before_efflux=0.129853 efflux_amount=0.445077 intracellular_after_efflux=0.000000 abcb1_active=0.816080 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5553 local_drug=0.196045 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.117627
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5553 intracellular_before_efflux=0.117627 efflux_amount=0.396855 intracellular_after_efflux=0.000000 abcb1_active=0.803296 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5846 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5553 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5856 local_drug=0.221977 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.133186
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5856 intracellular_before_efflux=0.133186 efflux_amount=0.446507 intracellular_after_efflux=0.000000 abcb1_active=0.798213 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5856 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5568 local_drug=0.196045 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.117627
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5568 intracellular_before_efflux=0.117627 efflux_amount=0.420230 intracellular_after_efflux=0.000000 abcb1_active=0.850612 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5857 local_drug=0.181117 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.108670
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5857 intracellular_before_efflux=0.108670 efflux_amount=0.360657 intracellular_after_efflux=0.000000 abcb1_active=0.790197 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5568 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5857 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5865 local_drug=0.201425 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.120855
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5865 intracellular_before_efflux=0.120855 efflux_amount=0.409232 intracellular_after_efflux=0.000000 abcb1_active=0.806224 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5865 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5867 local_drug=0.214391 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.128635
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5867 intracellular_before_efflux=0.128635 efflux_amount=0.416168 intracellular_after_efflux=0.000000 abcb1_active=0.770301 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5867 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5875 local_drug=0.236375 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.141825
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5875 intracellular_before_efflux=0.141825 efflux_amount=0.484177 intracellular_after_efflux=0.000000 abcb1_active=0.812835 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5610 local_drug=0.247997 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.148798
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5610 intracellular_before_efflux=0.148798 efflux_amount=0.511210 intracellular_after_efflux=0.000000 abcb1_active=0.817999 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5875 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5610 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+DEBUG_LOG:30245.999998,5610,0,0.247997,0.000000,0.817999,0.000000,0.000135,0.000263
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5632 local_drug=0.246156 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.147693
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5632 intracellular_before_efflux=0.147693 efflux_amount=0.484776 intracellular_after_efflux=0.000000 abcb1_active=0.781503 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5632 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000000 total_apoptosis_rate=0.000135
+[RC2_DRUG_DIAG][d21][UPTAKE_CELL] id=5640 local_drug=0.232469 intracellular_drug=0.000000 uptake_rate=0.100000 uptake_term=0.139481
+[RC2_DRUG_DIAG][d21][EFFLUX_CELL] id=5640 intracellular_before_efflux=0.139481 efflux_amount=0.458138 intracellular_after_efflux=0.000000 abcb1_active=0.782044 efflux_strength=0.700000
+[RC2_DRUG_DIAG][d21][APOPTOSIS_CELL] id=5640 intracellular_drug=0.000000 baseline_component=0.000135 drug_component=0.000000 emt_component=0.000050 total_apoptosis_rate=0.000185
+DEBUG_LOG:30251.999998,4322,0,0.243006,0.000000,0.806572,0.000000,0.000135,0.000555
+DEBUG_LOG:30251.999998,5501,0,0.244288,0.000000,0.809311,0.000000,0.000135,0.000673
+DEBUG_LOG:30251.999998,5772,0,0.261114,0.000000,0.764763,0.000000,0.000135,0.002322
+DEBUG_LOG:30251.999998,4251,0,0.205791,0.000000,0.807490,0.000000,0.000135,0.000504
+DEBUG_LOG:30257.999998,5220,0,0.240535,0.000000,0.809962,0.000000,0.000135,0.000195
+DEBUG_LOG:30257.999998,4129,0,0.157066,0.000000,0.806943,0.000000,0.000135,0.000397
+DEBUG_LOG:30257.999998,5120,0,0.180296,0.000000,0.795007,0.000000,0.000135,0.000568
+DEBUG_LOG:30257.999998,5171,0,0.186943,0.000000,0.809652,0.000000,0.000135,0.000281
+DEBUG_LOG:30257.999998,4248,0,0.295212,0.000000,0.807284,0.000000,0.000135,0.000186
+DEBUG_LOG:30263.999998,4312,0,0.230106,0.000000,0.808372,0.000000,0.000135,0.000309
+DEBUG_LOG:30263.999998,4815,0,0.321813,0.000000,0.804256,0.000000,0.000135,0.000664
+DEBUG_LOG:30263.999998,4909,0,0.160849,0.000000,0.808666,0.000000,0.000135,0.000408
+DEBUG_LOG:30263.999998,4459,0,0.207484,0.000000,0.806493,0.000000,0.000135,0.001506
+DEBUG_LOG:30263.999998,4244,0,0.186507,0.000000,0.806395,0.000000,0.000135,0.000452
+DEBUG_LOG:30263.999998,2860,0,0.257565,0.000000,0.806846,0.000000,0.000135,0.000701
+DEBUG_LOG:30269.999998,5844,0,0.242056,0.000000,0.777784,0.000000,0.000135,0.001245
+DEBUG_LOG:30269.999998,5267,0,0.231400,0.000000,0.803936,0.000000,0.000135,0.000983
+DEBUG_LOG:30269.999998,4775,0,0.359073,0.000000,0.809349,0.000000,0.000135,0.000329
+DEBUG_LOG:30269.999998,5255,0,0.202569,0.000000,0.777754,0.000000,0.000135,0.000919
+DEBUG_LOG:30269.999998,3794,0,0.299743,0.000000,0.806851,0.000000,0.000135,0.000247
+DEBUG_LOG:30269.999998,4160,0,0.292717,0.000000,0.808025,0.000000,0.000135,0.001042
+DEBUG_LOG:30269.999998,5332,0,0.242056,0.000000,0.804482,0.000000,0.000135,0.001245
+DEBUG_LOG:30269.999998,5846,0,0.221832,0.000000,0.815968,0.000000,0.000135,0.000313
+DEBUG_LOG:30269.999998,5647,0,0.221832,0.000000,0.869785,0.000000,0.000135,0.000313
+DEBUG_LOG:30269.999998,5395,0,0.262363,0.000000,0.805473,0.000000,0.000135,0.002317
+DEBUG_LOG:30275.999998,5220,0,0.241747,0.000000,0.809946,0.000000,0.000135,0.000180
+DEBUG_LOG:30275.999998,4561,0,0.230703,0.000000,0.805928,0.000000,0.000135,0.000313
+DEBUG_LOG:30275.999998,5501,0,0.266874,0.000000,0.809299,0.000000,0.000135,0.000707
+DEBUG_LOG:30275.999998,4827,0,0.181027,0.000000,0.805067,0.000000,0.000135,0.000445
+DEBUG_LOG:30275.999998,5800,0,0.238176,0.000000,0.785855,0.000000,0.000135,0.000393
+DEBUG_LOG:30275.999998,4686,0,0.211104,0.000000,0.811928,0.000000,0.000135,0.000592
+DEBUG_LOG:30275.999998,4021,0,0.316106,0.000000,0.806748,0.000000,0.000135,0.002089
+DEBUG_LOG:30275.999998,5171,0,0.179929,0.000000,0.809639,0.000000,0.000135,0.000746
+DEBUG_LOG:30281.999998,5067,0,0.181655,0.000000,0.807800,0.000000,0.000135,0.000569
+DEBUG_LOG:30281.999998,5120,0,0.181655,0.000000,0.795206,0.000000,0.000135,0.000569
+DEBUG_LOG:30281.999998,5654,0,0.215234,0.000000,0.780493,0.000000,0.000135,0.000416
+DEBUG_LOG:30287.999998,5456,0,0.237426,0.000000,0.819495,0.000000,0.000135,0.001208
+DEBUG_LOG:30287.999998,5267,0,0.230932,0.000000,0.803986,0.000000,0.000135,0.000982
+DEBUG_LOG:30287.999998,5741,0,0.211449,0.000000,0.774397,0.000000,0.000135,0.000428
+DEBUG_LOG:30287.999998,4583,0,0.225472,0.000000,0.806048,0.000000,0.000135,0.000556
+DEBUG_LOG:30287.999998,5538,0,0.180914,0.000000,0.831992,0.000000,0.000135,0.000746
+DEBUG_LOG:30287.999998,5857,0,0.180914,0.000000,0.790666,0.000000,0.000135,0.000746
+DEBUG_LOG:30287.999998,5865,0,0.201410,0.000000,0.806282,0.000000,0.000135,0.000184
+DEBUG_LOG:30287.999998,5867,0,0.211500,0.000000,0.771279,0.000000,0.000135,0.000634
+DEBUG_LOG:30287.999998,5395,0,0.261754,0.000000,0.805506,0.000000,0.000135,0.002323
+DEBUG_LOG:30293.999998,4989,0,0.246049,0.000000,0.799651,0.000000,0.000135,0.001014
+DEBUG_LOG:30293.999998,3278,0,0.378122,0.000000,0.806874,0.000000,0.000135,0.000467
+DEBUG_LOG:30293.999998,4376,0,0.199454,0.000000,0.808606,0.000000,0.000135,0.000355
+DEBUG_LOG:30293.999998,4160,0,0.295313,0.000000,0.808032,0.000000,0.000135,0.001057
+DEBUG_LOG:30293.999998,5783,0,0.194096,0.000000,0.788754,0.000000,0.000135,0.001095
+DEBUG_LOG:30293.999998,5330,0,0.228425,0.000000,0.805475,0.000000,0.000135,0.000496
+DEBUG_LOG:30293.999998,4909,0,0.158907,0.000000,0.808663,0.000000,0.000135,0.000410
+DEBUG_LOG:30293.999998,5838,0,0.272405,0.000000,0.803139,0.000000,0.000135,0.000147
+DEBUG_LOG:30293.999998,4459,0,0.205232,0.000000,0.806530,0.000000,0.000135,0.001509
+DEBUG_LOG:30293.999998,5404,0,0.208181,0.000000,0.800433,0.000000,0.000135,0.000923
+DEBUG_LOG:30293.999998,5893,0,0.199393,0.000000,0.800105,0.000000,0.000135,0.000938
+DEBUG_LOG:30299.999998,4966,0,0.299008,0.000000,0.804622,0.000000,0.000135,0.000163
+DEBUG_LOG:30299.999998,3278,0,0.377644,0.000000,0.806880,0.000000,0.000135,0.000466
+DEBUG_LOG:30299.999998,5883,0,0.216121,0.000000,0.793386,0.000000,0.000135,0.000703
+DEBUG_LOG:30299.999998,5255,0,0.202982,0.000000,0.778319,0.000000,0.000135,0.000725
+DEBUG_LOG:30299.999998,5085,0,0.259024,0.000000,0.817167,0.000000,0.000135,0.001364
+DEBUG_LOG:30299.999998,5323,0,0.165917,0.000000,0.813889,0.000000,0.000135,0.000270
+DEBUG_LOG:30299.999998,5568,0,0.199513,0.000000,0.849231,0.000000,0.000135,0.000354
+DEBUG_LOG:30299.999998,2805,0,0.211291,0.000000,0.806884,0.000000,0.000135,0.000435
+[perf] custom_function avg = 9.304691 us over 8450000 calls
+DEBUG_LOG:30299.999998,5856,0,0.224180,0.000000,0.798551,0.000000,0.000135,0.000616
+DEBUG_LOG:30299.999998,5395,0,0.261906,0.000000,0.805528,0.000000,0.000135,0.002317
+[perf] custom_function avg = 9.298116 us over 8500000 calls
+[perf] custom_function avg = 9.291186 us over 8550000 calls
+[perf] custom_function avg = 9.284386 us over 8600000 calls
+current simulated time: 30599.999998 min (max: 31680.000000 min)
+total agents: 3477
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.288303 seconds 
+total wall time: 0 days, 0 hours, 30 minutes, and 25.056785 seconds 
+
+[perf] custom_function avg = 9.278025 us over 8650000 calls
+[perf] custom_function avg = 9.271198 us over 8700000 calls
+[perf] custom_function avg = 9.264249 us over 8750000 calls
+[perf] custom_function avg = 9.257608 us over 8800000 calls
+current simulated time: 30959.999998 min (max: 31680.000000 min)
+total agents: 3542
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.363049 seconds 
+total wall time: 0 days, 0 hours, 30 minutes, and 50.419838 seconds 
+
+[perf] custom_function avg = 9.251108 us over 8850000 calls
+[perf] custom_function avg = 9.244680 us over 8900000 calls
+[perf] custom_function avg = 9.238324 us over 8950000 calls
+[perf] custom_function avg = 9.231945 us over 9000000 calls
+current simulated time: 31319.999998 min (max: 31680.000000 min)
+total agents: 3598
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.508094 seconds 
+total wall time: 0 days, 0 hours, 31 minutes, and 15.927935 seconds 
+
+[perf] custom_function avg = 9.225793 us over 9050000 calls
+[perf] custom_function avg = 9.219512 us over 9100000 calls
+[perf] custom_function avg = 9.213479 us over 9150000 calls
+[perf] custom_function avg = 9.207512 us over 9200000 calls
+[perf] custom_function avg = 9.201403 us over 9250000 calls
+current simulated time: 31679.999998 min (max: 31680.000000 min)
+total agents: 3671
+interval wall time: 0 days, 0 hours, 0 minutes, and 25.648419 seconds 
+total wall time: 0 days, 0 hours, 31 minutes, and 41.576358 seconds 
+
+
+Total simulation runtime: 
+0 days, 0 hours, 31 minutes, and 41.766768 seconds 

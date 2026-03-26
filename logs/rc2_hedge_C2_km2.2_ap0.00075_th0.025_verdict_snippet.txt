@@ -1,0 +1,9 @@
+RC2 strict verdict :: rc2_hedge_C2_km2.2_ap0.00075_th0.025
+==================================================
+  RC2-6 Regrowth: FAIL | d28=277 d42=186
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES; treatment intracellular peak=0.000000 (NO_EFFECTIVE_TREATMENT).
+  Hard Score: 4/5
+  Classification: FALSE PASS
+  Reason: Hard pass not achieved under strict RC2 biological criteria.
+  Risk Flags: WEAK_DRUG_EXPOSURE
+  seed_42                      hard=4/5   biological=FALSE PASS

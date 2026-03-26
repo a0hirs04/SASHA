@@ -1,0 +1,287 @@
+========================================================================
+  REALITY CHECK 2 — Drug Response, Sanctuary, Resistance & Regrowth
+  Replicates: 1   Seeds: [42]
+  Phases (min):  barrier 0–20160  |  drug 20160–40320  |  recovery 40320–60480
+  HPC: cpu384g partition, 32 CPUs/node
+  Quorum: >=1/1
+  Work dir: /home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_hedge_set/rc2_hedge_C4_km2.3_ap0.0008_th0.025
+  Override: drug_kill_multiplier=2.3
+  Override: abcb1_production_rate=0.0008
+  Override: drug_stress_threshold=0.025
+========================================================================
+  Submitted rep 1 (seed=42) → SLURM job 10679
+
+  All 1 jobs submitted.  Polling ...
+
+    rep 1: 2 snapshots  [20s]
+    rep 1: 3 snapshots  [40s]
+    rep 1: 4 snapshots  [60s]
+    rep 1: 5 snapshots  [80s]
+    rep 1: 5 snapshots  [100s]
+    rep 1: 6 snapshots  [120s]
+    rep 1: 7 snapshots  [140s]
+    rep 1: 8 snapshots  [160s]
+    rep 1: 9 snapshots  [180s]
+    rep 1: 10 snapshots  [200s]
+    rep 1: 11 snapshots  [220s]
+    rep 1: 12 snapshots  [240s]
+    rep 1: 13 snapshots  [260s]
+    rep 1: 14 snapshots  [280s]
+    rep 1: 14 snapshots  [300s]
+    rep 1: 15 snapshots  [320s]
+    rep 1: 16 snapshots  [340s]
+    rep 1: 17 snapshots  [360s]
+    rep 1: 18 snapshots  [380s]
+    rep 1: 19 snapshots  [400s]
+    rep 1: 20 snapshots  [420s]
+    rep 1: 20 snapshots  [441s]
+    rep 1: 21 snapshots  [461s]
+    rep 1: 22 snapshots  [481s]
+    rep 1: 23 snapshots  [501s]
+    rep 1: 24 snapshots  [521s]
+    rep 1: 25 snapshots  [541s]
+    rep 1: 26 snapshots  [561s]
+    rep 1: 27 snapshots  [581s]
+    rep 1: 28 snapshots  [601s]
+    rep 1: 29 snapshots  [621s]
+    rep 1: 29 snapshots  [641s]
+    rep 1: 30 snapshots  [661s]
+    rep 1: 31 snapshots  [681s]
+    rep 1: 32 snapshots  [701s]
+    rep 1: 33 snapshots  [721s]
+    rep 1: 34 snapshots  [741s]
+    rep 1: 35 snapshots  [761s]
+    rep 1: 36 snapshots  [781s]
+    rep 1: 37 snapshots  [801s]
+    rep 1: 37 snapshots  [821s]
+    rep 1: 38 snapshots  [841s]
+    rep 1: 39 snapshots  [861s]
+    rep 1: 40 snapshots  [881s]
+    rep 1: 41 snapshots  [901s]
+    rep 1: 42 snapshots  [921s]
+    rep 1: 43 snapshots  [941s]
+    rep 1: 44 snapshots  [961s]
+    rep 1: 45 snapshots  [981s]
+    rep 1: 45 snapshots  [1001s]
+    rep 1: 46 snapshots  [1021s]
+    rep 1: 47 snapshots  [1041s]
+    rep 1: 48 snapshots  [1061s]
+    rep 1: 49 snapshots  [1081s]
+    rep 1: 50 snapshots  [1101s]
+    rep 1: 51 snapshots  [1121s]
+    rep 1: 51 snapshots  [1141s]
+    rep 1: 52 snapshots  [1161s]
+    rep 1: 53 snapshots  [1181s]
+    rep 1: 54 snapshots  [1202s]
+    rep 1: 55 snapshots  [1222s]
+    rep 1: 56 snapshots  [1242s]
+    rep 1: 56 snapshots  [1262s]
+    rep 1: 57 snapshots  [1282s]
+    rep 1: 58 snapshots  [1302s]
+    rep 1: 59 snapshots  [1322s]
+    rep 1: 60 snapshots  [1342s]
+    rep 1: 61 snapshots  [1362s]
+    rep 1: 62 snapshots  [1382s]
+    rep 1: 63 snapshots  [1402s]
+    rep 1: 63 snapshots  [1422s]
+    rep 1: 64 snapshots  [1442s]
+    rep 1: 65 snapshots  [1462s]
+    rep 1: 66 snapshots  [1482s]
+    rep 1: 67 snapshots  [1502s]
+    rep 1: 68 snapshots  [1522s]
+    rep 1: 69 snapshots  [1542s]
+    rep 1: 69 snapshots  [1562s]
+    rep 1: 70 snapshots  [1582s]
+    rep 1: 71 snapshots  [1602s]
+    rep 1: 72 snapshots  [1622s]
+    rep 1: 73 snapshots  [1642s]
+    rep 1: 74 snapshots  [1662s]
+    rep 1: 74 snapshots  [1682s]
+    rep 1: 75 snapshots  [1702s]
+    rep 1: 76 snapshots  [1722s]
+    rep 1: 77 snapshots  [1742s]
+    rep 1: 78 snapshots  [1762s]
+    rep 1: 78 snapshots  [1782s]
+    rep 1: 79 snapshots  [1802s]
+    rep 1: 80 snapshots  [1822s]
+    rep 1: 81 snapshots  [1842s]
+    rep 1: 82 snapshots  [1862s]
+    rep 1: 82 snapshots  [1882s]
+    rep 1: 83 snapshots  [1902s]
+    rep 1: 84 snapshots  [1922s]
+    rep 1: 85 snapshots  [1943s]
+    rep 1: 86 snapshots  [1963s]
+    rep 1: 86 snapshots  [1983s]
+    rep 1: 87 snapshots  [2003s]
+    rep 1: 88 snapshots  [2023s]
+    rep 1: 89 snapshots  [2043s]
+    rep 1: 89 snapshots  [2063s]
+    rep 1: 90 snapshots  [2083s]
+    rep 1: 91 snapshots  [2103s]
+    rep 1: 92 snapshots  [2123s]
+    rep 1: 93 snapshots  [2143s]
+    rep 1: 93 snapshots  [2163s]
+    rep 1: 94 snapshots  [2183s]
+    rep 1: 95 snapshots  [2203s]
+    rep 1: 96 snapshots  [2223s]
+    rep 1: 96 snapshots  [2243s]
+    rep 1: 97 snapshots  [2263s]
+    rep 1: 98 snapshots  [2283s]
+    rep 1: 99 snapshots  [2303s]
+    rep 1: 99 snapshots  [2323s]
+    rep 1: 100 snapshots  [2343s]
+    rep 1: 101 snapshots  [2363s]
+    rep 1: 102 snapshots  [2383s]
+    rep 1: 102 snapshots  [2403s]
+    rep 1: 103 snapshots  [2423s]
+    rep 1: 104 snapshots  [2443s]
+    rep 1: 104 snapshots  [2463s]
+    rep 1: 105 snapshots  [2483s]
+    rep 1: 106 snapshots  [2503s]
+    rep 1: 107 snapshots  [2523s]
+    rep 1: 107 snapshots  [2543s]
+    rep 1: 108 snapshots  [2563s]
+    rep 1: 109 snapshots  [2583s]
+    rep 1: 109 snapshots  [2603s]
+    rep 1: 110 snapshots  [2623s]
+    rep 1: 111 snapshots  [2643s]
+    rep 1: 112 snapshots  [2663s]
+    rep 1: 112 snapshots  [2684s]
+    rep 1: 113 snapshots  [2704s]
+    rep 1: 114 snapshots  [2724s]
+    rep 1: 114 snapshots  [2744s]
+    rep 1: 115 snapshots  [2764s]
+    rep 1: 116 snapshots  [2784s]
+    rep 1: 116 snapshots  [2804s]
+    rep 1: 117 snapshots  [2824s]
+    rep 1: 118 snapshots  [2844s]
+    rep 1: 119 snapshots  [2864s]
+    rep 1: 119 snapshots  [2884s]
+    rep 1: 120 snapshots  [2904s]
+    rep 1: 121 snapshots  [2924s]
+    rep 1: 121 snapshots  [2944s]
+    rep 1: 122 snapshots  [2964s]
+    rep 1: 123 snapshots  [2984s]
+    rep 1: 123 snapshots  [3004s]
+    rep 1: 124 snapshots  [3024s]
+    rep 1: 125 snapshots  [3044s]
+    rep 1: 125 snapshots  [3064s]
+    rep 1: 126 snapshots  [3084s]
+    rep 1: 127 snapshots  [3104s]
+    rep 1: 127 snapshots  [3124s]
+    rep 1: 128 snapshots  [3144s]
+    rep 1: 128 snapshots  [3164s]
+    rep 1: 129 snapshots  [3184s]
+    rep 1: 130 snapshots  [3204s]
+    rep 1: 130 snapshots  [3224s]
+    rep 1: 131 snapshots  [3244s]
+    rep 1: 132 snapshots  [3264s]
+    rep 1: 132 snapshots  [3284s]
+    rep 1: 133 snapshots  [3304s]
+    rep 1: 133 snapshots  [3324s]
+    rep 1: 134 snapshots  [3344s]
+    rep 1: 135 snapshots  [3364s]
+    rep 1: 135 snapshots  [3384s]
+    rep 1: 136 snapshots  [3404s]
+    rep 1: 137 snapshots  [3424s]
+    rep 1: 137 snapshots  [3445s]
+    rep 1: 138 snapshots  [3465s]
+    rep 1: 138 snapshots  [3485s]
+    rep 1: 139 snapshots  [3505s]
+    rep 1: 140 snapshots  [3525s]
+    rep 1: 140 snapshots  [3545s]
+    rep 1: 141 snapshots  [3565s]
+    rep 1: 141 snapshots  [3585s]
+    rep 1: 142 snapshots  [3605s]
+    rep 1: 143 snapshots  [3625s]
+    rep 1: 143 snapshots  [3645s]
+    rep 1: 144 snapshots  [3665s]
+    rep 1: 144 snapshots  [3685s]
+    rep 1: 145 snapshots  [3705s]
+    rep 1: 146 snapshots  [3725s]
+    rep 1: 146 snapshots  [3745s]
+    rep 1: 147 snapshots  [3765s]
+    rep 1: 147 snapshots  [3785s]
+    rep 1: 148 snapshots  [3805s]
+    rep 1: 148 snapshots  [3825s]
+    rep 1: 149 snapshots  [3845s]
+    rep 1: 150 snapshots  [3865s]
+    rep 1: 150 snapshots  [3885s]
+    rep 1: 151 snapshots  [3905s]
+    rep 1: 151 snapshots  [3925s]
+    rep 1: 152 snapshots  [3945s]
+    rep 1: 152 snapshots  [3965s]
+    rep 1: 153 snapshots  [3985s]
+    rep 1: 154 snapshots  [4005s]
+    rep 1: 154 snapshots  [4025s]
+    rep 1: 155 snapshots  [4045s]
+    rep 1: 155 snapshots  [4065s]
+    rep 1: 156 snapshots  [4085s]
+    rep 1: 156 snapshots  [4105s]
+    rep 1: 157 snapshots  [4125s]
+    rep 1: 157 snapshots  [4145s]
+    rep 1: 158 snapshots  [4166s]
+    rep 1: 159 snapshots  [4186s]
+    rep 1: 159 snapshots  [4206s]
+    rep 1: 160 snapshots  [4226s]
+    rep 1: 160 snapshots  [4246s]
+    rep 1: 161 snapshots  [4266s]
+    rep 1: 161 snapshots  [4286s]
+    rep 1: 162 snapshots  [4306s]
+    rep 1: 162 snapshots  [4326s]
+    rep 1: 163 snapshots  [4346s]
+    rep 1: 163 snapshots  [4366s]
+    rep 1: 164 snapshots  [4386s]
+    rep 1: 164 snapshots  [4406s]
+    rep 1: 165 snapshots  [4426s]
+    rep 1: 166 snapshots  [4446s]
+    rep 1: 166 snapshots  [4466s]
+    rep 1: 167 snapshots  [4486s]
+    rep 1: 167 snapshots  [4506s]
+    rep 1: 168 snapshots  [4526s]
+    rep 1: 168 snapshots  [4546s]
+  OK Rep 1 (seed=42): COMPLETED  exit=0  [4566s]
+
+  All jobs done in 4566.0s (76.1 min)
+
+
+  Evaluating rep 1 (seed=42) ...
+    Parsing pre-treatment snapshot (t≈20160)...
+    Parsing treatment-end snapshot  (t≈40320)...
+    Parsing post-withdrawal snapshot (t≈60480)...
+
+========================================================================
+  PER-REPLICATE RESULTS
+========================================================================
+
+  Replicate 1  (seed=42)  — SOME FAIL
+    [PASS] RC2-1  Partial response (tumor reduced during treatment)
+           tumor(pre=824) → tumor(treat_end=447)  reduction=45.8%  threshold≥10%  ✓
+    [PASS] RC2-2  Not eradicated (survivors at treatment end)
+           survivors at treatment end = 447  (>0 ✓)
+    [PASS] RC2-3  Barrier persists (ECM ≥80% of pre-treatment)
+           peri_ecm(pre=0.0000) → peri_ecm(treat_end=0.9994)  threshold=0.0000  (≥ ✓)
+    [PASS] RC2-4  Spatial sanctuary (survivors in high-ECM zones)
+           ecm@survivors(treat_end=0.6802) vs ecm@tumor(pre=0.5143)  (> ✓)
+    [PASS] RC2-5  ABCB1 resistance emerges [SOFT]
+           frac_abcb1(pre=0.0000) → frac_abcb1(treat_end=1.0000)  (increased ✓)
+    [FAIL] RC2-6  Regrowth after withdrawal
+           tumor(treat_end=447) → tumor(post=342)  (did NOT regrow ✗)
+    Timecourse:
+      t=20160  tumor= 824  caf=1091  peri_ecm=0.0000  abcb1=0.0000  ecm@tumor=0.5143
+      t=40320  tumor= 447  caf=4668  peri_ecm=0.9994  abcb1=1.0000  ecm@tumor=0.6802
+      t=60480  tumor= 342  caf=11141  peri_ecm=0.9993  abcb1=0.0497  ecm@tumor=0.7198
+
+========================================================================
+  AGGREGATE  (>=1/1 replicates must pass)
+========================================================================
+  [PASS] RC2-1  Partial response (tumor reduced during treatment)  (1/1)
+  [PASS] RC2-2  Not eradicated (survivors at treatment end)  (1/1)
+  [PASS] RC2-3  Barrier persists (ECM ≥80% of pre-treatment)  (1/1)
+  [PASS] RC2-4  Spatial sanctuary (survivors in high-ECM zones)  (1/1)
+  [PASS] RC2-5  ABCB1 resistance emerges [SOFT]  (1/1)
+  [FAIL] RC2-6  Regrowth after withdrawal  (0/1)
+
+  Total wall time: 4566.0s  (76.1 min)
+
+  *** REALITY CHECK 2: FAIL ***

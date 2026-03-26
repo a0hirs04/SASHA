@@ -1,0 +1,75 @@
+
+====================================================================================================
+RC2 MECHANISTIC REPORT :: seed_42
+Output: /home/a0hirs04/PROJECT-NORTHSTAR/build/rc2_hedge_set/rc2_hedge_C7_km2.2_ap0.00065_th0.03/replicate_01_seed42/output
+====================================================================================================
+
+A) Timeline Summary
+  Day   LiveTumor  DeadTumor   Δcells/day
+   14         747         43         nan
+   21          87          4      -94.29
+   28          98         16        1.57
+   31          96          7       -0.67
+   35          74         10       -5.50
+   42          55          6       -2.71
+
+  Interpretation: treatment shrink=YES; withdrawal regrowth=NO; regrowth profile=gradual/mixed.
+
+B) RC2 Breakdown
+  RC2-1 Partial response: PASS | reduction=86.88% (d14 747 -> d28 98)
+  RC2-2 Not eradicated: PASS | survivors@d28=98
+  RC2-3 Barrier persists: PASS | peri_ecm d14=0.8378 d28=0.9972 need>=0.6703
+  RC2-4 Spatial sanctuary: PASS | ecm@all_pre=0.5523 ecm@survivors_d28=0.7840 Δ=0.2317 need>=0.05
+  RC2-5 ABCB1 emergence (soft): PASS | frac_abcb1 d14=0.0000 d28=1.0000
+  RC2-6 Regrowth: FAIL | d28=98 d42=55
+
+C) Resistance Dynamics
+  Day   ABCB1+%   mean_ABCB1   mean_NRF2
+   28    100.00%       0.9983      0.8569
+   29    100.00%       0.9993      0.8578
+   30    100.00%       0.9990      0.8396
+   31    100.00%       0.9982      0.5215
+
+  collapse_ratio=0.000 threshold=0.50 -> STABLE
+
+D) Drug Dynamics
+  Day   mean_intra_drug   mean_extra_drug
+   28          0.000000          0.262809
+   29          0.000000          0.089063
+   30          0.000000          0.021270
+   31          0.000000          0.004959
+
+  Interpretation: intracellular clearing=YES; extracellular clearing=YES; treatment intracellular peak=0.000000 (NO_EFFECTIVE_TREATMENT).
+
+E) EMT / ZEB1
+  Day 28: ZEB1+ fraction = 50.00%
+  Day 31: ZEB1+ fraction = 48.96%
+  Day 42: ZEB1+ fraction = 52.73%
+
+F) Spatial Analysis
+  ECM at survivors d28: 0.7840
+  ECM at all tumor d14: 0.5523
+  Tumor radius p95 d14/d28/d42: 257.49 / 139.64 / 82.87
+  Sanctuary zones: YES
+  Barrier intact: YES
+
+G) Mechanism Interpretation
+  Preferential resistant survival: YES
+  Regrowth mechanism: ambiguous
+  Resistance status: STABLE
+
+H) FINAL VERDICT
+  Hard Score: 4/5
+  Classification: FALSE PASS
+  Reason: Hard pass not achieved under strict RC2 biological criteria.
+  Risk Flags: WEAK_DRUG_EXPOSURE
+
+====================================================================================================
+SUMMARY
+====================================================================================================
+  seed_42                      hard=4/5   biological=FALSE PASS
+
+RANKED SUMMARY
+TRUE: none
+CONDITIONAL: none
+FALSE: seed_42(4/5)

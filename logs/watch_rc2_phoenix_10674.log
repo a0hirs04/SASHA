@@ -1,0 +1,3023 @@
+nohup: ignoring input
+[H[2J[3J[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 15:14  Limit: 6:00:00
+
+Progress: day=11.7  snap=47/168  phase=BARRIER  done=27%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 171M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 15:29  Limit: 6:00:00
+
+Progress: day=12.0  snap=48/168  phase=BARRIER  done=28%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 176M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 15:44  Limit: 6:00:00
+
+Progress: day=12.2  snap=49/168  phase=BARRIER  done=29%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 176M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 15:59  Limit: 6:00:00
+
+Progress: day=12.5  snap=50/168  phase=BARRIER  done=29%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 181M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 16:14  Limit: 6:00:00
+
+Progress: day=12.5  snap=50/168  phase=BARRIER  done=29%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 186M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 16:29  Limit: 6:00:00
+
+Progress: day=12.7  snap=51/168  phase=BARRIER  done=30%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 186M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 16:44  Limit: 6:00:00
+
+Progress: day=13.0  snap=52/168  phase=BARRIER  done=30%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 197M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 16:59  Limit: 6:00:00
+
+Progress: day=13.0  snap=52/168  phase=BARRIER  done=30%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 197M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 17:14  Limit: 6:00:00
+
+Progress: day=13.2  snap=53/168  phase=BARRIER  done=31%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 202M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 17:29  Limit: 6:00:00
+
+Progress: day=13.5  snap=54/168  phase=BARRIER  done=32%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 208M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 17:44  Limit: 6:00:00
+
+Progress: day=13.7  snap=55/168  phase=BARRIER  done=32%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 208M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 17:59  Limit: 6:00:00
+
+Progress: day=13.7  snap=55/168  phase=BARRIER  done=32%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 213M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 18:14  Limit: 6:00:00
+
+Progress: day=14.0  snap=56/168  phase=BARRIER  done=33%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 219M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 18:29  Limit: 6:00:00
+
+Progress: day=14.2  snap=57/168  phase=DRUG-ON  done=33%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 225M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 18:44  Limit: 6:00:00
+
+Progress: day=14.2  snap=57/168  phase=DRUG-ON  done=33%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 225M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 18:59  Limit: 6:00:00
+
+Progress: day=14.5  snap=58/168  phase=DRUG-ON  done=34%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 225M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 19:14  Limit: 6:00:00
+
+Progress: day=14.7  snap=59/168  phase=DRUG-ON  done=35%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 236M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 19:29  Limit: 6:00:00
+
+Progress: day=15.0  snap=60/168  phase=DRUG-ON  done=35%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 236M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 19:44  Limit: 6:00:00
+
+Progress: day=15.0  snap=60/168  phase=DRUG-ON  done=35%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 236M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 19:59  Limit: 6:00:00
+
+Progress: day=15.2  snap=61/168  phase=DRUG-ON  done=36%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 246M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 20:14  Limit: 6:00:00
+
+Progress: day=15.5  snap=62/168  phase=DRUG-ON  done=36%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 252M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 20:29  Limit: 6:00:00
+
+Progress: day=15.7  snap=63/168  phase=DRUG-ON  done=37%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 247M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 20:44  Limit: 6:00:00
+
+Progress: day=15.7  snap=63/168  phase=DRUG-ON  done=37%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 258M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 20:59  Limit: 6:00:00
+
+Progress: day=16.0  snap=64/168  phase=DRUG-ON  done=38%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 264M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 21:14  Limit: 6:00:00
+
+Progress: day=16.2  snap=65/168  phase=DRUG-ON  done=38%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 270M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 21:29  Limit: 6:00:00
+
+Progress: day=16.2  snap=65/168  phase=DRUG-ON  done=38%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 270M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 21:44  Limit: 6:00:00
+
+Progress: day=16.5  snap=66/168  phase=DRUG-ON  done=39%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 276M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 21:59  Limit: 6:00:00
+
+Progress: day=16.7  snap=67/168  phase=DRUG-ON  done=39%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 282M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 22:15  Limit: 6:00:00
+
+Progress: day=17.0  snap=68/168  phase=DRUG-ON  done=40%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 282M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 22:30  Limit: 6:00:00
+
+Progress: day=17.0  snap=68/168  phase=DRUG-ON  done=40%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 288M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 22:45  Limit: 6:00:00
+
+Progress: day=17.2  snap=69/168  phase=DRUG-ON  done=41%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 295M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 23:00  Limit: 6:00:00
+
+Progress: day=17.5  snap=70/168  phase=DRUG-ON  done=41%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 301M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 23:15  Limit: 6:00:00
+
+Progress: day=17.5  snap=70/168  phase=DRUG-ON  done=41%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 302M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 23:30  Limit: 6:00:00
+
+Progress: day=17.7  snap=71/168  phase=DRUG-ON  done=42%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 308M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 23:45  Limit: 6:00:00
+
+Progress: day=18.0  snap=72/168  phase=DRUG-ON  done=42%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 315M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 24:00  Limit: 6:00:00
+
+Progress: day=18.0  snap=72/168  phase=DRUG-ON  done=42%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 315M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 24:15  Limit: 6:00:00
+
+Progress: day=18.2  snap=73/168  phase=DRUG-ON  done=43%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 319M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 24:30  Limit: 6:00:00
+
+Progress: day=18.5  snap=74/168  phase=DRUG-ON  done=44%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 326M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 24:45  Limit: 6:00:00
+
+Progress: day=18.5  snap=74/168  phase=DRUG-ON  done=44%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 329M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 25:00  Limit: 6:00:00
+
+Progress: day=18.7  snap=75/168  phase=DRUG-ON  done=44%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 333M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 25:15  Limit: 6:00:00
+
+Progress: day=19.0  snap=76/168  phase=DRUG-ON  done=45%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 339M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 25:30  Limit: 6:00:00
+
+Progress: day=19.2  snap=77/168  phase=DRUG-ON  done=45%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 347M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 25:45  Limit: 6:00:00
+
+Progress: day=19.2  snap=77/168  phase=DRUG-ON  done=45%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 348M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 26:00  Limit: 6:00:00
+
+Progress: day=19.5  snap=78/168  phase=DRUG-ON  done=46%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 358M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 26:15  Limit: 6:00:00
+
+Progress: day=19.7  snap=79/168  phase=DRUG-ON  done=47%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 362M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 26:30  Limit: 6:00:00
+
+Progress: day=19.7  snap=79/168  phase=DRUG-ON  done=47%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 365M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 26:45  Limit: 6:00:00
+
+Progress: day=20.0  snap=80/168  phase=DRUG-ON  done=47%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 373M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 27:00  Limit: 6:00:00
+
+Progress: day=20.2  snap=81/168  phase=DRUG-ON  done=48%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 381M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 27:15  Limit: 6:00:00
+
+Progress: day=20.2  snap=81/168  phase=DRUG-ON  done=48%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 381M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 27:30  Limit: 6:00:00
+
+Progress: day=20.5  snap=82/168  phase=DRUG-ON  done=48%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 385M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 27:45  Limit: 6:00:00
+
+Progress: day=20.7  snap=83/168  phase=DRUG-ON  done=49%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 389M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 28:00  Limit: 6:00:00
+
+Progress: day=20.7  snap=83/168  phase=DRUG-ON  done=49%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 397M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 28:15  Limit: 6:00:00
+
+Progress: day=21.0  snap=84/168  phase=DRUG-ON  done=50%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 401M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 28:30  Limit: 6:00:00
+
+Progress: day=21.2  snap=85/168  phase=DRUG-ON  done=50%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 405M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 28:45  Limit: 6:00:00
+
+Progress: day=21.2  snap=85/168  phase=DRUG-ON  done=50%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 413M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 29:00  Limit: 6:00:00
+
+Progress: day=21.5  snap=86/168  phase=DRUG-ON  done=51%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 413M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 29:15  Limit: 6:00:00
+
+Progress: day=21.5  snap=86/168  phase=DRUG-ON  done=51%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 421M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 29:31  Limit: 6:00:00
+
+Progress: day=21.7  snap=87/168  phase=DRUG-ON  done=51%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 430M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 29:46  Limit: 6:00:00
+
+Progress: day=22.0  snap=88/168  phase=DRUG-ON  done=52%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 430M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 30:01  Limit: 6:00:00
+
+Progress: day=22.0  snap=88/168  phase=DRUG-ON  done=52%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 438M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 30:16  Limit: 6:00:00
+
+Progress: day=22.2  snap=89/168  phase=DRUG-ON  done=52%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 447M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 30:31  Limit: 6:00:00
+
+Progress: day=22.5  snap=90/168  phase=DRUG-ON  done=53%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 451M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 30:46  Limit: 6:00:00
+
+Progress: day=22.5  snap=90/168  phase=DRUG-ON  done=53%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 456M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 31:01  Limit: 6:00:00
+
+Progress: day=22.7  snap=91/168  phase=DRUG-ON  done=54%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 460M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 31:16  Limit: 6:00:00
+
+Progress: day=23.0  snap=92/168  phase=DRUG-ON  done=54%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 469M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 31:31  Limit: 6:00:00
+
+Progress: day=23.0  snap=92/168  phase=DRUG-ON  done=54%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 469M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 31:46  Limit: 6:00:00
+
+Progress: day=23.2  snap=93/168  phase=DRUG-ON  done=55%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 478M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 32:01  Limit: 6:00:00
+
+Progress: day=23.5  snap=94/168  phase=DRUG-ON  done=55%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 487M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 32:16  Limit: 6:00:00
+
+Progress: day=23.5  snap=94/168  phase=DRUG-ON  done=55%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 488M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 32:31  Limit: 6:00:00
+
+Progress: day=23.7  snap=95/168  phase=DRUG-ON  done=56%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 497M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 32:46  Limit: 6:00:00
+
+Progress: day=23.7  snap=95/168  phase=DRUG-ON  done=56%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 502M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 33:01  Limit: 6:00:00
+
+Progress: day=24.0  snap=96/168  phase=DRUG-ON  done=57%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 512M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 33:16  Limit: 6:00:00
+
+Progress: day=24.2  snap=97/168  phase=DRUG-ON  done=57%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 516M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 33:31  Limit: 6:00:00
+
+Progress: day=24.2  snap=97/168  phase=DRUG-ON  done=57%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 516M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 33:46  Limit: 6:00:00
+
+Progress: day=24.5  snap=98/168  phase=DRUG-ON  done=58%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 525M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 34:01  Limit: 6:00:00
+
+Progress: day=24.7  snap=99/168  phase=DRUG-ON  done=58%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 530M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 34:16  Limit: 6:00:00
+
+Progress: day=24.7  snap=99/168  phase=DRUG-ON  done=58%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 541M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 34:31  Limit: 6:00:00
+
+Progress: day=25.0  snap=100/168  phase=DRUG-ON  done=59%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 551M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 34:46  Limit: 6:00:00
+
+Progress: day=25.0  snap=100/168  phase=DRUG-ON  done=59%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 546M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 35:01  Limit: 6:00:00
+
+Progress: day=25.2  snap=101/168  phase=DRUG-ON  done=60%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 561M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 35:16  Limit: 6:00:00
+
+Progress: day=25.5  snap=102/168  phase=DRUG-ON  done=60%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 560M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 35:31  Limit: 6:00:00
+
+Progress: day=25.5  snap=102/168  phase=DRUG-ON  done=60%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 572M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 35:46  Limit: 6:00:00
+
+Progress: day=25.7  snap=103/168  phase=DRUG-ON  done=61%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 570M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 36:01  Limit: 6:00:00
+
+Progress: day=25.7  snap=103/168  phase=DRUG-ON  done=61%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 582M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 36:16  Limit: 6:00:00
+
+Progress: day=26.0  snap=104/168  phase=DRUG-ON  done=61%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 593M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 36:32  Limit: 6:00:00
+
+Progress: day=26.2  snap=105/168  phase=DRUG-ON  done=62%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 591M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 36:47  Limit: 6:00:00
+
+Progress: day=26.2  snap=105/168  phase=DRUG-ON  done=62%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 604M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 37:02  Limit: 6:00:00
+
+Progress: day=26.5  snap=106/168  phase=DRUG-ON  done=63%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 602M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 37:17  Limit: 6:00:00
+
+Progress: day=26.5  snap=106/168  phase=DRUG-ON  done=63%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 615M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 37:32  Limit: 6:00:00
+
+Progress: day=26.7  snap=107/168  phase=DRUG-ON  done=63%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 626M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 37:47  Limit: 6:00:00
+
+Progress: day=27.0  snap=108/168  phase=DRUG-ON  done=64%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 630M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 38:02  Limit: 6:00:00
+
+Progress: day=27.0  snap=108/168  phase=DRUG-ON  done=64%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 637M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 38:17  Limit: 6:00:00
+
+Progress: day=27.2  snap=109/168  phase=DRUG-ON  done=64%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 641M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 38:32  Limit: 6:00:00
+
+Progress: day=27.2  snap=109/168  phase=DRUG-ON  done=64%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 648M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 38:47  Limit: 6:00:00
+
+Progress: day=27.5  snap=110/168  phase=DRUG-ON  done=65%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 650M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 39:02  Limit: 6:00:00
+
+Progress: day=27.7  snap=111/168  phase=DRUG-ON  done=66%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 665M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 39:17  Limit: 6:00:00
+
+Progress: day=27.7  snap=111/168  phase=DRUG-ON  done=66%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 664M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 39:32  Limit: 6:00:00
+
+Progress: day=28.0  snap=112/168  phase=DRUG-ON  done=66%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 680M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 39:47  Limit: 6:00:00
+
+Progress: day=28.0  snap=112/168  phase=DRUG-ON  done=66%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 683M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 40:02  Limit: 6:00:00
+
+Progress: day=28.2  snap=113/168  phase=REGROWTH  done=67%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 691M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 40:17  Limit: 6:00:00
+
+Progress: day=28.2  snap=113/168  phase=REGROWTH  done=67%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 692M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 40:32  Limit: 6:00:00
+
+Progress: day=28.5  snap=114/168  phase=REGROWTH  done=67%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 707M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 40:47  Limit: 6:00:00
+
+Progress: day=28.7  snap=115/168  phase=REGROWTH  done=68%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 716M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 41:02  Limit: 6:00:00
+
+Progress: day=28.7  snap=115/168  phase=REGROWTH  done=68%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 716M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 41:17  Limit: 6:00:00
+
+Progress: day=29.0  snap=116/168  phase=REGROWTH  done=69%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 728M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 41:32  Limit: 6:00:00
+
+Progress: day=29.0  snap=116/168  phase=REGROWTH  done=69%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 729M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 41:47  Limit: 6:00:00
+
+Progress: day=29.2  snap=117/168  phase=REGROWTH  done=69%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 741M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 42:02  Limit: 6:00:00
+
+Progress: day=29.2  snap=117/168  phase=REGROWTH  done=69%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 741M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 42:17  Limit: 6:00:00
+
+Progress: day=29.5  snap=118/168  phase=REGROWTH  done=70%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 758M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 42:32  Limit: 6:00:00
+
+Progress: day=29.7  snap=119/168  phase=REGROWTH  done=70%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 762M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 42:47  Limit: 6:00:00
+
+Progress: day=29.7  snap=119/168  phase=REGROWTH  done=70%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 771M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 43:02  Limit: 6:00:00
+
+Progress: day=30.0  snap=120/168  phase=REGROWTH  done=71%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 775M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 43:18  Limit: 6:00:00
+
+Progress: day=30.0  snap=120/168  phase=REGROWTH  done=71%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 784M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 43:33  Limit: 6:00:00
+
+Progress: day=30.2  snap=121/168  phase=REGROWTH  done=72%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 792M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 43:48  Limit: 6:00:00
+
+Progress: day=30.2  snap=121/168  phase=REGROWTH  done=72%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 798M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 44:03  Limit: 6:00:00
+
+Progress: day=30.5  snap=122/168  phase=REGROWTH  done=72%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 806M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 44:18  Limit: 6:00:00
+
+Progress: day=30.5  snap=122/168  phase=REGROWTH  done=72%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 811M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 44:33  Limit: 6:00:00
+
+Progress: day=30.7  snap=123/168  phase=REGROWTH  done=73%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 815M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 44:48  Limit: 6:00:00
+
+Progress: day=31.0  snap=124/168  phase=REGROWTH  done=73%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 833M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 45:03  Limit: 6:00:00
+
+Progress: day=31.0  snap=124/168  phase=REGROWTH  done=73%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 839M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 45:18  Limit: 6:00:00
+
+Progress: day=31.2  snap=125/168  phase=REGROWTH  done=74%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 842M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 45:33  Limit: 6:00:00
+
+Progress: day=31.2  snap=125/168  phase=REGROWTH  done=74%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 853M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 45:48  Limit: 6:00:00
+
+Progress: day=31.5  snap=126/168  phase=REGROWTH  done=75%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 856M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 46:03  Limit: 6:00:00
+
+Progress: day=31.5  snap=126/168  phase=REGROWTH  done=75%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 867M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 46:18  Limit: 6:00:00
+
+Progress: day=31.7  snap=127/168  phase=REGROWTH  done=75%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 870M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 46:33  Limit: 6:00:00
+
+Progress: day=31.7  snap=127/168  phase=REGROWTH  done=75%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 882M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 46:48  Limit: 6:00:00
+
+Progress: day=32.0  snap=128/168  phase=REGROWTH  done=76%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 884M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 47:03  Limit: 6:00:00
+
+Progress: day=32.0  snap=128/168  phase=REGROWTH  done=76%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 897M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 47:18  Limit: 6:00:00
+
+Progress: day=32.2  snap=129/168  phase=REGROWTH  done=76%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 899M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 47:33  Limit: 6:00:00
+
+Progress: day=32.2  snap=129/168  phase=REGROWTH  done=76%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 911M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 47:48  Limit: 6:00:00
+
+Progress: day=32.5  snap=130/168  phase=REGROWTH  done=77%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 920M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 48:03  Limit: 6:00:00
+
+Progress: day=32.5  snap=130/168  phase=REGROWTH  done=77%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 926M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 48:18  Limit: 6:00:00
+
+Progress: day=32.7  snap=131/168  phase=REGROWTH  done=77%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 935M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 48:33  Limit: 6:00:00
+
+Progress: day=32.7  snap=131/168  phase=REGROWTH  done=77%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 942M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 48:48  Limit: 6:00:00
+
+Progress: day=33.0  snap=132/168  phase=REGROWTH  done=78%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 950M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 49:03  Limit: 6:00:00
+
+Progress: day=33.0  snap=132/168  phase=REGROWTH  done=78%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 957M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 49:18  Limit: 6:00:00
+
+Progress: day=33.2  snap=133/168  phase=REGROWTH  done=79%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 966M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 49:33  Limit: 6:00:00
+
+Progress: day=33.2  snap=133/168  phase=REGROWTH  done=79%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 973M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 49:49  Limit: 6:00:00
+
+Progress: day=33.5  snap=134/168  phase=REGROWTH  done=79%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 982M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 50:04  Limit: 6:00:00
+
+Progress: day=33.5  snap=134/168  phase=REGROWTH  done=79%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 988M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 50:19  Limit: 6:00:00
+
+Progress: day=33.7  snap=135/168  phase=REGROWTH  done=80%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 997M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 50:34  Limit: 6:00:00
+
+Progress: day=33.7  snap=135/168  phase=REGROWTH  done=80%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1004M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 50:49  Limit: 6:00:00
+
+Progress: day=34.0  snap=136/168  phase=REGROWTH  done=80%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1006M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 51:04  Limit: 6:00:00
+
+Progress: day=34.0  snap=136/168  phase=REGROWTH  done=80%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1021M
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 51:19  Limit: 6:00:00
+
+Progress: day=34.2  snap=137/168  phase=REGROWTH  done=81%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 51:34  Limit: 6:00:00
+
+Progress: day=34.2  snap=137/168  phase=REGROWTH  done=81%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 51:49  Limit: 6:00:00
+
+Progress: day=34.5  snap=138/168  phase=REGROWTH  done=82%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 52:04  Limit: 6:00:00
+
+Progress: day=34.5  snap=138/168  phase=REGROWTH  done=82%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 52:19  Limit: 6:00:00
+
+Progress: day=34.7  snap=139/168  phase=REGROWTH  done=82%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 52:34  Limit: 6:00:00
+
+Progress: day=34.7  snap=139/168  phase=REGROWTH  done=82%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 52:49  Limit: 6:00:00
+
+Progress: day=35.0  snap=140/168  phase=REGROWTH  done=83%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 53:04  Limit: 6:00:00
+
+Progress: day=35.0  snap=140/168  phase=REGROWTH  done=83%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 53:19  Limit: 6:00:00
+
+Progress: day=35.2  snap=141/168  phase=REGROWTH  done=83%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 53:34  Limit: 6:00:00
+
+Progress: day=35.2  snap=141/168  phase=REGROWTH  done=83%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 53:49  Limit: 6:00:00
+
+Progress: day=35.5  snap=142/168  phase=REGROWTH  done=84%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 54:04  Limit: 6:00:00
+
+Progress: day=35.5  snap=142/168  phase=REGROWTH  done=84%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.1G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 54:19  Limit: 6:00:00
+
+Progress: day=35.7  snap=143/168  phase=REGROWTH  done=85%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 54:34  Limit: 6:00:00
+
+Progress: day=35.7  snap=143/168  phase=REGROWTH  done=85%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 54:49  Limit: 6:00:00
+
+Progress: day=36.0  snap=144/168  phase=REGROWTH  done=85%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 55:04  Limit: 6:00:00
+
+Progress: day=36.0  snap=144/168  phase=REGROWTH  done=85%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 55:19  Limit: 6:00:00
+
+Progress: day=36.2  snap=145/168  phase=REGROWTH  done=86%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 55:34  Limit: 6:00:00
+
+Progress: day=36.2  snap=145/168  phase=REGROWTH  done=86%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 55:49  Limit: 6:00:00
+
+Progress: day=36.5  snap=146/168  phase=REGROWTH  done=86%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 56:05  Limit: 6:00:00
+
+Progress: day=36.5  snap=146/168  phase=REGROWTH  done=86%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 56:20  Limit: 6:00:00
+
+Progress: day=36.5  snap=146/168  phase=REGROWTH  done=86%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 56:35  Limit: 6:00:00
+
+Progress: day=36.7  snap=147/168  phase=REGROWTH  done=87%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 56:50  Limit: 6:00:00
+
+Progress: day=36.7  snap=147/168  phase=REGROWTH  done=87%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 57:05  Limit: 6:00:00
+
+Progress: day=37.0  snap=148/168  phase=REGROWTH  done=88%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.2G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 57:20  Limit: 6:00:00
+
+Progress: day=37.0  snap=148/168  phase=REGROWTH  done=88%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 57:35  Limit: 6:00:00
+
+Progress: day=37.2  snap=149/168  phase=REGROWTH  done=88%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 57:50  Limit: 6:00:00
+
+Progress: day=37.2  snap=149/168  phase=REGROWTH  done=88%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 58:05  Limit: 6:00:00
+
+Progress: day=37.5  snap=150/168  phase=REGROWTH  done=89%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 58:20  Limit: 6:00:00
+
+Progress: day=37.5  snap=150/168  phase=REGROWTH  done=89%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 58:35  Limit: 6:00:00
+
+Progress: day=37.7  snap=151/168  phase=REGROWTH  done=89%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 58:50  Limit: 6:00:00
+
+Progress: day=37.7  snap=151/168  phase=REGROWTH  done=89%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 59:05  Limit: 6:00:00
+
+Progress: day=38.0  snap=152/168  phase=REGROWTH  done=90%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 59:20  Limit: 6:00:00
+
+Progress: day=38.0  snap=152/168  phase=REGROWTH  done=90%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 59:35  Limit: 6:00:00
+
+Progress: day=38.0  snap=152/168  phase=REGROWTH  done=90%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 59:50  Limit: 6:00:00
+
+Progress: day=38.2  snap=153/168  phase=REGROWTH  done=91%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:00:05  Limit: 6:00:00
+
+Progress: day=38.2  snap=153/168  phase=REGROWTH  done=91%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.3G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:00:20  Limit: 6:00:00
+
+Progress: day=38.5  snap=154/168  phase=REGROWTH  done=91%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:00:35  Limit: 6:00:00
+
+Progress: day=38.5  snap=154/168  phase=REGROWTH  done=91%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:00:50  Limit: 6:00:00
+
+Progress: day=38.7  snap=155/168  phase=REGROWTH  done=92%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:01:05  Limit: 6:00:00
+
+Progress: day=38.7  snap=155/168  phase=REGROWTH  done=92%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:01:20  Limit: 6:00:00
+
+Progress: day=39.0  snap=156/168  phase=REGROWTH  done=92%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:01:35  Limit: 6:00:00
+
+Progress: day=39.0  snap=156/168  phase=REGROWTH  done=92%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:01:50  Limit: 6:00:00
+
+Progress: day=39.0  snap=156/168  phase=REGROWTH  done=92%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:02:06  Limit: 6:00:00
+
+Progress: day=39.2  snap=157/168  phase=REGROWTH  done=93%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:02:21  Limit: 6:00:00
+
+Progress: day=39.2  snap=157/168  phase=REGROWTH  done=93%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:02:36  Limit: 6:00:00
+
+Progress: day=39.5  snap=158/168  phase=REGROWTH  done=94%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:02:51  Limit: 6:00:00
+
+Progress: day=39.5  snap=158/168  phase=REGROWTH  done=94%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.4G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:03:06  Limit: 6:00:00
+
+Progress: day=39.7  snap=159/168  phase=REGROWTH  done=94%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:03:21  Limit: 6:00:00
+
+Progress: day=39.7  snap=159/168  phase=REGROWTH  done=94%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:03:36  Limit: 6:00:00
+
+Progress: day=40.0  snap=160/168  phase=REGROWTH  done=95%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:03:51  Limit: 6:00:00
+
+Progress: day=40.0  snap=160/168  phase=REGROWTH  done=95%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:04:06  Limit: 6:00:00
+
+Progress: day=40.0  snap=160/168  phase=REGROWTH  done=95%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:04:21  Limit: 6:00:00
+
+Progress: day=40.2  snap=161/168  phase=REGROWTH  done=95%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:04:36  Limit: 6:00:00
+
+Progress: day=40.2  snap=161/168  phase=REGROWTH  done=95%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:04:51  Limit: 6:00:00
+
+Progress: day=40.5  snap=162/168  phase=REGROWTH  done=96%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:05:06  Limit: 6:00:00
+
+Progress: day=40.5  snap=162/168  phase=REGROWTH  done=96%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:05:21  Limit: 6:00:00
+
+Progress: day=40.7  snap=163/168  phase=REGROWTH  done=97%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.5G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:05:36  Limit: 6:00:00
+
+Progress: day=40.7  snap=163/168  phase=REGROWTH  done=97%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:05:51  Limit: 6:00:00
+
+Progress: day=40.7  snap=163/168  phase=REGROWTH  done=97%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:06:06  Limit: 6:00:00
+
+Progress: day=41.0  snap=164/168  phase=REGROWTH  done=97%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:06:21  Limit: 6:00:00
+
+Progress: day=41.0  snap=164/168  phase=REGROWTH  done=97%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:06:36  Limit: 6:00:00
+
+Progress: day=41.2  snap=165/168  phase=REGROWTH  done=98%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:06:51  Limit: 6:00:00
+
+Progress: day=41.2  snap=165/168  phase=REGROWTH  done=98%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:07:06  Limit: 6:00:00
+
+Progress: day=41.5  snap=166/168  phase=REGROWTH  done=98%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:07:21  Limit: 6:00:00
+
+Progress: day=41.5  snap=166/168  phase=REGROWTH  done=98%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:07:36  Limit: 6:00:00
+
+Progress: day=41.5  snap=166/168  phase=REGROWTH  done=98%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:07:51  Limit: 6:00:00
+
+Progress: day=41.7  snap=167/168  phase=REGROWTH  done=99%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:08:07  Limit: 6:00:00
+
+Progress: day=41.7  snap=167/168  phase=REGROWTH  done=99%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.6G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:08:22  Limit: 6:00:00
+
+Progress: day=42.0  snap=168/168  phase=REGROWTH  done=100%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.7G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: rc2_regrowth_candidate_r1_s42  State: RUNNING
+Partition: cpu384g  Node: cpusm03  CPUs: 32  Mem: 0
+Elapsed: 1:08:37  Limit: 6:00:00
+
+Progress: day=42.0  snap=168/168  phase=REGROWTH  done=100%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.7G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+[H[2J[3JRC2 PHOENIX WATCH
+--------------------------------------------------------------
+Job: 10674  Name: ?  State: COMPLETED
+Partition: ?  Node: ?  CPUs: ?  Mem: ?
+Elapsed: N/A  Limit: N/A
+
+Progress: day=42.2  snap=169/168  phase=REGROWTH  done=100%
+Output dir: /work/a0hirs04/PROJECT-NORTHSTAR/build/rc2_regrowth_candidate/replicate_01_seed42/output
+Disk: 1.7G
+
+Verdict file: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+(not ready)
+
+Refresh: 15s (Ctrl+C to stop)
+
+Final job state: COMPLETED
+JobID|State|Elapsed|NodeList
+10674|COMPLETED|01:08:50|cpusm03
+10674.batch|COMPLETED|01:08:50|cpusm03
+10674.extern|COMPLETED|01:08:50|cpusm03
+
+
+Auto-hedge enabled: invoking launch_rc2_hedge_set.py
+Phoenix job 10674 state: COMPLETED
+Phoenix finished but verdict file not ready: /home/a0hirs04/PROJECT-NORTHSTAR/logs/rc2_regrowth_candidate_verdict_snippet.txt
+No hedge launch yet.

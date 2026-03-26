@@ -207,8 +207,10 @@ def _write_slurm_script(
     rep_idx: int,
     seed: int,
     job_name_prefix: str = "rc2",
+    drug_pipeline_debug: bool = False,
 ) -> Path:
     script = rep_dir / "run.slurm.sh"
+    debug_env_line = "export RC2_DRUG_DEBUG=1\n" if drug_pipeline_debug else ""
     script.write_text(textwrap.dedent(f"""\
         #!/bin/bash
         #SBATCH --job-name={job_name_prefix}_r{rep_idx+1}_s{seed}
@@ -225,6 +227,7 @@ def _write_slurm_script(
         export OMP_NUM_THREADS={SLURM_CPUS}
         export OMP_PROC_BIND=spread
         export OMP_PLACES=cores
+        {debug_env_line.rstrip()}
 
         cd {PROJECT_ROOT}
         echo "=== Reality Check 2 -- Replicate {rep_idx+1} -- seed={seed} ==="
@@ -549,6 +552,11 @@ def main() -> int:
         default=None,
         help="Optional override for user_parameters.drug_stress_threshold",
     )
+    parser.add_argument(
+        "--drug-pipeline-debug",
+        action="store_true",
+        help="Enable focused RC2 drug pipeline diagnostics (sets RC2_DRUG_DEBUG=1 in SLURM job)",
+    )
     args = parser.parse_args()
 
     if args.dry_run and args.evaluate_only:
@@ -651,6 +659,7 @@ def main() -> int:
                 i,
                 seed,
                 job_name_prefix=args.job_name_prefix,
+                drug_pipeline_debug=args.drug_pipeline_debug,
             )
 
             result = subprocess.run(
