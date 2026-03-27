@@ -54702,3 +54702,168 @@ C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING
 --------------------------------------------------------------------------
 Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
 Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:31:19
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:31:39
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:31:59
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:32:19
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:32:39
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:32:59
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:33:19
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:33:39
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:33:59
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:34:19
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:34:39
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:34:59
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:35:20
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:35:40
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
+[H[2J[3JRC2 HIGH-THRESHOLD POLLING (C3/C5/C7)
+--------------------------------------------------------------------------
+Time: 2026-03-27 01:36:00
+Columns: ID | prefix | state | rep1_snaps | strict_status
+--------------------------------------------------------------------------
+C3  rc2_hedge_C3_km2.0_ap0.00075_th0.03        UNKNOWN      -         PENDING 
+C5  rc2_hedge_C5_km1.9_ap0.0007_th0.03         UNKNOWN      -         PENDING 
+C7  rc2_hedge_C7_km2.2_ap0.00065_th0.03        UNKNOWN      -         PENDING 
+--------------------------------------------------------------------------
+Snippets: /home/a0hirs04/PROJECT-NORTHSTAR/logs/*_verdict_snippet.txt
+Refresh: 20s (Ctrl+C to stop)
