@@ -471,14 +471,6 @@ void tumor_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
     phenotype.mechanics.cell_cell_adhesion_strength =
         0.1 + 0.3 * clamp_unit(cdh1 / std::max(0.75, emt_extent_mult));
 
-    // ---- 5d) ECM DEGRADATION (local voxel update) ---------------------------
-    if (ecm_index >= 0)
-    {
-        const double local_ecm = read_density_value(densities, ecm_index);
-        const double degraded_ecm = clamp_unit(local_ecm - mmp2 * emt_extent_mult * 0.01 * dt);
-        write_density_value(densities, ecm_index, degraded_ecm);
-    }
-
     // ---- 5e) SECRETION -------------------------------------------------------
     // Expression proxies (gene activities) map to secretion rates.
     // TRAIT 1: KRAS constitutively drives TGF-β and SHH secretion (KRAS=1, locked).

@@ -38,13 +38,12 @@ T_WITHDRAW = 28.0 * DAY_MIN    # 40320
 T_END = 31.0 * DAY_MIN         # 44640
 SAVE_INTERVAL = 360
 
-# Sweep grid — Round 3: transition zone
-# Round 1 (km=2-10, ap=0.0005): total kill — drug too fast for resistance
-# Round 2 (km=0.1-1.0, ap=0.001-0.01): total survival — 100% ABCB1, ic=0
-# Round 3: narrow the transition zone between kill and survival
-KILL_MULTIPLIERS = [2.0, 2.2, 2.5, 2.8]
+# Sweep grid — Round 5: real-drug recalibration (4 jobs)
+# Keep efflux fixed at a stable value; bracket kill multiplier only.
+KILL_MULTIPLIERS = [0.02, 0.05, 0.10, 0.20]
 ABCB1_PRODUCTION_RATES = [0.0008]
 FIXED_STRESS_THRESHOLD = 0.02
+FIXED_EFFLUX_STRENGTH = 0.04
 
 
 def _set(root: ET.Element, xpath: str, value: str) -> None:
@@ -130,6 +129,7 @@ def patch_config(
     _set(root, ".//user_parameters/drug_stress_threshold", str(FIXED_STRESS_THRESHOLD))
     _set(root, ".//user_parameters/drug_kill_multiplier", str(kill_multiplier))
     _set(root, ".//user_parameters/abcb1_production_rate", str(abcb1_production_rate))
+    _set(root, ".//user_parameters/efflux_strength", str(FIXED_EFFLUX_STRENGTH))
 
     tree.write(dst, encoding="utf-8", xml_declaration=True)
 
@@ -219,6 +219,7 @@ def main() -> int:
                 "drug_kill_multiplier": km,
                 "abcb1_production_rate": ap,
                 "drug_stress_threshold": FIXED_STRESS_THRESHOLD,
+                "efflux_strength": FIXED_EFFLUX_STRENGTH,
                 "job_id": job_id,
                 "work_dir": str(variant_dir),
             }

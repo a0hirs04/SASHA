@@ -160,14 +160,6 @@ void stromal_phenotype_update(Cell* pCell, Phenotype& phenotype, double dt)
         phenotype.secretion.secretion_rates[tgfb_index] = tgfb_secretion;
     }
 
-    // 3f) MMP2-dependent ECM remodeling.
-    // CAFs both deposit and degrade ECM; degradation is lower than production.
-    if (ecm_index >= 0)
-    {
-        local_ecm = clamp_unit(local_ecm - mmp2 * 0.002 * dt);
-        write_density_value(densities, ecm_index, local_ecm);
-    }
-
     // 3g) DRUG DIFFUSION MODULATION SUPPORT
     // Store local ECM as an optional custom output for fitness/analysis pipelines.
     set_custom_data_if_present(pCell, "local_ecm_density", local_ecm);

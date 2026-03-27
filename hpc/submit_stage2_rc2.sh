@@ -93,7 +93,7 @@ for n in root.findall(".//save//interval"):
     n.text = str(SAVE_INT)
 
 for var_name, val in [("oxygen","38"),("tgfb","0"),("shh","0"),
-                      ("drug","0"),("ecm_density","0")]:
+                      ("drug","0")]:
     var = root.find(f".//microenvironment_setup/variable[@name='{var_name}']")
     if var is None:
         continue

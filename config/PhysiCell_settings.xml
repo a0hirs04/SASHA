@@ -177,17 +177,17 @@
         <variable name="ecm_density" units="dimensionless" ID="4">
             <physical_parameter_set>
                 <diffusion_coefficient units="micron^2/min">0.0</diffusion_coefficient>
-                <decay_rate units="1/min">0.0001</decay_rate>
+                <decay_rate units="1/min">0.0</decay_rate>
             </physical_parameter_set>
             <initial_condition units="dimensionless">0</initial_condition>
-            <Dirichlet_boundary_condition units="dimensionless" enabled="true">0</Dirichlet_boundary_condition>
+            <Dirichlet_boundary_condition units="dimensionless" enabled="false">0</Dirichlet_boundary_condition>
             <Dirichlet_options>
-                <boundary_value ID="xmin" enabled="true">0</boundary_value>
-                <boundary_value ID="xmax" enabled="true">0</boundary_value>
-                <boundary_value ID="ymin" enabled="true">0</boundary_value>
-                <boundary_value ID="ymax" enabled="true">0</boundary_value>
-                <boundary_value ID="zmin" enabled="true">0</boundary_value>
-                <boundary_value ID="zmax" enabled="true">0</boundary_value>
+                <boundary_value ID="xmin" enabled="false">0</boundary_value>
+                <boundary_value ID="xmax" enabled="false">0</boundary_value>
+                <boundary_value ID="ymin" enabled="false">0</boundary_value>
+                <boundary_value ID="ymax" enabled="false">0</boundary_value>
+                <boundary_value ID="zmin" enabled="false">0</boundary_value>
+                <boundary_value ID="zmax" enabled="false">0</boundary_value>
             </Dirichlet_options>
         </variable>
 
@@ -868,7 +868,7 @@
         <ecm_ha_fraction_default type="double" units="dimensionless"
             description="Default HA fraction of newly produced ECM">0.6</ecm_ha_fraction_default>
         <mmp2_degradation_rate type="double" units="1/min"
-            description="ECM degradation rate for mmp2_active tumor cells">0.005</mmp2_degradation_rate>
+            description="ECM degradation rate for mmp2_active tumor cells">0.001</mmp2_degradation_rate>
         <ecm_natural_decay_rate type="double" units="1/min"
             description="Slow background ECM turnover (handled outside per-cell Module 6)">0.0001</ecm_natural_decay_rate>
         <drug_uptake_rate type="double" units="1/hour"

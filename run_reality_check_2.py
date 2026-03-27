@@ -193,7 +193,6 @@ def _patch_config(
     _enforce_dirichlet("tgfb",        "0")
     _enforce_dirichlet("shh",         "0")
     _enforce_dirichlet("drug",        "0")   # C++ will raise to drug_conc at T_PRE
-    _enforce_dirichlet("ecm_density", "0")
 
     tree.write(dst, encoding="utf-8", xml_declaration=True)
 
